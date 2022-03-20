@@ -25,11 +25,10 @@ for general use.
 
 ``` r
 library(ICSNP) # HotellingsT2
-library(psych) # hmm
 library(MASS) # LDA
 library(HDtest) # LC-test
 library(mvnormtest) # Multivariate normality test
-library(tidyverse)
+library(tidyverse) # dplyr and piping
 library(cowplot) # grid plots
 library("devtools") 
 library("factoextra") #Scree plot for eigenvalues
