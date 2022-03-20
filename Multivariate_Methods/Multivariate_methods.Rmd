@@ -1,5 +1,5 @@
 ---
-title: "Multivariate Methods"
+title: "Exploring Relationships in Body Dimensions"
 author: "Benjamin Sivac"
 date: "`r Sys.Date()`"
 output: 
