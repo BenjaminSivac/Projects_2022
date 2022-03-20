@@ -650,10 +650,7 @@ partimat(as.factor(Gender) ~ Bitrochanteric_diameter + Ankle_diameter, data=df.b
 From the results we may interpret the first principal component as
 having strong correlation to measures concerning upper body and size of
 frame, while the second principal component would refer to the
-measurements around upper legs. Meaning when investigating the
-relationships between men and women, the variables can be summarised as
-measurements of upper body, including overall size, and secondly upper
-legs. There’s also a likely case of including a third component to
+measurements around upper legs. There’s also a likely case of including a third component to
 explain the age variable, but it does not have any strong correlations
 to other measurements and would only explain itself, making principal
 component analysis redundant and pointless.
