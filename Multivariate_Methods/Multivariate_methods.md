@@ -156,9 +156,9 @@ list_pca %>% fviz_eig(choice = "eigenvalue", addlabels = TRUE) +
   theme(axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5))
 ```
-
+<p align="center">
 <img src="Multivariate_methods_files/figure-gfm/eig-1.png" style="display: block; margin: auto;" />
-
+</p>
 The first four eigenvalues fulfill the greater-than-one rule. If we
 adhere to it, we would retain the four components. But looking at the
 “elbow” of the scree plot, it’s clear that it starts at the second
