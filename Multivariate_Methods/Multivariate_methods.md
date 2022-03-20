@@ -95,7 +95,7 @@ and Bitrochanteric. They, in the same order, correspond to the skeletal
 distance between shoulders, between outer edges of the pelvis, and
 between the outer points of the hips.
 <p align="center">
-![alt text](https://github.com/BenjaminSivac/Projects_2022/blob/main/Multivariate_Methods/Multivariate_methods_files/figure-gfm/biabiibit.jpg?raw=true)
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/Multivariate_Methods/Multivariate_methods_files/figure-gfm/biabiibit.jpg"/>
 </p>
 ### Principal component analysis
 
