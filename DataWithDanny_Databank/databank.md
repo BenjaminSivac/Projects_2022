@@ -37,6 +37,8 @@ familiar with their tables.
 
 #### Entity Relationship Diagram
 
+![alt text](https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny_Databank/erd.png?raw=true)
+
 #### Table 1: Regions
 
 Just like popular cryptocurrency platforms - Data Bank is also run off a
