@@ -205,8 +205,10 @@ ORDER BY region_id;
 ------------------------------------------------------------------------
 
 **4. How many days on average are customers reallocated to a different
-node?** Not entirely sure that I understood the question. I interpret it
-as “*After* how many days…”, rather than “How many *times*…”, on average
+node?** 
+
+I'm not entirely sure that I understood the question correctly. I interpret it
+as “***After*** how many days…” rather than “How many ***times***…” on average
 are they reallocated.
 
 ``` sql
@@ -245,7 +247,9 @@ FROM cte_sum_diff;
 ------------------------------------------------------------------------
 
 **5. What is the median, 80th and 95th percentile for this same
-reallocation days metric for each region?** Re-used the same CTE from
+reallocation days metric for each region?** 
+
+Re-used the same CTE from
 quesiton 4 and added another select query utilizing percentile\_disc
 functions, returning a current value rather than an interpolated value.
 
@@ -325,7 +329,9 @@ GROUP BY txn_type
 ------------------------------------------------------------------------
 
 **2. What is the average total historical deposit counts and amounts for
-all customers?** Making do with just a subquery over another CTE.
+all customers?** 
+
+Making do with just a subquery over another CTE.
 
 ``` sql
 SELECT 
@@ -352,8 +358,9 @@ FROM
 ------------------------------------------------------------------------
 
 **3. For each month - how many Data Bank customers make more than 1
-deposit and either 1 purchase or 1 withdrawal in a single month?** Using
-case expression to create a counter for each transaction type and then
+deposit and either 1 purchase or 1 withdrawal in a single month?** 
+
+Using case expression to create a counter for each transaction type and then
 issuing proper filter conditions.
 
 ``` sql
@@ -394,7 +401,9 @@ GROUP BY month;
 ------------------------------------------------------------------------
 
 **4. What is the closing balance for each customer at the end of the
-month?** Could have utilized more CTE’s for more readability, but I
+month?** 
+
+Could have utilized more CTE’s for more readability, but I
 prefer it being more compact. Note that I will revisit at a later point
 to fill in for months with no transactions!
 
@@ -442,7 +451,9 @@ Displaying records 1 - 10
 ------------------------------------------------------------------------
 
 **5. What is the percentage of customers who increase their closing
-balance by more than 5%?** Again, trying to minimize the amount of CTE’s
+balance by more than 5%?** 
+
+Again, trying to minimize the amount of CTE’s
 but I still ended up making 4 of them. We use DISTINCT in the end to get
 the percentage of customers who at least once experienced more than 5%
 growth.
