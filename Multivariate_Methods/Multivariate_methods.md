@@ -338,9 +338,9 @@ plot_hist <- df.body %>% ggplot(aes(Biacromial_diameter)) +
 
 plot_grid(plot_hist, plot_qq, ncol = 2)
 ```
-
+<p align="center">
 <img src="Multivariate_methods_files/figure-gfm/Normality pt1-1.png" style="display: block; margin: auto;" />
-
+</p>
 While the null-hypothesis is not rejected in the LC-test, the
 distribution plots seem a bit skewed and the test statistic for the
 shapiro-Wilk normality test is not significant enough to claim
