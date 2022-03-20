@@ -292,9 +292,9 @@ ggarrange(plot_prop, plot_bikes,
           common.legend = TRUE,
           legend="bottom")
 ```
-
+<p align="center">
 <img src="Cyclistic_files/figure-gfm/Proportions-1.png" style="display: block; margin: auto;" />
-
+</p>
 For an overview of the customer base, members account for 54.8% of total
 rides taken during the 1-year period, while casual riders comprised the
 remaining 45.2% of trips. There is clearly a strong incentive for
@@ -334,9 +334,9 @@ ggarrange(plot_month, plot_weekday, plot_hour, plot_legend,
          align="hv") %>%
   annotate_figure(top = text_grob("Trips across 12 months", size=14))
 ```
-
+<p align="center">
 <img src="Cyclistic_files/figure-gfm/Time series-1.png" style="display: block; margin: auto;" />
-
+</p>
 In terms of monthly trips, number of casual users peak in July and hit a
 bottom in February, a clear relationship to weather conditions and
 vacation times. Members do share similar numbers but, perhaps not
@@ -384,9 +384,9 @@ ggarrange(plot_duration, plot_distance,
   annotate_figure(top = text_grob("Average Trip length- and Distance travelled, by hour", 
                                   size=14))
 ```
-
+<p align="center">
 <img src="Cyclistic_files/figure-gfm/trip_distance_hour-1.png" style="display: block; margin: auto;" />
-
+</p>
 Casual users on average tend to bike for both longer periods of time and
 longer distances, which is reasonable as workers would likely stick to a
 few selected routes for making good on time. But also, casual users
@@ -422,9 +422,9 @@ df_trips %>% filter(trip_length > 0) %>%
         plot.title = element_text(hjust = 0.5)) +
   labs(title="5 most common stations")
 ```
-
+<p align="center">
 <img src="Cyclistic_files/figure-gfm/5 common-1.png" style="display: block; margin: auto;" />
-
+</p>
 ‘Streeter Dr & Grand Ave’ and Millenium Park would be the best stations
 for placing advertisement appealing to casual riders. Members have very
 low numbers at Millennium Park, likely because it is not en route to any
@@ -442,9 +442,9 @@ df_trips %>% filter(trip_length > 0) %>%
         plot.title = element_text(hjust = 0.5)) +
   labs(title="Trip length by 5 most common stations")
 ```
-
+<p align="center">
 <img src="Cyclistic_files/figure-gfm/Duration by common stations-1.png" style="display: block; margin: auto;" />
-
+</p>
 Trip length by the 5 most common starting stations support the above
 hypothesis, as casual riders would likely make stops and have extended
 outings at Millennium Park.
