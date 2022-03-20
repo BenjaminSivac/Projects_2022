@@ -1,4 +1,4 @@
-Multivariate Methods
+Exploring Relationships in Body Dimensions
 ================
 Benjamin Sivac
 2022-03-17
