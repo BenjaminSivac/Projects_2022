@@ -42,7 +42,7 @@ familiar with their tables.
 #### Entity Relationship Diagram
 
 <p align="center">
-  <img src= "https://https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny_Databank/figure-gfm/erd.png"/>
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny_Databank/figure-gfm/erd.png"/>
 </p>
 
 
