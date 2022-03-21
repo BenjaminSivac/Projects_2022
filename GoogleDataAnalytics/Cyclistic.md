@@ -14,6 +14,10 @@ thought process with proper reasoning, comments and visualizations.
 
 ### Background
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/GoogleDataAnalytics/Cyclistic_files/figure-gfm/Cyclistic_logo.png"/>
+</p>
+
 Cyclistic is a bike-share program that features more than 5,800 bicycles
 and 600 docking stations. Cyclistic sets itself apart by also offering
 reclining bikes, hand tricycles, and cargo bikes, making bike-share more
