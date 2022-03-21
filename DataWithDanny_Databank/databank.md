@@ -5,7 +5,7 @@ Benjamin Sivac
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny_Databank/figure-gfm/dwd_pic.png"
-       width="400" 
+       width="500" 
        height="500"/>
 </p>
 
