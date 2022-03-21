@@ -161,11 +161,12 @@ df_trips$trip_length %>% min()
     ## Time difference of -3482 secs
 
 There are negative values that will be kept but filtered out for later
-analysis. By doing so, there wont be a lose off valuable observations
+analysis. By doing so, there wont be a loss off valuable observations
 for other variables, like rideable type.
 
 #### Distance travelled
 
+Following code is an attempt at trying to make use of the recorded spatial coordinates of each observation. 
 It will likely be inaccurate, as Haversine formula calculates the
 great-circle distance between two coordinates with no regards to
 different routes, while also returning values of zero for people
@@ -251,9 +252,9 @@ cases.
 
 ### Analysis
 
-With the data cleaned, adjusted and prepared can the analysis begin. It
-will cover ratios, time series, and frequencies for gaining insights
-into customer profiles. In doing so helps adjust marketing efforts,
+With the data cleaned, adjusted and prepared the analysis can finally begin.
+It will cover ratios, time series, and frequencies for gaining insights
+into customer profiles. This would help adjust marketing efforts,
 improve engagement, and better promote Cyclistic with the casual user
 base.
 
