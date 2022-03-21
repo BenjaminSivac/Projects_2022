@@ -3,8 +3,10 @@ Data With Danny: Data Bank
 Benjamin Sivac
 2022-03-19
 
-<p align="center" style="max-height:350px; max-width:350px">
-  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny_Databank/figure-gfm/dwd_pic.png"/>
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny_Databank/figure-gfm/dwd_pic.png"
+       width="400" 
+       height="500"/>
 </p>
 
 ### Task
