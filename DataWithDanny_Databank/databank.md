@@ -3,6 +3,10 @@ Data With Danny: Data Bank
 Benjamin Sivac
 2022-03-19
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny_Databank/figure-gfm/dwd_pic.png"/>
+</p>
+
 ### Task
 
 There is a new innovation in the financial industry called Neo-Banks:
@@ -37,7 +41,10 @@ familiar with their tables.
 
 #### Entity Relationship Diagram
 
-![alt text](https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny_Databank/erd.png?raw=true)
+<p align="center">
+  <img src= "https://https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny_Databank/figure-gfm/erd.png"/>
+</p>
+
 
 #### Table 1: Regions
 
