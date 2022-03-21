@@ -1,7 +1,7 @@
 Cyclistic Case Study
 ================
 Benjamin Sivac
-2022-03-20
+2022-03-21
 
 ### Preamble
 
@@ -43,6 +43,7 @@ coordinates, as well as useful packages for observing the data.
 library(tidyverse) # tidy data & piping
 library(lubridate) # 
 library(geosphere)
+library(scales)
 library(ggpubr)
 ```
 
@@ -148,11 +149,11 @@ df_trips$trip_length <- df_trips %>% with(hms::hms(seconds_to_period(difftime(en
 df_trips$trip_length %>%  sample(5)
 ```
 
-    ## 00:17:38
-    ## 00:27:01
-    ## 00:08:32
-    ## 00:02:06
-    ## 00:03:25
+    ## 00:06:42
+    ## 00:21:28
+    ## 00:30:31
+    ## 00:12:28
+    ## 00:51:18
 
 ``` r
 df_trips$trip_length %>% min()
@@ -166,13 +167,13 @@ for other variables, like rideable type.
 
 #### Distance travelled
 
-Following code is an attempt at trying to make use of the recorded spatial coordinates of each observation. 
-It will likely be inaccurate, as Haversine formula calculates the
-great-circle distance between two coordinates with no regards to
-different routes, while also returning values of zero for people
-returning to the same starting station. But it may still give an idea of
-any differences between types of riders as there are close to 5.5
-million observations.
+Following code is an attempt at trying to make use of the recorded
+spatial coordinates of each observation. It will likely be inaccurate,
+as Haversine formula calculates the great-circle distance between two
+coordinates with no regards to different routes, while also returning
+values of zero for people returning to the same starting station. But it
+may still give an idea of any differences between types of riders as
+there are close to 5.5 million observations.
 
 ``` r
 df_trips <- df_trips %>% mutate(distance_travelled = distHaversine(cbind(start_lat, start_lng), cbind(end_lat, end_lng)))
@@ -180,7 +181,7 @@ df_trips$distance_travelled <- df_trips$distance_travelled %>% round(digits=2)
 sample(df_trips$distance_travelled, 5)
 ```
 
-    ## [1]    0.00 1895.71    9.09  423.89 1008.47
+    ## [1] 1661.72 3339.90  689.19    0.00 1628.63
 
 #### Time variables
 
@@ -196,7 +197,7 @@ df_trips$month <- ordered(df_trips$month, levels=c("January", "February", "March
 sample(df_trips$month,5)
 ```
 
-    ## [1] November July     October  May      July    
+    ## [1] August  June    June    April   October
     ## 12 Levels: January < February < March < April < May < June < ... < December
 
 ``` r
@@ -206,7 +207,7 @@ df_trips$weekday <- ordered(df_trips$weekday, levels=c("Monday", "Tuesday", "Wed
 sample(df_trips$weekday,5)
 ```
 
-    ## [1] Sunday   Saturday Tuesday  Sunday   Friday  
+    ## [1] Monday    Monday    Sunday    Monday    Wednesday
     ## 7 Levels: Monday < Tuesday < Wednesday < Thursday < Friday < ... < Sunday
 
 ``` r
@@ -214,7 +215,7 @@ df_trips$hour <- df_trips$started_at %>% strftime('%H')
 sample(df_trips$hour,5)
 ```
 
-    ## [1] "15" "01" "14" "21" "17"
+    ## [1] "12" "13" "14" "15" "15"
 
 #### Data overview
 
@@ -252,11 +253,11 @@ cases.
 
 ### Analysis
 
-With the data cleaned, adjusted and prepared the analysis can finally begin.
-It will cover ratios, time series, and frequencies for gaining insights
-into customer profiles. This would help adjust marketing efforts,
-improve engagement, and better promote Cyclistic with the casual user
-base.
+With the data cleaned, adjusted and prepared the analysis can finally
+begin. It will cover ratios, time series, and frequencies for gaining
+insights into customer profiles. This would help adjust marketing
+efforts, improve engagement, and better promote Cyclistic with the
+casual user base.
 
 ``` r
 plot_prop <- df_trips %>% 
@@ -293,9 +294,9 @@ ggarrange(plot_prop, plot_bikes,
           common.legend = TRUE,
           legend="bottom")
 ```
-<p align="center">
+
 <img src="Cyclistic_files/figure-gfm/Proportions-1.png" style="display: block; margin: auto;" />
-</p>
+
 For an overview of the customer base, members account for 54.8% of total
 rides taken during the 1-year period, while casual riders comprised the
 remaining 45.2% of trips. There is clearly a strong incentive for
@@ -316,7 +317,8 @@ plot_weekday <- df_trips %>% ggplot(aes(weekday, color=member_casual, group = me
   geom_point(stat='count', size = 2) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle=45, hjust=1, size = 7.7),
-        legend.position = "none")
+        legend.position = "none") +
+  scale_y_continuous(labels = scientific)
 
 plot_hour <- df_trips %>% ggplot(aes(hour, color=member_casual, group = member_casual)) + 
   geom_line(stat='count', size = 1) +
@@ -335,9 +337,9 @@ ggarrange(plot_month, plot_weekday, plot_hour, plot_legend,
          align="hv") %>%
   annotate_figure(top = text_grob("Trips across 12 months", size=14))
 ```
-<p align="center">
+
 <img src="Cyclistic_files/figure-gfm/Time series-1.png" style="display: block; margin: auto;" />
-</p>
+
 In terms of monthly trips, number of casual users peak in July and hit a
 bottom in February, a clear relationship to weather conditions and
 vacation times. Members do share similar numbers but, perhaps not
@@ -369,13 +371,15 @@ plot_duration <- df_trips %>% filter(trip_length > 0) %>%
   stat_summary(fun = mean, geom = "line", size=1) +
   stat_summary(fun = mean, geom = "point", size=2) +# The stat_summary function removes all rows with null values.
   theme(axis.text.x = element_text(angle=45, hjust=1, size = 7.7)) +
-  theme_minimal()
+  theme_minimal() +
+  ylab("trip length [h:m:s]")
 plot_distance <- df_trips %>% filter(distance_travelled > 0) %>% 
   ggplot(aes(hour, distance_travelled, group = member_casual, color = member_casual)) +
   stat_summary(fun = mean, geom = "line", size=1) +
   stat_summary(fun = mean, geom = "point", size=2) + # The stat_summary function removes all rows with null values.
   theme(axis.text.x = element_text(angle=45, hjust=1, size = 7.7)) +
-  theme_minimal()
+  theme_minimal() +
+  ylab("distance travelled [m]")
 
 ggarrange(plot_duration, plot_distance, 
           common.legend = T, 
@@ -385,9 +389,9 @@ ggarrange(plot_duration, plot_distance,
   annotate_figure(top = text_grob("Average Trip length- and Distance travelled, by hour", 
                                   size=14))
 ```
-<p align="center">
+
 <img src="Cyclistic_files/figure-gfm/trip_distance_hour-1.png" style="display: block; margin: auto;" />
-</p>
+
 Casual users on average tend to bike for both longer periods of time and
 longer distances, which is reasonable as workers would likely stick to a
 few selected routes for making good on time. But also, casual users
@@ -421,11 +425,13 @@ df_trips %>% filter(trip_length > 0) %>%
   theme_minimal() +
   theme(axis.text.x = element_text(angle=45, hjust=1),
         plot.title = element_text(hjust = 0.5)) +
-  labs(title="5 most common stations")
+  labs(title="5 most common stations", 
+       x = "station name",
+       y = "count")
 ```
-<p align="center">
+
 <img src="Cyclistic_files/figure-gfm/5 common-1.png" style="display: block; margin: auto;" />
-</p>
+
 ‘Streeter Dr & Grand Ave’ and Millenium Park would be the best stations
 for placing advertisement appealing to casual riders. Members have very
 low numbers at Millennium Park, likely because it is not en route to any
@@ -441,11 +447,13 @@ df_trips %>% filter(trip_length > 0) %>%
   theme_minimal() +
   theme(axis.text.x = element_text(angle=45, hjust=1),
         plot.title = element_text(hjust = 0.5)) +
-  labs(title="Trip length by 5 most common stations")
+  labs(title="Trip length by 5 most common stations", 
+       y = "trip length [h:m:s]",
+       x = "station name")
 ```
-<p align="center">
+
 <img src="Cyclistic_files/figure-gfm/Duration by common stations-1.png" style="display: block; margin: auto;" />
-</p>
+
 Trip length by the 5 most common starting stations support the above
 hypothesis, as casual riders would likely make stops and have extended
 outings at Millennium Park.

@@ -34,6 +34,7 @@ as well as useful packages for observing the data.
 library(tidyverse) # tidy data & piping
 library(lubridate) # 
 library(geosphere)
+library(scales)
 library(ggpubr)
 ```
 
@@ -202,7 +203,8 @@ plot_weekday <- df_trips %>% ggplot(aes(weekday, color=member_casual, group = me
   geom_point(stat='count', size = 2) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle=45, hjust=1, size = 7.7),
-        legend.position = "none")
+        legend.position = "none") +
+  scale_y_continuous(labels = scientific)
 
 plot_hour <- df_trips %>% ggplot(aes(hour, color=member_casual, group = member_casual)) + 
   geom_line(stat='count', size = 1) +
@@ -250,13 +252,15 @@ plot_duration <- df_trips %>% filter(trip_length > 0) %>%
   stat_summary(fun = mean, geom = "line", size=1) +
   stat_summary(fun = mean, geom = "point", size=2) +# The stat_summary function removes all rows with null values.
   theme(axis.text.x = element_text(angle=45, hjust=1, size = 7.7)) +
-  theme_minimal()
+  theme_minimal() +
+  ylab("trip length [h:m:s]")
 plot_distance <- df_trips %>% filter(distance_travelled > 0) %>% 
   ggplot(aes(hour, distance_travelled, group = member_casual, color = member_casual)) +
   stat_summary(fun = mean, geom = "line", size=1) +
   stat_summary(fun = mean, geom = "point", size=2) + # The stat_summary function removes all rows with null values.
   theme(axis.text.x = element_text(angle=45, hjust=1, size = 7.7)) +
-  theme_minimal()
+  theme_minimal() +
+  ylab("distance travelled [m]")
 
 ggarrange(plot_duration, plot_distance, 
           common.legend = T, 
@@ -296,7 +300,9 @@ df_trips %>% filter(trip_length > 0) %>%
   theme_minimal() +
   theme(axis.text.x = element_text(angle=45, hjust=1),
         plot.title = element_text(hjust = 0.5)) +
-  labs(title="5 most common stations")
+  labs(title="5 most common stations", 
+       x = "station name",
+       y = "count")
 
 ```
 
@@ -313,7 +319,9 @@ df_trips %>% filter(trip_length > 0) %>%
   theme_minimal() +
   theme(axis.text.x = element_text(angle=45, hjust=1),
         plot.title = element_text(hjust = 0.5)) +
-  labs(title="Trip length by 5 most common stations")
+  labs(title="Trip length by 5 most common stations", 
+       y = "trip length [h:m:s]",
+       x = "station name")
 ```
 
 Trip length by the 5 most common starting stations support the above hypothesis,
@@ -360,5 +368,4 @@ have a good reach. Naturally on the weekends.
 * Cyclistic could either promote commuting to work by bike, as that gives them 
 an incentive to pay for a yearly membership, or launch a program that caters to 
 their long ride tendencies through some sort of point system.
-
 
