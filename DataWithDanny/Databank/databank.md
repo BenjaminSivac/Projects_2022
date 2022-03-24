@@ -3,6 +3,10 @@ Data With Danny: Data Bank
 Benjamin Sivac
 2022-03-19
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Databank/figure-gfm/dwd_pic.png"
+       height="200px" width="200px"/>
+</p>
 ### Task
 
 There is a new innovation in the financial industry called Neo-Banks:
