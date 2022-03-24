@@ -1,0 +1,192 @@
+---
+title: "Covid-19 Pandemic & The Swedish House Market"
+output: html_document
+---
+```{r, include=FALSE}
+knitr::opts_chunk$set(fig.align="center", figure.width=14) 
+```
+
+```{r Packages, message=FALSE, warning=FALSE}
+library(imputeTS)
+library(missForest)
+library(tidyverse)
+library(janitor) # row to names
+```
+
+Cleaned data with assigned numbers for population density.
+```{r data}
+df.condos <- read.table("Data_condos.csv", header = TRUE, sep = ",", dec = ".")
+```
+
+```{r}
+df.condos %>% glimpse()
+# Wide data format, lots of zeroes (presumably NA values)
+```
+```{r convert NAs}
+df.condos[df.condos == 0] <- NA
+df.sub <- df.condos %>% select(-c(2,3,4,5)) # Also remove useless columns (for now)
+df.sub_t <- df.sub %>% t() %>% as.data.frame()
+df.sub_t <- df.sub_t %>% row_to_names(row_number = 1)
+```
+
+```{r another check}
+df.sub_t %>% glimpse()
+```
+
+```{r pct NAs}
+# calculating the product of dimensions of dataframe 
+totalcells = prod(dim(df.sub_t))
+print("Total number of cells ")
+print(totalcells)
+  
+# calculating the number of cells with na
+missingcells = sum(is.na(df.sub_t))
+print("Missing value cells")
+print(missingcells)
+  
+# calculating percentage of missing values
+percentage = (missingcells * 100 )/(totalcells)
+print("Percentage of missing values' cells")
+print (percentage)
+```
+
+```{r evaluate NAs}
+ggplot_na_distribution(
+  df.sub_t$`125`,
+  x_axis_labels = NULL,
+  color_points = "steelblue",
+  color_lines = "steelblue2",
+  color_missing = "indianred",
+  color_missing_border = "indianred",
+  alpha_missing = 0.5,
+  title = "Distribution of Missing Values",
+  subtitle = "Time Series with highlighted missing regions",
+  xlab = "Time",
+  ylab = "Value",
+  shape_points = 20,
+  size_points = 2.5,
+  theme = ggplot2::theme_linedraw()
+)
+ggplot_na_gapsize(
+  df.sub_t$`125`,
+  limit = 10,
+  include_total = TRUE,
+  ranked_by = "occurrence",
+  color_occurrence = "indianred",
+  color_total = "steelblue",
+  title = "Occurrence of gap sizes",
+  subtitle = "Gap sizes (NAs in a row) ordered by most common",
+  xlab = NULL,
+  ylab = "Number occurrence",
+  legend = TRUE,
+  orientation = "horizontal",
+  label_occurrence = "Number occurrence gapsize",
+  label_total = "Resulting NAs for gapsize",
+  theme = ggplot2::theme_linedraw()
+)
+```
+
+
+```{r test imp, warning=FALSE, message=FALSE}
+delete.na <- function(BF, n=0) { # delete too many NA function
+  BF[rowSums(is.na(BF)) <= n,]
+}
+df.noNA <- df.sub %>% delete.na(0) # 97 municipalities left remaining
+
+rownames(df.noNA)<-df.noNA[,1] # Change row numbers to LK numbers
+df.noNA<-df.noNA[,-1] # remove LK column
+df.noNA <- as.data.frame(t(df.noNA)) # transpose it and keep it as a data.frame. Each municipality is their own variable, and each observation is a different time stamp. 
+
+df_mis <- prodNA(df.noNA, noNA = 0.05) # create 5% missing values (same level as our original data)
+test <- na_seadec(df_mis, algorithm = "interpolation", find_frequency=TRUE) # Comment why interpolation works best
+mixError(test, df_mis, df.noNA) # 4% error
+```
+
+
+```{r remove half}
+# Semi-listwise deletion 50%
+delete.na <- function(BF, n=0) { # delete too many NA function
+  BF[rowSums(is.na(BF)) <= n,]
+}
+df.condos_halved <- df.condos %>% delete.na(24) # no more than 24 missing values per municipality
+# 129 municipalities left. 
+```
+
+```{r transpose}
+#TRANSPOSE
+n <- df.condos_halved$LK # first remember the names
+df.ch <- df.condos_halved %>% select(-c(1, 2, 3, 4, 5)) # remove useless columns
+df.ch <- as.data.frame(t(df.ch)) 
+colnames(df.ch) <- n
+```
+
+
+```{r imp, warning=FALSE, message=FALSE}
+#Imputation
+df.imp <- na_seadec(df.ch, algorithm = "interpolation", find_frequency=TRUE)
+
+```
+
+```{r plot}
+#plot
+ts.ch <- ts(df.ch[,37], frequency = 12, start = c(2017,10))
+ts.imp <- ts(df.imp[,37], frequency = 12, start = c(2017,10))
+
+ggplot_na_imputations(
+  ts.ch,
+  ts.imp,
+  title = "Imputed Values for price/square meter",
+  subtitle = "Visualization of missing value replacements in Trosa",
+  xlab = "Time",
+  ylab = "Price / m^2",
+  color_points = "steelblue",
+  color_imputations = "indianred",
+  color_truth = "seagreen3",
+  color_lines = "lightslategray",
+  shape_points = 16,
+  shape_imputations = 18,
+  shape_truth = 16,
+  size_points = 1.5,
+  size_imputations = 2.5,
+  size_truth = 1.5,
+  size_lines = 0.5,
+  linetype = "solid",
+  connect_na = TRUE,
+  legend = TRUE,
+  legend_size = 5,
+  label_known = "known values",
+  label_imputations = "imputed values",
+  label_truth = "ground truth",
+  theme = ggplot2::theme_linedraw()
+)
+```
+
+```{r subset}
+
+```
+
+```{r load control variables}
+
+```
+
+```{r plot groups n control variables}
+
+```
+
+```{r S+T adj}
+
+```
+
+```{r VAR models}
+
+```
+
+```{r forecasts}
+
+```
+
+
+
+
+
+
