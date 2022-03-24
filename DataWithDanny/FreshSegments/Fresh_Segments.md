@@ -3,6 +3,11 @@ Data With Danny: Fresh Segments
 Benjamin Sivac
 2022-03-24
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/FreshSegments/fs.png"
+       height="850px" width="850px"/>
+</p>
+
 ### Task
 
 Danny created Fresh Segments, a digital marketing agency that helps
