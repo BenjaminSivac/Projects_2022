@@ -7,6 +7,7 @@ Benjamin Sivac
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Databank/figure-gfm/dwd_pic.png"
        height="850px" width="850px"/>
 </p>
+
 ### Task
 
 There is a new innovation in the financial industry called Neo-Banks:
