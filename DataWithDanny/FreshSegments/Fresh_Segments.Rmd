@@ -1,0 +1,362 @@
+---
+title: "Data With Danny: Fresh Segments"
+author: "Benjamin Sivac"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::github_document
+---
+```{r, include=FALSE}
+hook_output <- knitr::knit_hooks$get("output")
+```
+
+```{r Loading packages, message=FALSE, warning=FALSE, include=FALSE}
+library(DBI)
+library(odbc)
+library(tidyverse)
+library(datamodelr) # ER diagram
+```
+
+
+```{r, include=FALSE}
+con <- DBI::dbConnect(odbc::odbc(), 
+                      Driver = "SQL Server", 
+                      Server = "localhost\\SQLEXPRESS", 
+                      Database = "datawdanny2", 
+                      Trusted_Connection = "True")
+```
+
+### Task 
+
+Danny created Fresh Segments, a digital marketing agency that helps other businesses analyse trends in online ad click behaviour for their unique customer base.
+
+Clients share their customer lists with the Fresh Segments team who then aggregate interest metrics and generate a single dataset worth of metrics for further analysis.
+
+In particular - the composition and rankings for different interests are provided for each client showing the proportion of their customer list who interacted with online assets related to each interest for each month.
+
+Danny has asked for your assistance to analyse aggregated metrics for an example client and provide some high level insights about the customer list and their interests.
+
+### Available Data
+For this case study there is a total of 2 datasets which you will need to use to solve the questions.
+
+### Interest Metrics
+This table contains information about aggregated interest metrics for a specific major client of Fresh Segments which makes up a large proportion of their customer base.
+
+Each record in this table represents the performance of a specific interest_id based on the client’s customer base interest measured through clicks and interactions with specific targeted advertising content.
+
+```{sql,echo=FALSE, connection=con}
+SELECT *
+FROM
+  dbo.interest_metrics
+```
+For example for the first row, in July 2018, the composition metric is 11.89, meaning that 11.89% of the client’s customer list interacted with the interest interest_id = 32486 - we can link interest_id to a separate mapping table to find the segment name called “Vacation Rental Accommodation Researchers”
+
+The index_value is 6.19, means that the composition value is 6.19x the average composition value for all Fresh Segments clients’ customer for this particular interest in the month of July 2018.
+
+The ranking and percentage_ranking relates to the order of index_value records in each month year.
+
+### Interest Map
+This mapping table links the interest_id with their relevant interest information. You will need to join this table onto the previous interest_details table to obtain the interest_name as well as any details about the summary information.
+
+```{sql, echo=FALSE, connection=con}
+SELECT id, interest_name, interest_summary
+FROM dbo.interest_map
+```
+#### 1. Data Exploration and Cleansing
+
+
+**1.Update the interest_metrics table by modifying the month_year column to be a date data type with the start of the month**
+
+MSQL can't convert MM-YYYY format to date, so we'll instead create another column with DATE type, set new column equal to old values + another date stamp, remove old one, and finally rename the new column to month_year
+```{sql, connection=con, eval=FALSE}
+ALTER TABLE interest_metrics 
+ADD month DATE;
+
+UPDATE interest_metrics
+SET month='01-' + [month_year] -- Only way I can add another date element, but the server thinks it is month.
+
+UPDATE interest_metrics
+SET month= FORMAT(month,'dd/MM/yyyy') -- Now it's in a correct format !
+
+ALTER TABLE interest_metrics
+DROP COLUMN month_year -- drop old column
+
+exec sp_RENAME 'interest_metrics.month','month_year', 'COLUMN' -- rename our new column.
+-- Annoying but what can you do...
+```
+***
+
+
+**2. What is count of records in the fresh_segments.interest_metrics for each month_year value sorted in chronological order (earliest to latest) with the null values appearing first?**
+
+```{sql, connection=con}
+SELECT 
+	month_year,
+	COUNT(month_year) AS count_records
+FROM
+	interest_metrics
+GROUP BY month_year
+ORDER BY month_year
+```
+***
+
+**3. What do you think we should do with these null values in the fresh_segments.interest_metrics**
+
+```{sql, connection=con}
+SELECT 
+	*
+FROM
+	interest_metrics
+ORDER BY month_year
+```
+All but 1 record with month_year as NULL has NULL values in interest_id. 
+It'd be hard to identify clients without the id and time stamp, 
+so we either drop or filter em out.
+
+***
+
+**4. How many interest_id values exist in the fresh_segments.interest_metrics table but not in the fresh_segments.interest_map table? What about the other way around?**
+
+```{sql, connection=con}
+SELECT
+	COUNT(DISTINCT(interest_id)) AS interest_id_count,
+	COUNT(DISTINCT(id)) AS id_count,
+	SUM(CASE WHEN interest_id IS NULL THEN 1 END) AS not_in_map,
+	SUM(CASE WHEN id IS NULL THEN 1 END) AS not_in_metric
+FROM
+	interest_metrics metrics
+	RIGHT OUTER JOIN 
+		interest_map map
+		ON
+			metrics.interest_id = map.id
+```
+There are 7 id values in interest_map that are not in interest_metrics, and 0 interest id values in interest_metrics that are not in interest_map.
+
+***
+
+**5. Summarise the id values in the fresh_segments.interest_map by its total record count in this table**
+
+```{sql, connection = con}
+SELECT
+  COUNT(*) AS total_record_count
+FROM
+  interest_map
+```
+An unusually simple question...
+
+***
+
+**6. What sort of table join should we perform for our analysis and why? Check your logic by checking the rows where interest_id = 21246 in your joined output and include all columns from fresh_segments.interest_metrics and all columns from fresh_segments.interest_map except from the id column.**
+
+To query all columns from both tables, while filtering for only id 21245, we can use INNER JOIN.
+```{sql, connection = con}
+SELECT _month, _year, interest_id, composition, index_value, ranking, percentile_ranking, month_year,
+      interest_name, interest_summary
+FROM interest_metrics metrics
+INNER JOIN interest_map map
+  ON metrics.interest_id = map.id
+WHERE interest_id = 21246
+```
+Note that we get one record with NULL time stamps values, which wont neccesarily disturb our analysis unless we are specifically interested in said time stamps. Also, there's no convenient way to exclude one column, like id, from a * query. So I had to list each column name.
+
+***
+
+**7. Are there any records in your joined table where the month_year value is before the created_at value from the fresh_segments.interest_map table? Do you think these values are valid and why?**
+
+```{sql, connection=con}
+SELECT 
+	COUNT(*)
+FROM interest_metrics me
+INNER JOIN interest_map ma
+  ON me.interest_id = ma.id
+WHERE MONTH(month_year) < MONTH(created_at)
+```
+We'll cross reference with the _month column and find out if we get the same number of observations.
+```{sql, connection=con}
+SELECT 
+	COUNT(*)
+FROM interest_metrics me
+INNER JOIN interest_map ma
+  ON me.interest_id = ma.id
+WHERE _month < MONTH(created_at)
+```
+Confirmed to also be 4972 observations. I assume that the interest_map table was created at a later date which is what the created_at column is referring to. It would then not share any connections to the other time stamp columns, and is therefore valid and accurate. 
+
+***
+
+#### B. Interest Analysis
+
+**1. Which interests have been present in all month_year dates in our dataset?**
+
+```{sql, connection = con}
+WITH cte_total_months AS(
+	SELECT 
+		interest_id,
+		COUNT(DISTINCT month_year) AS total_months 
+	FROM
+		interest_metrics
+	WHERE month_year IS NOT NULL
+	GROUP BY interest_id
+)
+
+SELECT 
+	COUNT(DISTINCT interest_id) AS countd_interests,
+	total_months
+FROM
+	cte_total_months
+WHERE total_months = 14
+GROUP BY total_months;
+```
+***
+
+**2. Using this same total_months measure - calculate the cumulative percentage of all records starting at 14 months - which total_months value passes the 90% cumulative percentage value?**
+```{sql, connection = con}
+WITH cte_total_months AS(
+	SELECT 
+		interest_id,
+		COUNT(DISTINCT month_year) AS total_months 
+	FROM
+		interest_metrics
+	WHERE month_year IS NOT NULL
+	GROUP BY interest_id
+),
+cte_countd_interests AS(
+	SELECT
+		COUNT(DISTINCT interest_id) as countd_interests,
+		total_months
+	FROM
+		cte_total_months
+	GROUP BY total_months
+)
+
+SELECT 
+	total_months,
+	countd_interests,
+	100 * SUM(countd_interests) OVER (ORDER BY total_months DESC) /
+      SUM(countd_interests) OVER () AS cumulative_percentage -- running sum of all interests, by total_months, divided by sum of all interests.
+FROM
+	cte_countd_interests;
+```
+Cumulative percentaget value passes 90% by 6 months and above. Rest have relatively low clicks and interactions. 
+
+***
+
+**3. If we were to remove all interest_id values which are lower than the total_months value we found in the previous question - how many total data points would we be removing?**
+
+```{sql, connection = con}
+WITH cte_total_months AS(
+	SELECT 
+		interest_id,
+		COUNT(DISTINCT month_year) AS total_months 
+	FROM
+		interest_metrics
+	WHERE month_year IS NOT NULL
+	GROUP BY interest_id
+),
+cte_low_months AS(
+	SELECT
+		COUNT(DISTINCT interest_id) as countd_interests,
+		total_months
+	FROM
+		cte_total_months
+	GROUP BY total_months
+	HAVING total_months < 6
+)
+SELECT
+	SUM(countd_interests) AS nbr_data_pts
+FROM 
+	cte_low_months;
+```
+110 observations have less than 6 months of interests and is expected to be removed.
+
+***
+
+**4. Does this decision make sense to remove these data points from a business perspective? Use an example where there are all 14 months present to a removed interest example for your arguments - think about what it means to have less months present from a segment perspective.** 
+
+No they should be investigated and improved upon to garner more clicks and interactions. 
+The more segments there are, the harder it is to reach these arbitrary thresholds. 
+Removing an interest with 14 months present vs one with 1 present months has the same impact on the cumulative percentage.
+
+***
+
+**5. After removing these interests - how many unique interests are there for each month?**
+We first count distinct months per interest_id, filter by number of months, and then summarise each unique interest by month. 
+```{sql, connection = con}
+WITH cte_total_months AS(
+	SELECT 
+		DISTINCT interest_id AS unique_interests,
+		COUNT(DISTINCT month_year) AS total_months
+	FROM
+		interest_metrics
+	WHERE month_year IS NOT NULL
+	GROUP BY interest_id
+),
+cte_filter AS (	
+	SELECT
+		COUNT(unique_interests) as nbr_unique_interests,
+		metrics.month_year,
+		total_months
+	FROM
+		cte_total_months cte
+		INNER JOIN
+			interest_metrics metrics
+		ON
+			cte.unique_interests = metrics.interest_id		
+	GROUP BY total_months, metrics.month_year
+	HAVING total_months > 5
+)
+SELECT
+	SUM(nbr_unique_interests) AS count_unique_interests,
+	month_year
+FROM
+	cte_filter
+GROUP BY month_year;
+```
+
+***
+
+
+#### C. Segment Analysis
+ 
+**1. Using our filtered dataset by removing the interests with less than 6 months worth of data, which are the top 10 and bottom 10 interests which have the largest composition values in any month_year? Only use the maximum composition value for each interest but you must keep the corresponding month_year**
+
+```{sql, connection = con}
+WITH cte_total_months AS(
+	SELECT 
+		DISTINCT interest_id AS unique_interests,
+		COUNT(DISTINCT month_year) AS total_months
+	FROM
+		interest_metrics
+	WHERE month_year IS NOT NULL
+	GROUP BY interest_id
+),
+cte_filter AS(
+	SELECT
+		unique_interests,
+		me.month_year,
+		MAX(composition) AS max_comp
+	FROM
+		cte_total_months cte
+		INNER JOIN
+			interest_metrics me
+		ON
+			cte.unique_interests = me.interest_id		
+	GROUP BY total_months, me.month_year, composition, unique_interests
+	HAVING total_months > 5
+)
+SELECT
+	month_year,
+	max_comp,
+	unique_interests
+FROM
+	cte_filter
+GROUP BY month_year, max_comp, unique_interests
+ORDER BY unique_interests
+```
+WIP. Query unique_interests by max_comp. 
+
+***
+
+	
+
+
+
