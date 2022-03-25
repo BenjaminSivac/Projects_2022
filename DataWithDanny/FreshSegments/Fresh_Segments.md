@@ -100,6 +100,7 @@ details about the summary information.
 Displaying records 1 - 10
 
 </div>
+
 ### Case Study Questions
 The following questions can be considered key business questions that are required to be answered for the Fresh Segments team.
 
