@@ -1,0 +1,432 @@
+---
+title: "Multivariate Methods"
+author: "Benjamin Sivac"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::github_document
+---
+```{r, include=FALSE}
+hook_output <- knitr::knit_hooks$get("output")
+knitr::opts_chunk$set(fig.align="center") 
+```
+
+```{r global-options, include=FALSE}
+knitr::knit_hooks$set(output = function(x, options) {
+  if (!is.null(n <- options$out.lines)) {
+    x <- xfun::split_lines(x)
+    if (length(x) > n) {
+      # truncate the output
+      x <- c(head(x, n), "....\n")
+    }
+    x <- paste(x, collapse = "\n")
+  }
+  hook_output(x, options)
+})
+```
+### Introduction
+This report consists of two multivariate analyses upon data exploring the relationships
+between body dimensions. The original authors who collected the data and
+measurements sought to investigate and develop predictive techniques for assessing the lean/fat
+body composition of individuals. It was uploaded onto Journal of Statisics Education (http://jse.amstat.org/v11n2/datasets.johnson.html) to provide statistics students practice in data analysis, specifically multiple regression and discriminant analysis. I myself decided to conduct
+both a principal component analysis and a discriminant analysis, the former as a way to reduce the number of variables and summarize it into fewer variables, and the latter for discerning groups apart, in this case between men and women.
+
+### Data and packages
+
+Loading packages with pre-built statistical tests, visualizations and for general use.
+```{r Loading packages, message=FALSE, warning=FALSE, include=TRUE, class.source = 'fold-show'}
+library(ICSNP) # HotellingsT2
+library(psych) # hmm
+library(MASS) # LDA
+library(HDtest) # LC-test
+library(mvnormtest) # Multivariate normality test
+library(tidyverse)
+library(cowplot) # grid plots
+library("devtools") 
+library("factoextra") #Scree plot for eigenvalues
+library(caret) #confusion matrix
+library(klaR) #partition plot
+library(ggfortify) # autoplot for the PCA plot
+```
+
+The data is in a .txt file which we add headers onto and create a table consisting
+of descriptive statistics for each of them.
+```{r read files, class.source = 'fold-show'}
+df.body <- read.table("body.dat.txt", header = FALSE, sep = "", fill = TRUE)
+colnames(df.body) <- c("Biacromial_diameter", "Biiliac_diameter", 
+                      "Bitrochanteric_diameter", "Chest_depth_diameter",
+                      "Chest_diameter", "Elbow_diameter", "Wrist_diameter", 
+                      "Knee_diameter", "Ankle_diameter", "Shoulder_girth", 
+                      "Chest_girth", "Waist_girth", "Abdominal_girth", 
+                      "Hip_girth", "Thigh_girth", "Bicep_girth","Forearm_girth",
+                      "Knee_girth", "Calf_girth", "Ankle_girth", "Wrist_girth",
+                      "Age", "Weight", "Height", "Gender")
+
+table <- subset(describe(df.body), select = c(mean, sd, min, max, range))
+table[,6] <- table$sd^2
+colnames(table) <- c("mean", "sd", "min", "max", "range", "var")
+(table)
+```
+We find the data set to include 21 body dimensions, measured in centimeters, on 
+247 men and 260 women, amounting to 507 observations. Among these dimensions are
+9 skeletal- and 12 girth measurements, but also age, weight, height, and gender. 
+Their age ranges primarily between the twenties and thirties with a few older participants, 
+each confirmed to be attending fitness clubs and exercising several hours a week.
+Among the list are 3 perhaps more obscure measurements; Biacromial, Biiliac, and
+Bitrochanteric. They, in the same order, correspond to the skeletal distance 
+between shoulders, between outer edges of the pelvis, and between the outer points of the hips. 
+
+### Principal component analysis
+The goal of Principal components analysis is to reduce the number of observed variables by creating new,
+linearly combined ones, referred to as principal components, that explains the maximum
+variance out of the old variables. We'll first get 24 components, one for each original variable, and
+decide on how many to retain by a set of guidelines: by following the eigenvalue greater-than-one rule,
+identifying the "elbow" in a scree plot, investigating explained individual- and cumulative variance,
+and determining significant values of loadings (above .5). By observing our table, we can see that variance differs
+a lot which requires us to standardize the data before performing PCA. If we don't, the
+ones with bigger variance will get bigger weights which would imply greater importance.
+This is done by subtracting the mean and dividing by the standard deviation for each value
+of each variable. Once done, they will be transformed to the same scale.
+
+We start off by first discarding the one categorical variable, Gender, from our data.
+Then we perform the principal component analysis for centered means and standardized variances.
+```{r PCA part 1, class.source = 'fold-show'}
+# Discarding the one categorical variable in our data.
+df.sub <- df.body %>% subset(select = -c(Gender))
+
+# Perform PCA with centered mean values and put SCALE = TRUE for standardizing
+list_pca <- df.sub %>% prcomp(center=TRUE, scale = TRUE)
+
+list_pca$scale # Variance of the variables
+```
+With Variance lowered by a great deal, we can now check how many principal components to retain by following our 5 guidelines. 
+
+```{r eig}
+# Scree plot, shows eigenvalue for each respective PC:
+list_pca %>% fviz_eig(choice = "eigenvalue", addlabels = TRUE) +
+  labs(x = "Principal Components") +
+  scale_y_continuous(breaks = c(0,1,5,10,15)) +
+  geom_hline(yintercept = 1, linetype = "dashed") +
+  theme_minimal() + 
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(hjust = 0.5))
+
+```
+
+The first four eigenvalues fulfill the greater-than-one rule. If we
+adhere to it, we would retain the four components. But looking at the "elbow"
+of the scree plot, it's clear that it starts at the second eigenvalue which, 
+contrary to the previous criteria, suggests that we keep two principal 
+components instead of four.
+```{r var}
+# proportion of variance:
+list_pca %>% fviz_eig(addlabels = TRUE) +
+  labs(x = "Principal Components") +
+  scale_y_continuous(breaks = c(0,4.4,20,40,60)) +
+  geom_hline(yintercept = 4.17, linetype = "dashed") +
+  theme_minimal() + 
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(hjust = 0.5))
+
+# Cumulative variance output:
+get_eigenvalue(list_pca)$cumulative.variance.percent
+```
+
+For both the explained variances and the cumulative 
+explained variances, there's no absolute cut-off value to follow other than
+wanting it to be high as possible for as few as possible. However, we do at least want
+them to explain themselves, which is about 4.17%. Looking at variance explained,
+we find that the first four principal components makes it over the threshold,
+the first one explaining a majority of the data and the fourth one explaining just enough at 4.4%.
+As for the cumulative variance explained, 73% is explained by two components and 83%
+by four components. We will likely proceed with only two as opposed to four 
+since we value fewer components.
+
+We also need to check loadings, which are the correlations between the 
+original variables and the newly formed variables. By observing their values, we 
+can discern how large and influential the original variables are in forming the new variables. 
+
+```{r loadings, class.source = 'fold-show'}
+scores <- list_pca$x[,1:2] # PC scores.
+scores[,1:2] %>% cor(df.sub[,1:24]) # loadings for the first 2 PC's
+```
+
+Adhering to the .5 threshold, we see that the first principal has large loadings for next
+to all variables, similarly can be said for the second component but for fewer variables.
+Both do walk the line at .5 for the Biiliac diameter and they both do have low 
+loadings for the Age variable, which could likely be explained by a third 
+component if we were to include it.
+
+```{r, plot_pca}
+autoplot(list_pca, loadings = TRUE, loadings.label = TRUE, df.sub) +
+  theme_minimal() + 
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(hjust = 0.5))
+```
+A quick plot of the loadings for PC1 and PC2 respectively, their positions reflecting their correlations to each other. We can clearly see Age being a clear outsider relative to the first two components.  
+
+### Discriminant analysis
+Discriminant analysis is a technique used to identify the so-called best set of variables, known as discriminator variables, that are used for discerning where an observation belongs between two different groups. It also utilizes a discriminant function for calculating discriminant scores and classifying future observations into said two groups. The Biacromial measurement is, according to an article associated with this data, said to be a very discriminant variable for classifying gender which is what we will evaluate first. A scatter plot is a good way to start with when doing discriminant analysis. This plot can be used to assess the extent to which ratios discriminate between the two groups. 
+```{r DA}
+# Scree plot of Biacromial_diameter between men and women.
+df.body %>% ggplot(aes(seq_along(Biacromial_diameter), Biacromial_diameter, color=as.factor(Gender))) + 
+  geom_point() + 
+  labs(x="Observations",
+  y = "Biacromial diameter",
+  title="Scatter plot") +
+  scale_color_manual(name = "Gender",
+  values = c( "1" = "blue", "0" = "red"),
+  labels = c("Men", "Women")) +
+  theme_minimal() + 
+  theme(axis.line = element_line(colour = "black"), 
+        plot.title = element_text(hjust = 0.5))
+```
+
+It looks fairly discriminant between men and women. We'll confirm that the means of the two groups are significantly different with respect to the variable. We do so by performing Hotelling's two sample T2-test, a generalized t-statistic that is used in multivariate hypothesis testing. 
+```{r}
+# two-group T-test.
+HotellingsT2(as.matrix(df.body[(1:247),1]),as.matrix(df.body[(248:507),1])) 
+```
+We find that the p-value is very low which rejects the null-hypothesis of equal means, indicating that the difference is significant between genders and performing a discriminant analysis might be suitable. 
+
+Both the multivariate t-test and linear discriminant analysis assumes equal variances and 
+normal distribution, we shall therefore perform Shapiro Wilk's test to control for multivariate
+normality and check the univariate normal distribution for each variable through residual plots. Additionally, we'll need to perform LC-test to check for equal covariance matrices, as the calculations for posterior probabilities relies on that assumption. 
+Violation of these assumptions would compromise the significance tests and any 
+following classification results. 
+
+```{r Normality pt1, message=FALSE, warning=FALSE, fig.width = 14}
+# LC-test for equality of covariance:
+testCov(df.body[(1:247),1], df.body[(248:507),1])[4]
+
+# shapiro-Wilk normality test:
+mshapiro.test(t(as.matrix(df.body[,1])))
+
+# Check for normality in residuals:
+plot_qq <- df.body %>% ggplot(aes(sample = Biacromial_diameter)) + 
+  stat_qq() + 
+  stat_qq_line() +
+  labs(title = "Normal Q-Q Plot", x = "Theoretical Quantiles", 
+       y = "Sample Quantiles") + 
+  theme_minimal() + 
+  theme(text = element_text(size=17),
+        axis.line = element_line(colour = "black"))
+
+plot_hist <- df.body %>% ggplot(aes(Biacromial_diameter)) + 
+  geom_histogram(aes(y = ..ncount..), bins = 15) +
+  labs(title = "Histogram", x = "Biacromial diameter", y = "Frequency") + 
+  theme_minimal() + 
+  theme(text = element_text(size=17),
+        axis.line = element_line(colour = "black"),
+        plot.title = element_text(hjust = 0.5))
+
+plot_grid(plot_hist, plot_qq, ncol = 2)
+```
+
+While the null-hypothesis is not rejected in the LC-test, the distribution plots seem a bit skewed and the test statistic for the shapiro-Wilk normality test is not significant enough to claim multivariate normality. We shall therefore go back and reevaluate each variable in the data set.
+
+If we can’t assume that the data are multivariate normally distributed, the
+method discriminant analysis should not be used. At least if the deviation is 
+too big. We shall therefore loop through each variable into Shapiro-Wilk's test.
+
+```{r, class.source = 'fold-show'}
+for (i in 1:24) 
+  {
+    if (mshapiro.test(t(as.matrix(df.body[,i])))$p.value > 0.05)
+    {
+      cat(colnames(df.body[i]),
+          ", p-value =", 
+          mshapiro.test(t(as.matrix(df.body[,i])))$p.value, 
+          "\n") 
+    }
+}
+
+```
+We find that the measures of Bitrochanteric and Ankles are the only two 
+variables with p-values above 0.05. Meaning that they are not significantly 
+different from normal distribution and will give accurate results moving forward.
+
+Now let's find out if they make good candidates for becoming discriminator variables.
+```{r splot_da}
+df.body %>% ggplot(aes(Bitrochanteric_diameter, Ankle_diameter, color=as.factor(Gender))) + 
+  geom_point() + 
+  labs(x="Bitrochanteric Diameter",
+  y = "Ankle Diameter",
+  title = "Scatter plot") +
+  scale_color_manual(name = "Gender",
+  values = c( "1" = "blue", "0" = "red"),
+  labels = c("Men", "Women")) +
+  theme_minimal()+ 
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(hjust = 0.5))
+```
+
+The plot between the two variables shows ankle measurement to be somewhat
+discriminant on the y-axis while not particularly for bitrochanteric on the x-axis, or jointly for
+that matter.
+
+Let's double check that our assumptions may hold true for our new subjects.
+```{r, message=FALSE, warning=FALSE}
+# Plots to check for normality:
+q2 <- df.body %>% ggplot(aes(sample = Bitrochanteric_diameter)) + 
+  stat_qq() + 
+  stat_qq_line() +
+  labs(title = "Normal Q-Q Plot", 
+       x = "Theoretical Quantiles", 
+       y = "Sample Quantiles") +
+  theme_minimal() + 
+  theme(axis.line = element_line(colour = "black"))
+
+h2 <- df.body %>% ggplot(aes(Bitrochanteric_diameter)) + 
+  geom_histogram(aes(y = ..ncount..), bins = 15) +
+  labs(title = "Histogram", 
+       x = "Bitrochanteric diameter", 
+       y = "Frequency") + 
+  theme_minimal() + 
+  theme(axis.line = element_line(colour = "black"))
+
+q3 <- df.body %>% ggplot(aes(sample = Ankle_diameter)) + 
+  stat_qq() + 
+  stat_qq_line() +
+  labs(title = "Normal Q-Q Plot", 
+       x = "Theoretical Quantiles", 
+       y = "Sample Quantiles") + 
+  theme_minimal() + 
+  theme(axis.line = element_line(colour = "black"))
+
+h3 <- df.body %>% ggplot(aes(Ankle_diameter)) + 
+  geom_histogram(aes(y = ..ncount..), bins = 15) +
+  labs(title = "Histogram", 
+       x = "Ankle diameter", 
+       y = "Frequency") + 
+  theme_minimal() + 
+  theme(axis.line = element_line(colour = "black"))
+
+plot_grid(h2, q2, h3, q3, ncol = 2)
+
+# two-group T-test.
+HotellingsT2(as.matrix(df.body[(1:247),3,9]),as.matrix(df.body[(248:507),3,9]))
+
+# Check for equality of covariance matrices:
+testCov(df.body[(1:247),3], df.body[(248:507),3])[4]
+
+# Check for equality of covariance matrices:
+testCov(df.body[(1:247),9], df.body[(248:507),9])[4] 
+
+```
+
+The p-value from the Hotelling's T2 test is very low, indicating that the difference is significant between genders. The null hypothesis for equality of covariance matrices is not rejected, meaning they are equal and satisfactory. We also find their respective plots to be well distributed. 
+
+We can now proceed with computing the linear discriminant analysis. 
+It first estimates the weight vectors of the discriminant function,
+so that the difference between within and between group variance is maximized. 
+That way, it creates linear combinations of the predictors which enables it to
+predict the groups.
+```{r}
+# lda:
+fit <-lda(Gender ~ Bitrochanteric_diameter + Ankle_diameter, data=df.body)
+fit
+```
+At the end of this output, values -0.1029221 and 1.1872311 are shown which are the weights in the equation
+
+$$Z = -0.0863669 \cdot BitrochantericDiameter + 0.9962634 \cdot AnkleDiameter.$$
+
+The normalized coefficients can be calculated as
+```{r norm_coeff, class.source = 'fold-show'}
+# Our normalized coefficients manually calculated:
+w1=(fit$scaling[1,1]/(sqrt(fit$scaling[1,1]^2+fit$scaling[2,1]^2)))
+w1
+w2=(fit$scaling[2,1]/(sqrt(fit$scaling[1,1]^2+fit$scaling[2,1]^2)))
+w2
+```
+We can now classify each observation by either posterior probabilities or by discriminant scores. The posterior probabilities are given by P(G, D), where G represents the group and D is the cutoff value, a value which is based on the average of the Zs in each group. Given prior probabilities, an observation will be classified by the highest posterior probability between the two groups. We find the probabilities through following code
+```{r posterior ,class.source = 'fold-show', out.lines = 10}
+# Change 1's to M for male and 0's to F for female
+df.body$Gender <- ifelse(df.body$Gender=="1", "M", "F") 
+# CV = TRUE returns posterior probabilities of the output.
+fit_cv <-lda(Gender ~ Bitrochanteric_diameter + Ankle_diameter, data=df.body,CV=TRUE)
+fit_cv$posterior
+```
+
+For example, we can see the posterior probabilities of observation 9 between 
+the men and women are, respectively, 84% and 16%. It will therefore be 
+misclassified as a woman. As for using discriminant scores, we can with the 
+help of a cutoff value determine whether an observation in the data belongs 
+to the male or female group. We assign an observation to the male group if
+
+$$Z \ge \frac{\overline{Z}_{1}+\overline{Z}_{2}}{2}$$
+
+and assign to female group if
+
+$$Z \le \frac{\overline{Z}_{1}+\overline{Z}_{2}}{2}.$$
+
+We can utilise a confusion matrix as a summary of the classification results 
+to see the number of observations correctly classified and missclassified. 
+These are computed by simply running the training data back through the 
+discriminant function to see how they get classified.
+```{r}
+# we need to fit the model again without CV=TRUE
+fit <-lda(Gender ~ Bitrochanteric_diameter + Ankle_diameter, data=df.body)
+
+# Confusion matrix to determine performance of our discriminant variables.
+confusionMatrix(as.factor(df.body$Gender),as.factor(predict(fit)$class))
+```
+Here we see that out of our 507 observations, 16% were misclassified as men and 19% as women. 
+The overall error rate ends up at about 17.5%.
+
+We can visualize the results through a partition plot, where colored regions delineate each classification area. 
+```{r}
+partimat(as.factor(Gender) ~ Bitrochanteric_diameter + Ankle_diameter, data=df.body, method="lda")
+
+```
+
+
+### Interpretation of results
+
+#### Principal Component Analysis
+From the results we may interpret the first principal component as having strong correlation to
+measures concerning upper body and size of frame, while the second principal component would
+refer to the measurements around upper legs. Meaning when investigating the relationships between
+men and women, the variables can be summarised as measurements of upper body, including overall
+size, and secondly upper legs. There's also a likely case of including a third component to explain
+the age variable, but it does not have any strong correlations to other measurements and would
+only explain itself, making principal component analysis redundant and pointless.
+
+#### Discriminant Analysis
+With few acceptable variables to choose from, bitrochanteric diameter and ankle diameter proved
+to have pretty significant discriminant power at only 17.5% error rate, suggesting a 82.5% accuracy
+for predicting observations between men and women. Looking at the scatter plot for Ankle diameter leaves
+us to believe that it alone could have a substantial discriminant power amongst our
+data. It could also be seen in the discriminant function that the weight of Bitrochanteric diameter is a
+lot smaller compared to the very big value of Ankle diameter, reflecting it's relative small effect on the results. 
+
+### Conclusion
+Principal components analysis proved to be an useful technique for reducing the number of variables,
+from 24 down to 2 (3 if we include the third component to be a 1:1 substitute for the Age variable),
+the first component measuring upper body and overall size, second being measurements around the
+upper thighs.
+As for the Discriminant Analysis, we conclude ankle diameter to have strong 
+discriminate power, along with Bitriochanteric diameter, at 82.5% accuracy. 
+However, considering the data, close to all variables did not satisfy the 
+multivariate normality assumption, unless we don't utilize posterior 
+probabilities, which limited the choice of variables and prevented us from
+discovering which body measures are, in reality, the most useful in determining 
+the gender of an individual. In retrospect, using logistic regression would have
+circumvented the multivariate normality requirement and given us an opportunity
+to compare models of fit between variables and decide the best one.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
