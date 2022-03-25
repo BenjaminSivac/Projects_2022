@@ -100,6 +100,10 @@ details about the summary information.
 Displaying records 1 - 10
 
 </div>
+### Case Study Questions
+The following questions can be considered key business questions that are required to be answered for the Fresh Segments team.
+
+Most questions can be answered using a single query however some questions are more open ended and require additional thought and not just a coded solution!
 
 #### A. Data Exploration and Cleansing
 
