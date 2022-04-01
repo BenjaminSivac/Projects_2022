@@ -3,6 +3,11 @@ Data With Danny: Foodie-Fi
 Benjamin Sivac
 2022-04-01
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Foodie-Fi/figure-gfm/dwd_ff.png"
+       height="850px" width="850px"/>
+</p>
+
 ### Introduction
 
 Subscription based businesses are super popular and Danny realised that
@@ -32,6 +37,11 @@ include this reference within your SQL scripts as you start exploring
 the data and answering the case study questions.
 
 #### Entity Relationship Diagram
+
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Foodie-Fi/figure-gfm/erd_ff.png"/>
+</p>
+
 
 #### Table 1: plans
 
