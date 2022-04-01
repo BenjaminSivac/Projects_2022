@@ -140,8 +140,10 @@ of join to make your explanations a bit easier!
 
 </div>
 
-Customer id 1 started trial on 1st of August 2020 and afterwards paid
+**Customer id 1** started trial on 1st of August 2020 and afterwards paid
 for a basic monthly subscription on August the 8th 2020.
+
+------------------------------------------------------------------------
 
 <div class="knitsql-table">
 
@@ -156,6 +158,8 @@ for a basic monthly subscription on August the 8th 2020.
 
 Customer id 11 started trial on 19th of november 2020 and let it run out
 with no renewal.
+
+------------------------------------------------------------------------
 
 <div class="knitsql-table">
 
