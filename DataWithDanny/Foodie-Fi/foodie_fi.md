@@ -143,8 +143,6 @@ of join to make your explanations a bit easier!
 **Customer id 1** started trial on 1st of August 2020 and afterwards paid
 for a basic monthly subscription on August the 8th 2020.
 
-------------------------------------------------------------------------
-
 <div class="knitsql-table">
 
 | customer\_id | plan\_name | price | start\_date |
@@ -156,10 +154,8 @@ for a basic monthly subscription on August the 8th 2020.
 
 </div>
 
-Customer id 11 started trial on 19th of november 2020 and let it run out
+**Customer id 11** started trial on 19th of november 2020 and let it run out
 with no renewal.
-
-------------------------------------------------------------------------
 
 <div class="knitsql-table">
 
@@ -173,7 +169,7 @@ with no renewal.
 
 </div>
 
-Customer id 15 started trial on 17 of March 2020, upgraded to a pro
+**Customer id 15** started trial on 17 of March 2020, upgraded to a pro
 monthly subscription right after which has added benefits, then canceled
 his subscription on April the 29th, having access to his account until
 24th of May.
