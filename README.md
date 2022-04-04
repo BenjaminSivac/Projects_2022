@@ -15,7 +15,7 @@ I will take on various projects to prepare myself for a career in data analysis 
 
 
 # R
-## Google Data Analytics - Cyclistic
+## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/GoogleDataAnalytics/Cyclistic.md">Google Data Analytics - Cyclistic</a>
 ## Multivariate Methods
 ## Covid-19 And The Swedish Housing Market
 *[Ongoing]*
