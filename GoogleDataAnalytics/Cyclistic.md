@@ -298,9 +298,9 @@ ggarrange(plot_prop, plot_bikes,
           common.legend = TRUE,
           legend="bottom")
 ```
-
-<img src="Cyclistic_files/figure-gfm/Proportions-1.png" style="display: block; margin: auto;" />
-
+<p align="center">
+  <img src="Cyclistic_files/figure-gfm/Proportions-1.png" style="display: block; margin: auto;" />
+</p>
 For an overview of the customer base, members account for 54.8% of total
 rides taken during the 1-year period, while casual riders comprised the
 remaining 45.2% of trips. There is clearly a strong incentive for
