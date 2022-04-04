@@ -13,9 +13,7 @@ I will take on various projects to prepare myself for a career in data analysis 
 
 # Table of contents 
 * <a href="https://github.com/BenjaminSivac/Projects_2022#r">R</a>
-
 * <a href="https://github.com/BenjaminSivac/Projects_2022#sql">SQL</a>
-
 * <a href="https://github.com/BenjaminSivac/Projects_2022#tableau">Tableau</a>
 
 # R
