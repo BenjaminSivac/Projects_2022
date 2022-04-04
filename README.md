@@ -7,9 +7,9 @@ I will take on various projects to prepare myself for a career in data analysis 
 * Exploratory Data Analysis (EDA)
 * Data Cleaning
 * Data Wrangling
-* Build upon my statistical prowess
-* Analysis
-* Data Visualization for drawing meaningful conclusions
+* Apply statistical methods
+* Analysis 
+* Data Visualization for finding and sharing meaningful insights
 
 # Table of contents 
 
