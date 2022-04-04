@@ -2,12 +2,12 @@
 
 I'm excited to fill up my first ever github repository 😁
 
-I will take on various projects to prepare me for a career as a Data Analyst / Analytics professional by learning:
+I will take on various projects to prepare myself for a career in data analysis by learning:
 
 * Exploratory Data Analysis (EDA)
 * Data Cleaning
 * Data Wrangling
-* Practical Statistics
+* Build upon my statistical prowess
 * Analysis
 * Data Visualization for drawing meaningful conclusions
 
