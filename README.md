@@ -2,7 +2,7 @@
 
 I'm excited to fill up my first ever github repository 😁
 
-I will take on various projects to prepare myself for a career in data analysis by learning:
+I will take on various projects to prepare myself for a career in data analysis, and by doing so learn:
 
 * Exploratory Data Analysis (EDA)
 * Data Cleaning
@@ -18,13 +18,15 @@ I will take on various projects to prepare myself for a career in data analysis 
 ***
 # R
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/GoogleDataAnalytics/Cyclistic.md">Google Data Analytics - Cyclistic</a>
+My first proper
+
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/Multivariate_Methods/Multivariate_methods.md">Multivariate Methods</a>
 ## Covid-19 And The Swedish Housing Market
 *[Ongoing]*
 ***
 # SQL
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/DataWithDanny">Data With Danny</a>
-I'm working my way through various SQL casestudies that are part of a 8 week long challenge. The casestudies ranges from health, marketing and people analytics to financial markets, consumer goods and digital marketing. It has so far been a great opportunity to reiterate basics, hone and understand fun and interesting concepts like recursive CTEs, cumulative aggregates, and indexing. 
+I'm working my way through various SQL casestudies that are part of a 8 week long challenge. The casestudies ranges from health, marketing and people analytics to financial markets, consumer goods and digital marketing. It has so far been a great opportunity to reiterate basics, hone and apply fun and interesting concepts like recursive CTEs, cumulative aggregates, and indexing. 
 
 * Case Study #1 - Danny’s Diner
 * Case Study #2 - Pizza Runner
