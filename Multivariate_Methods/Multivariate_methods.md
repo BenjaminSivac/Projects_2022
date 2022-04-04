@@ -161,8 +161,9 @@ list_pca %>% fviz_eig(choice = "eigenvalue", addlabels = TRUE) +
   theme(axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5))
 ```
-
+<p align="center">
 <img src="Multivariate_methods_files/figure-gfm/eig-1.png" style="display: block; margin: auto;" />
+</p>
 
 The first four eigenvalues fulfill the greater-than-one rule. If we
 adhere to it, we would retain the four components. But looking at the
@@ -180,8 +181,9 @@ list_pca %>% fviz_eig(addlabels = TRUE) +
   theme(axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5))
 ```
-
+<p align="center">
 <img src="Multivariate_methods_files/figure-gfm/var-1.png" style="display: block; margin: auto;" />
+</p>
 
 ``` r
 # Cumulative variance output:
@@ -243,8 +245,10 @@ autoplot(list_pca, loadings = TRUE, loadings.label = TRUE, df.sub) +
   theme(axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5))
 ```
-
+<p align="center">
 <img src="Multivariate_methods_files/figure-gfm/plot_pca-1.png" style="display: block; margin: auto;" />
+</p>
+
 A quick plot of the loadings for PC1 and PC2 respectively, their
 positions reflecting their correlations to each other. We can clearly
 see Age being a clear outsider relative to the first two components.
@@ -276,9 +280,9 @@ df.body %>% ggplot(aes(seq_along(Biacromial_diameter), Biacromial_diameter, colo
   theme(axis.line = element_line(colour = "black"), 
         plot.title = element_text(hjust = 0.5))
 ```
-
+<p align="center">
 <img src="Multivariate_methods_files/figure-gfm/DA-1.png" style="display: block; margin: auto;" />
-
+</p>
 It looks fairly discriminant between men and women. We’ll confirm that
 the means of the two groups are significantly different with respect to
 the variable. We do so by performing Hotelling’s two sample T2-test, a
@@ -355,9 +359,10 @@ plot_hist <- df.body %>% ggplot(aes(Biacromial_diameter)) +
 
 plot_grid(plot_hist, plot_qq, ncol = 2)
 ```
-
+<p align="center">
 <img src="Multivariate_methods_files/figure-gfm/Normality pt1-1.png" style="display: block; margin: auto;" />
-
+</p>
+  
 While the null-hypothesis is not rejected in the LC-test, the
 distribution plots seem a bit skewed and the test statistic for the
 shapiro-Wilk normality test is not significant enough to claim
@@ -406,9 +411,10 @@ df.body %>% ggplot(aes(Bitrochanteric_diameter, Ankle_diameter, color=as.factor(
   theme(axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5))
 ```
-
+<p align="center">
 <img src="Multivariate_methods_files/figure-gfm/splot_da-1.png" style="display: block; margin: auto;" />
-
+</p>
+  
 The plot between the two variables shows ankle measurement to be
 somewhat discriminant on the y-axis while not particularly for
 bitrochanteric on the x-axis, or jointly for that matter.
@@ -454,8 +460,9 @@ h3 <- df.body %>% ggplot(aes(Ankle_diameter)) +
 
 plot_grid(h2, q2, h3, q3, ncol = 2)
 ```
-
+<p align="center">
 <img src="Multivariate_methods_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
+</p>
 
 ``` r
 # two-group T-test.
@@ -643,8 +650,9 @@ regions delineate each classification area.
 ``` r
 partimat(as.factor(Gender) ~ Bitrochanteric_diameter + Ankle_diameter, data=df.body, method="lda")
 ```
-
+<p align="center">
 <img src="Multivariate_methods_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+</p>
 
 ### Interpretation of results
 
