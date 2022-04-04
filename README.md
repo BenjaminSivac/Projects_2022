@@ -18,7 +18,7 @@ I will take on various projects to prepare myself for a career in data analysis,
 ***
 # R
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/GoogleDataAnalytics/Cyclistic.md">Google Data Analytics - Cyclistic</a>
-My first take on a data analytics project.  
+My first take on a data analytics project where I profile users and share insights on how to improve marketing. 
 
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/Multivariate_Methods/Multivariate_methods.md">Multivariate Methods</a>
 I got tired of seeing basic, descriptive statistics while browsing for project inspirations, and so I reimagined and improved upon an old assignment I did last year. It mainly covers machine learning methods, probability, and hypothesis testing. 
