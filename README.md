@@ -29,7 +29,7 @@ Based upon my Bachelor's thesis in Statisics, explaining my work and thoughtproc
 ***
 # SQL
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/DataWithDanny">Data With Danny</a>
-I'm working my way through various SQL casestudies that are part of a 8 week long challenge. The casestudies ranges from health, marketing and people analytics to financial markets, consumer goods and digital marketing. It has so far been a great opportunity to reiterate basics, hone and apply fun and interesting concepts like recursive CTEs, cumulative aggregates, and indexing. 
+I'm working my way through various SQL casestudies that are part of a 8 week long challenge. The casestudies ranges from health, marketing and people analytics to financial markets, consumer goods and digital marketing. It has so far been a great opportunity to reiterate basics, hone and utilise interesting concepts like recursive CTEs, cumulative aggregates, and indexing. 
 
 * Case Study #1 - Danny’s Diner
 * Case Study #2 - Pizza Runner
