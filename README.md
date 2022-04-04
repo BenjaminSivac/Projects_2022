@@ -18,10 +18,13 @@ I will take on various projects to prepare myself for a career in data analysis,
 ***
 # R
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/GoogleDataAnalytics/Cyclistic.md">Google Data Analytics - Cyclistic</a>
-My first proper
+My first take on a data analytics project.  
 
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/Multivariate_Methods/Multivariate_methods.md">Multivariate Methods</a>
+I got tired of seeing basic, descriptive statistics while browsing for project inspirations, and so I reimagined and improved upon an old assignment I did last year. It mainly covers machine learning methods, probability, and hypothesis testing. 
+
 ## Covid-19 And The Swedish Housing Market
+Based upon my Bachelor's thesis in Statisics, explaining my work and thoughtprocess handling imputation and modelling timeseries. 
 *[Ongoing]*
 ***
 # SQL
