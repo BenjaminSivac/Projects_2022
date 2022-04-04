@@ -24,7 +24,7 @@ I will take on various projects to prepare myself for a career in data analysis 
 ***
 # SQL
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/DataWithDanny">Data With Danny</a>
-I'm working my way through various SQL casestudies that are part of a 8 week long challenge. The casestudies ranges from health, marketing and people analytics to financial markets, consumder goods and digital marketing. It has so far been a great opportunity to reiterate basics, hone and understand fun and interesting concepts like recursive CTEs, cumulative aggregates, and indexing. 
+I'm working my way through various SQL casestudies that are part of a 8 week long challenge. The casestudies ranges from health, marketing and people analytics to financial markets, consumer goods and digital marketing. It has so far been a great opportunity to reiterate basics, hone and understand fun and interesting concepts like recursive CTEs, cumulative aggregates, and indexing. 
 
 * Case Study #1 - Danny’s Diner
 * Case Study #2 - Pizza Runner
