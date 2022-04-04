@@ -341,8 +341,9 @@ ggarrange(plot_month, plot_weekday, plot_hour, plot_legend,
          align="hv") %>%
   annotate_figure(top = text_grob("Trips across 12 months", size=14))
 ```
-
+<p align="center">
 <img src="Cyclistic_files/figure-gfm/Time series-1.png" style="display: block; margin: auto;" />
+</p>
 
 In terms of monthly trips, number of casual users peak in July and hit a
 bottom in February, a clear relationship to weather conditions and
@@ -393,8 +394,9 @@ ggarrange(plot_duration, plot_distance,
   annotate_figure(top = text_grob("Average Trip length- and Distance travelled, by hour", 
                                   size=14))
 ```
-
+<p align="center">
 <img src="Cyclistic_files/figure-gfm/trip_distance_hour-1.png" style="display: block; margin: auto;" />
+</p>
 
 Casual users on average tend to bike for both longer periods of time and
 longer distances, which is reasonable as workers would likely stick to a
@@ -433,9 +435,9 @@ df_trips %>% filter(trip_length > 0) %>%
        x = "station name",
        y = "count")
 ```
-
+<p align="center">
 <img src="Cyclistic_files/figure-gfm/5 common-1.png" style="display: block; margin: auto;" />
-
+</p>
 ‘Streeter Dr & Grand Ave’ and Millenium Park would be the best stations
 for placing advertisement appealing to casual riders. Members have very
 low numbers at Millennium Park, likely because it is not en route to any
@@ -455,9 +457,9 @@ df_trips %>% filter(trip_length > 0) %>%
        y = "trip length [h:m:s]",
        x = "station name")
 ```
-
+<p align="center">
 <img src="Cyclistic_files/figure-gfm/Duration by common stations-1.png" style="display: block; margin: auto;" />
-
+</p>
 Trip length by the 5 most common starting stations support the above
 hypothesis, as casual riders would likely make stops and have extended
 outings at Millennium Park.
