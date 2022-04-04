@@ -18,10 +18,10 @@ I will take on various projects to prepare me for a career as a Data Analyst / A
 ## Google Data Analytics - Cyclistic
 ## Multivariate Methods
 ## Covid-19 And The Swedish Housing Market
-**[Ongoing]**
+*[Ongoing]*
 
 # SQL
 ## Data With Danny
 
 # Tableau
-**[On hold]**
+*[On hold]*
