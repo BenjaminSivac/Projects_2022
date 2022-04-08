@@ -1,0 +1,377 @@
+---
+title: "Data With Danny: Balanced Tree Clothing Co."
+author: "Benjamin Sivac"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::github_document
+---
+```{r, include=FALSE}
+hook_output <- knitr::knit_hooks$get("output")
+```
+
+```{r Loading packages, message=FALSE, warning=FALSE, include=FALSE}
+library(DBI)
+library(odbc)
+library(tidyverse)
+library(datamodelr) # ER diagram
+```
+
+```{r, include=FALSE}
+con <- DBI::dbConnect(odbc::odbc(), 
+                      Driver = "SQL Server", 
+                      Server = "localhost\\SQLEXPRESS", 
+                      Database = "dwd#7", 
+                      Trusted_Connection = "True")
+```
+
+### Introduction
+Balanced Tree Clothing Company prides themselves on providing an optimised range of clothing and lifestyle wear for the modern adventurer!
+
+Danny, the CEO of this trendy fashion company has asked you to assist the team’s merchandising teams analyse their sales performance and generate a basic financial report to share with the wider business.
+
+### Available Data
+For this case study there is a total of 4 datasets for this case study - however you will only need to utilise 2 main tables to solve all of the regular questions, and the additional 2 tables are used only for the bonus challenge question!
+
+#### Product Details
+product_details includes all information about the entire range that Balanced Clothing sells in their store.
+
+```{sql echo=FALSE, connection=con}
+SELECT
+  *
+FROM 
+  product_details
+```
+
+#### Product Sales
+sales contains product level information for all the transactions made for Balanced Tree including quantity, price, percentage discount, member status, a transaction ID and also the transaction timestamp.
+
+```{sql echo=FALSE, connection=con}
+SELECT
+  *
+FROM
+  sales
+```
+
+### Case Study Questions
+The following questions can be considered key business questions and metrics that the Balanced Tree team requires for their monthly reports.
+
+Each question can be answered using a single query - but as you are writing the SQL to solve each individual problem, keep in mind how you would generate all of these metrics in a single SQL script which the Balanced Tree team can run each month.
+ 
+#### A. High Level Sales Analysis
+
+**1. What was the total quantity sold for all products?**
+```{sql, connection = con}
+SELECT 
+	SUM(qty) AS total_quantity
+FROM
+	sales
+```
+***
+
+**2. What is the total generated revenue for all products before discounts?**
+```{sql, connection = con}
+SELECT
+	SUM(price*qty) AS Total_revenue
+FROM 
+	sales
+```
+***
+
+
+**3. What was the total discount amount for all products?**
+```{sql, connection = con}
+SELECT
+	SUM(qty*(price*(discount*0.01))) AS total_discount_amount
+FROM
+	sales
+```
+***
+
+#### B. Transaction Analysis
+
+**1. How many unique transactions were there?**
+```{sql, connection = con}
+SELECT
+	COUNT(DISTINCT txn_id) AS count_unique_txn
+FROM
+	sales;
+```
+***
+
+**2. What is the average unique products purchased in each transaction?**
+```{sql, connection = con}
+WITH cte_count AS(
+	SELECT 
+		COUNT(DISTINCT prod_id) AS unique_count
+	FROM
+		sales
+	GROUP BY txn_id
+)
+
+SELECT
+	AVG(unique_count) AS avg_unique_count
+FROM 
+	cte_count;
+```
+***
+
+**3. What are the 25th, 50th and 75th percentile values for the revenue per transaction?**
+```{sql, connection = con}
+SELECT
+	DISTINCT txn_id,
+	PERCENTILE_DISC(0.25) WITHIN GROUP (ORDER BY qty*price-(qty*price*discount*0.01))
+	OVER (PARTITION BY txn_id) AS twentyfive_centile,
+	PERCENTILE_DISC(0.50) WITHIN GROUP (ORDER BY qty*price-(qty*price*discount*0.01))
+	OVER (PARTITION BY txn_id) AS median,
+	PERCENTILE_DISC(0.75) WITHIN GROUP (ORDER BY qty*price-(qty*price*discount*0.01))
+	OVER (PARTITION BY txn_id) AS seventyfive_centile
+FROM
+    sales
+GROUP BY txn_id, price, qty, discount
+ORDER BY txn_id
+```
+***
+
+**4. What is the average discount value per transaction?**
+```{sql, connection = con}
+SELECT
+	txn_id,
+	CAST(AVG(discount*price*qty*0.01) AS DECIMAL(10,2)) AS average_discount_value
+FROM
+	sales
+GROUP BY txn_id
+```
+***
+
+**5. What is the percentage split of all transactions for members vs non-members?**
+```{sql, connection = con}
+SELECT
+	DISTINCT member,
+	FORMAT(COUNT(1) * 100 / SUM(COUNT(1)) OVER() * 0.01, 'p') AS pct
+FROM
+	sales
+GROUP BY member
+```
+***
+
+**6. What is the average revenue for member transactions and non-member transactions?**
+```{sql, connection = con}
+SELECT
+	DISTINCT member, 
+	CAST(AVG(price*qty - (price*qty*discount*0.01)) AS DECIMAL(10,2)) AS avg_revenue
+FROM
+	sales
+GROUP BY member;
+```
+***
+
+#### C. Product Analysis
+
+**1. What are the top 3 products by total revenue before discount?**
+```{sql, connection = con}
+WITH cte_total_revenue AS(
+	SELECT
+		prod_id,
+		SUM(price*qty) AS total_revenue
+	FROM
+		sales
+	GROUP BY prod_id
+)
+
+SELECT
+	TOP 3 prod_id,
+	total_revenue
+FROM
+	cte_total_revenue
+ORDER BY total_revenue DESC;
+```
+***
+
+**2. What is the total quantity, revenue and discount for each segment?**
+```{sql, connection = con}
+SELECT
+	segment_name,
+	SUM(qty) AS total_quantity,
+	SUM(s.price*qty-(s.price*qty*discount*0.01)) AS total_revenue,
+	SUM(s.price*qty*discount*0.01) AS total_discount
+FROM sales s
+	JOIN 
+	product_details pd
+	ON
+		s.prod_id = pd.product_id
+GROUP BY segment_name;
+```
+***
+
+**3. What is the top selling product for each segment?**
+```{sql, connection = con}
+WITH cte_total_quantity AS(
+	SELECT 
+		segment_name,
+		product_name,
+		SUM(qty) AS total_quantity
+	FROM
+		sales s
+	JOIN 
+		product_details pd
+	ON
+		s.prod_id = pd.product_id
+	GROUP BY segment_name, product_name
+),
+
+cte_rn AS(
+	SELECT
+		segment_name,
+		product_name,
+		total_quantity,
+		ROW_NUMBER() OVER (PARTITION BY segment_name ORDER BY total_quantity DESC) AS rn
+	FROM 
+		cte_total_quantity
+)
+
+SELECT
+	segment_name,
+	product_name,
+	total_quantity
+FROM
+	cte_rn
+WHERE rn=1;
+```
+***
+
+**4. What is the total quantity, revenue and discount for each category?**
+```{sql, connection = con}
+SELECT
+	category_name,
+	SUM(qty) AS total_quantity,
+	SUM(qty*s.price-(qty*s.price*discount*0.01)) AS total_revenue,
+	SUM(qty*s.price*discount*0.01) AS total_discount
+FROM sales s
+	JOIN 
+	product_details pd
+	ON
+		s.prod_id = pd.product_id
+GROUP BY category_name;
+```
+***
+
+**5. What is the top selling product for each category?**
+```{sql, connection = con}
+WITH cte_total_quantity AS(
+	SELECT 
+		category_name,
+		product_name,
+		SUM(qty) AS total_quantity
+	FROM
+		sales s
+	JOIN 
+		product_details pd
+	ON
+		s.prod_id = pd.product_id
+	GROUP BY category_name, product_name
+),
+
+cte_rn AS(
+	SELECT
+		category_name,
+		product_name,
+		total_quantity,
+		ROW_NUMBER() OVER (PARTITION BY category_name ORDER BY total_quantity DESC) AS rn
+	FROM 
+		cte_total_quantity
+)
+
+SELECT
+	category_name,
+	product_name,
+	total_quantity
+FROM
+	cte_rn
+WHERE rn=1;
+```
+***
+
+**6. What is the percentage split of revenue by product for each segment?**
+```{sql, connection = con}
+WITH cte_total_revenue AS(
+	SELECT
+		product_id,
+		segment_name,
+		product_name,
+		SUM(SUM(s.price*qty - (s.price*qty*discount*0.01))) OVER (PARTITION BY segment_name) AS total_revenue
+	FROM
+		sales s
+	JOIN 
+		product_details pd
+	ON
+		s.prod_id = pd.product_id
+	GROUP BY product_id, segment_name, product_name
+)
+
+SELECT
+	segment_name,
+	product_name,
+	FORMAT(SUM(s.price*qty - (s.price*qty*discount*0.01)) / total_revenue,'P') AS split_pct_revenue
+FROM
+	cte_total_revenue tr
+JOIN
+	sales s
+ON
+	s.prod_id = tr.product_id
+GROUP BY segment_name, product_name, total_revenue
+ORDER BY segment_name;
+```
+Might later add a column with cumulative percentage making it easier to confirm percentages. 
+
+***
+
+**7. What is the percentage split of revenue by segment for each category?**
+```{sql, connection = con}
+WITH cte_total_revenue AS(
+	SELECT
+		product_id,
+		category_name,
+		segment_name,
+		SUM(SUM(s.price*qty - (s.price*qty*discount*0.01))) OVER (PARTITION BY category_name) AS total_revenue
+	FROM
+		sales s
+	JOIN 
+		product_details pd
+	ON
+		s.prod_id = pd.product_id
+	GROUP BY product_id, category_name, segment_name
+)
+
+SELECT
+	category_name,
+	segment_name,
+	FORMAT(SUM(s.price*qty - (s.price*qty*discount*0.01)) / total_revenue,'P') AS split_pct_revenue
+FROM
+	cte_total_revenue tr
+JOIN
+	sales s
+ON
+	s.prod_id = tr.product_id
+GROUP BY category_name, segment_name, total_revenue
+ORDER BY category_name;
+```
+***
+
+**8.  What is the percentage split of total revenue by category?**
+```{sql, connection = con}
+SELECT
+	DISTINCT category_name,
+	FORMAT(SUM(s.price*qty - (s.price*qty*discount*0.01)) OVER(PARTITION BY category_name) / 
+	SUM(s.price*qty - (s.price*qty*discount*0.01)) OVER(), 'P') AS split_pct_revenue
+FROM
+	sales s
+JOIN
+	product_details pd
+ON
+	s.prod_id = pd.product_id;
+```
+***
+
+**9. What is the total transaction “penetration” for each product? (hint: penetration = number of transactions where at least 1 quantity of a product was purchased divided by total number of transactions)**
+
+To be continued
