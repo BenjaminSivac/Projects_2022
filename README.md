@@ -37,7 +37,7 @@ I'm working my way through various SQL casestudies that are part of a 8 week lon
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Databank/databank.md">Case Study #4 - Data Bank</a>
 * Case Study #5 - Data Mart
 * Case Study #6 - Clique Bait
-* Case Study #7 - Balanced Tree Clothing Co.
+* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/balanced_tree_company_co.md">Case Study #7 - Balanced Tree Clothing Co.</a>
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/FreshSegments/Fresh_Segments.md">Case Study #8 - Fresh Segments</a>
 
 ***
