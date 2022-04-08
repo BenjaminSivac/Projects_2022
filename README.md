@@ -24,7 +24,7 @@ My first take on a data analytics project where I profile users and share insigh
 I got tired of seeing basic, descriptive statistics while browsing for project inspirations, and so I reimagined and improved upon an old assignment I did last year. It mainly covers machine learning methods, probability, and hypothesis testing. 
 
 ## Covid-19 And The Swedish Housing Market
-Based upon my Bachelor's thesis in Statisics, explaining my work and thoughtprocess handling imputation and modelling timeseries. 
+Based on my Bachelor's thesis in Statisics, explaining my work and thoughtprocess handling imputation and modelling timeseries. 
 *[Ongoing]*
 ***
 # SQL
