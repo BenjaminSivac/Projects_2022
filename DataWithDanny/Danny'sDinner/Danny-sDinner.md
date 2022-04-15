@@ -3,6 +3,11 @@ Data With Danny: Danny’s Dinner
 Benjamin Sivac
 2022-04-15
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Danny'sDinner/figure-gfm/dwd_1.png"
+       height="850px" width="850px"/>
+</p>
+
 ### Introduction
 
 Danny seriously loves Japanese food so in the beginning of 2021, he
@@ -38,6 +43,10 @@ Danny has shared with you 3 key datasets for this case study:
 -   members
 
 ### Entity Relationship Diagram
+
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Danny'sDinner/figure-gfm/erd.PNG"/>
+</p>
 
 ### Datasets
 
