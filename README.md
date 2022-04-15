@@ -31,7 +31,7 @@ Based on my Bachelor's thesis in Statisics, explaining my work and thoughtproces
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/DataWithDanny">Data With Danny</a>
 I'm working my way through various SQL casestudies that are part of a 8 week long challenge. The casestudies ranges from health, marketing and people analytics to financial markets, consumer goods and digital marketing. It has so far been a great opportunity to reiterate basics, hone and utilise interesting concepts like recursive CTEs, cumulative aggregates, and indexing. 
 
-* Case Study #1 - Danny’s Diner
+* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Danny'sDinner/Danny-sDinner.md"> Case Study #1 - Danny’s Diner
 * Case Study #2 - Pizza Runner
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Foodie-Fi/foodie_fi.md">Case Study #3 - Foodie-Fi</a>
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Databank/databank.md">Case Study #4 - Data Bank</a>
