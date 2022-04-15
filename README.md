@@ -4,7 +4,7 @@ I'm excited to fill up my first ever github repository 😁
 
 I will take on various projects to prepare myself for a career in data analysis, and by doing so learn:
 
-* Exploratory Data Analysis (EDA)
+* Exploratory Data Analysis
 * Data Cleaning
 * Data Wrangling
 * Statistical applications
