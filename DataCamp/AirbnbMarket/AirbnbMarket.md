@@ -203,7 +203,7 @@ ggarrange(plot.box, plot.density,
 ```
 
 <img src="AirbnbMarket_files/figure-gfm/plots-1.png" style="display: block; margin: auto;" />
-The natural log of listing prices resembles closely a bell curve, albeit
+The natural log of listing prices closely resembles a bell curve, albeit
 a bit skewed to the right which would suggest comparing median prices
 rather than mean.  
 Looking at the boxplot, there seems to be a number of free listings in
