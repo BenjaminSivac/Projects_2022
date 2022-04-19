@@ -55,8 +55,8 @@ dates.
 
 ### Preparing the Environment
 
-Importing the required packages for importing, performing data
-manipulation, and visualization.
+Importing the required packages for importing data, performing data
+manipulation, and creating visualizations.
 
 ``` r
 library(tidyverse)
