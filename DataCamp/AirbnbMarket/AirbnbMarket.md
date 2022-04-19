@@ -201,8 +201,10 @@ ggarrange(plot.box, plot.density,
           align = "hv") %>% 
   annotate_figure(top = text_grob("Distribution and Density of log(price)", size=14))
 ```
-
+<p align="center">
 <img src="AirbnbMarket_files/figure-gfm/plots-1.png" style="display: block; margin: auto;" />
+</p>
+
 The natural log of listing prices closely resembles a bell curve, albeit
 a bit skewed to the right which would suggest comparing median prices
 rather than mean.  
@@ -290,8 +292,9 @@ df.data %>% group_by(room_type) %>%
   theme(axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5))
 ```
-
+<p align="center">
 <img src="AirbnbMarket_files/figure-gfm/room_dist-1.png" style="display: block; margin: auto;" />
+</p>
 
 There are close to no listings for shared rooms, but both
 apartments/houses and private rooms have over 10000 listings.
@@ -319,8 +322,9 @@ test %>% ggplot(aes(y=mean, x=borough, fill=borough, color=borough)) +
         axis.text.x = element_blank()) +
   facet_wrap(~room_type)
 ```
-
+<p align="center">
 <img src="AirbnbMarket_files/figure-gfm/stats-1.png" style="display: block; margin: auto;" />
+</p>
 We can with point and box plots combined observe the distribution of
 prices across boroughs and type of rooms that are listed. It also shows
 labels for the most commonly listed neighborhoods by each borough. Homes and
