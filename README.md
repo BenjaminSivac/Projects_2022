@@ -23,6 +23,11 @@ My first take on a data analytics project where I profile users and share insigh
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/Multivariate_Methods/Multivariate_methods.md">Multivariate Methods</a>
 I got tired of seeing basic, descriptive statistics while browsing for project inspirations, and so I reimagined and improved upon an old assignment I did last year. It mainly covers machine learning methods, probability, and hypothesis testing. 
 
+## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/DataCamp">DataCamp</a>
+I decided to try out a few Datacamp courses in R, and possibly SQL, which has so far been a good learning experience and I get access to a few projects/datasets that I'm going to try out. Nothing too fancy, but they are short and sweat.
+
+* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/AirbnbMarket/AirbnbMarket.md">Exploring the NYC Airbnb Market</a>
+
 ## Covid-19 And The Swedish Housing Market
 Based on my Bachelor's thesis in Statisics, explaining my work and thoughtprocess handling imputation and modelling timeseries. 
 *[Ongoing]*
