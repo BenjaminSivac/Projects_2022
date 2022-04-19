@@ -209,7 +209,7 @@ rather than mean.
 Looking at the boxplot, there seems to be a number of free listings in
 the data, there are also a couple of extremely expensive ones. Out of
 curiosity, let’s have a closer look to see if these values are
-reasonable or inaccurate which might just be caused by measurement
+reasonable or widely inaccurate due to measurement
 errors.
 
 ``` r
