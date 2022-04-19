@@ -3,6 +3,10 @@ Airbnb listings in New York City
 Benjamin Sivac
 2022-04-19
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/AirbnbMarket/AirbnbMarket_files/figure-gfm/nyc.jpg"/>
+</p>
+
 ### Introduction
 
 Welcome to New York City, one of the most-visited cities in the world.
