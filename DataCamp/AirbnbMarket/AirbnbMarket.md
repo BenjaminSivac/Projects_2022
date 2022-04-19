@@ -323,7 +323,7 @@ test %>% ggplot(aes(y=mean, x=borough, fill=borough, color=borough)) +
 <img src="AirbnbMarket_files/figure-gfm/stats-1.png" style="display: block; margin: auto;" />
 We can with point and box plots combined observe the distribution of
 prices across boroughs and type of rooms that are listed. It also shows
-labels for the most common listings by each borough. Homes and
+labels for the most commonly listed neighborhoods by each borough. Homes and
 apartments are close to being twice as expensive as private rooms, and
 probably three times as expensive than shared rooms. Manhattan is
 clearly the most expensive across each housing type with the average
