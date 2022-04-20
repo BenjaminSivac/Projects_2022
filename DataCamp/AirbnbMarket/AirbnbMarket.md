@@ -310,7 +310,7 @@ stat.count %>% ggplot(aes(y=mean, x=borough, fill=borough, color=borough)) +
   geom_point(stat="identity", alpha=0.4, show.legend = FALSE) +
   geom_bar(data=stat.groups, stat="identity", alpha=0.3) +
   ylim(0,500) +
-  geom_text_repel(data=test %>% filter(dense_rank(-count) < 6), 
+  geom_text_repel(data=stat.count %>% filter(dense_rank(-count) < 6), 
                   aes(label = neighborhood), 
                   color = "black",
                   size = 2.5, 
