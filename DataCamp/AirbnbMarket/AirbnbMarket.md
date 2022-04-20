@@ -303,10 +303,10 @@ apartments/houses and private rooms have over 10000 listings.
 stat.groups <- df.data %>% group_by(borough, room_type) %>% 
   summarise(mean=mean(price))
 
-test <- df.data %>% group_by(borough, neighborhood, room_type) %>% 
+stat.count <- df.data %>% group_by(borough, neighborhood, room_type) %>% 
   summarise(mean=mean(price),
             count=n())
-test %>% ggplot(aes(y=mean, x=borough, fill=borough, color=borough)) +
+stat.count %>% ggplot(aes(y=mean, x=borough, fill=borough, color=borough)) +
   geom_point(stat="identity", alpha=0.4, show.legend = FALSE) +
   geom_bar(data=stat.groups, stat="identity", alpha=0.3) +
   ylim(0,500) +
