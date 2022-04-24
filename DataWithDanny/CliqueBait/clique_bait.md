@@ -137,7 +137,7 @@ Displaying records 1 - 10
 
 ### Case Study Questions
 
-#### 1. Digital Analysis
+#### A. Digital Analysis
 
 Using the available datasets - answer the following questions using a
 single query for each one:
@@ -393,7 +393,7 @@ ORDER BY bought DESC;
 
 ------------------------------------------------------------------------
 
-#### 2. Product Funnel Analysis
+#### B. Product Funnel Analysis
 
 Using a single SQL query - create a new output table which has the
 following details:
@@ -632,7 +632,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-#### 3. Campaigns Analysis
+#### C. Campaigns Analysis
 
 Generate a table that has 1 single row for every unique visit\_id record
 and has the following columns:
