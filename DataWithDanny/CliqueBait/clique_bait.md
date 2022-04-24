@@ -3,6 +3,11 @@ Data With Danny: Clique Bait
 Benjamin Sivac
 2022-04-24
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/CliqueBait/figure-gfm/dwd6.png"
+       height="850px" width="850px"/>
+</p>
+
 ### Introduction
 
 Clique Bait is not like your regular online seafood store - the founder
