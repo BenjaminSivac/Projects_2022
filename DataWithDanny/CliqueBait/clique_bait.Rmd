@@ -391,7 +391,7 @@ I turned the previous table into a temporary table called ***#temp_products*** s
 Use your 2 new output tables - answer the following questions:
 
 **Which product had the most views, cart adds and purchases?**
-```{sql connection=con, eval=F, echo=T}
+```{sql connection=con}
 SELECT TOP 1
 	(SELECT TOP 1 product_name FROM #temp_products ORDER BY product_view DESC) AS most_views,
 	(SELECT TOP 1 product_name FROM #temp_products ORDER BY added_to_cart DESC) AS most_added_to_cart,
@@ -402,7 +402,7 @@ FROM
 ***
 
 **Which product was most likely to be abandoned?**
-```{sql connection=con, eval=F, echo=T}
+```{sql connection=con}
 SELECT TOP 1
 	product_name AS most_abandoned
 FROM
@@ -412,7 +412,7 @@ ORDER BY abandoned DESC;
 ***
 
 **Which product had the highest view to purchase percentage?**
-```{sql connection=con, eval=F, echo=T}
+```{sql connection=con}
 SELECT TOP 1 
 	product_name,
 	FORMAT(ROUND(CAST(bought AS FLOAT)/product_view,3), 'P') AS view_to_purchase_pct
@@ -423,7 +423,7 @@ ORDER BY view_to_purchase_pct DESC;
 ***
 
 **What is the average conversion rate from view to cart add?**
-```{sql connection=con, eval=F, echo=T}
+```{sql connection=con}
 SELECT
 	FORMAT(ROUND(AVG(CAST(added_to_cart AS FLOAT)/product_view),3), 'P') AS avg_cart_add_conversion
 FROM
@@ -432,7 +432,7 @@ FROM
 ***
 
 **What is the average conversion rate from cart add to purchase?**
-```{sql connection=con, eval=F, echo=T}
+```{sql connection=con}
 SELECT
 	FORMAT(ROUND(AVG(CAST(bought AS FLOAT)/added_to_cart),3), 'P') AS avg_purchase_conversion
 FROM
