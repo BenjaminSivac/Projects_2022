@@ -668,18 +668,18 @@ SELECT
                   WITHIN GROUP (ORDER BY sequence_number) AS cart_products
 FROM
     clique_bait.events ev
-JOIN
-    clique_bait.users u
-    ON 
-        ev.cookie_id = u.cookie_id
-JOIN
-    clique_bait.campaign_identifier c_id
-    ON
-        ev.event_time BETWEEN c_id.start_date AND c_id.end_date
-JOIN
-    clique_bait.page_hierarchy ph
-    ON
-        ev.page_id = ph.page_id
+INNER JOIN
+	clique_bait.users u
+	ON 
+		ev.cookie_id = u.cookie_id
+LEFT JOIN
+	clique_bait.campaign_identifier c_id
+	ON
+		ev.event_time BETWEEN c_id.start_date AND c_id.end_date
+LEFT JOIN
+	clique_bait.page_hierarchy ph
+	ON
+		ev.page_id = ph.page_id
 GROUP BY user_id, visit_id, campaign_name
 ```
 
