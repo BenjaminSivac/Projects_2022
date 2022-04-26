@@ -409,17 +409,6 @@ GROUP BY number_of_pizzas;
 ```
 ***
 
-**1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)**
-```{sql, connection = con}
-SELECT
-	DATEPART(WEEK,registration_date) AS week,
-	COUNT(runner_id) AS nbr_runners
-FROM
-	runners
-GROUP BY DATEPART(WEEK,registration_date);
-```
-***
-
 **4. What was the average distance travelled for each customer?**
 ```{sql, connection = con}
 SELECT
