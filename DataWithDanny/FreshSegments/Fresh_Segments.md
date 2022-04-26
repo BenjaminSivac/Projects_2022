@@ -108,7 +108,7 @@ Most questions can be answered using a single query however some questions are m
 
 #### A. Data Exploration and Cleansing
 
-**1. Update the interest\_metrics table by modifying the month\_year
+**A.1 Update the interest\_metrics table by modifying the month\_year
 column to be a date data type with the start of the month**
 
 MSQL can’t convert MM-YYYY format to date, so we’ll instead create
@@ -135,7 +135,7 @@ exec sp_RENAME 'interest_metrics.month','month_year', 'COLUMN' -- rename our new
 
 ------------------------------------------------------------------------
 
-**2. What is count of records in the fresh\_segments.interest\_metrics
+**A.2 What is count of records in the fresh\_segments.interest\_metrics
 for each month\_year value sorted in chronological order (earliest to
 latest) with the null values appearing first?**
 
@@ -170,7 +170,7 @@ Displaying records 1 - 10
 
 ------------------------------------------------------------------------
 
-**3. What do you think we should do with these null values in the
+**A.3 What do you think we should do with these null values in the
 fresh\_segments.interest\_metrics**
 
 ``` sql
@@ -206,7 +206,7 @@ stamp, so we either drop or filter em out.
 
 ------------------------------------------------------------------------
 
-**4. How many interest\_id values exist in the
+**A.4 How many interest\_id values exist in the
 fresh\_segments.interest\_metrics table but not in the
 fresh\_segments.interest\_map table? What about the other way around?**
 
@@ -240,7 +240,7 @@ are not in interest\_map.
 
 ------------------------------------------------------------------------
 
-**5. Summarise the id values in the fresh\_segments.interest\_map by its
+**A.5 Summarise the id values in the fresh\_segments.interest\_map by its
 total record count in this table**
 
 ``` sql
@@ -264,7 +264,7 @@ An unusually simple question…
 
 ------------------------------------------------------------------------
 
-**6. What sort of table join should we perform for our analysis and why?
+**A.6 What sort of table join should we perform for our analysis and why?
 Check your logic by checking the rows where interest\_id = 21246 in your
 joined output and include all columns from
 fresh\_segments.interest\_metrics and all columns from
@@ -308,7 +308,7 @@ column, like id, from a \* query. So I had to list each column name.
 
 ------------------------------------------------------------------------
 
-**7. Are there any records in your joined table where the month\_year
+**A.7 Are there any records in your joined table where the month\_year
 value is before the created\_at value from the
 fresh\_segments.interest\_map table? Do you think these values are valid
 and why?**
@@ -363,7 +363,7 @@ time stamp columns, and is therefore valid and accurate.
 
 #### B. Interest Analysis
 
-**1. Which interests have been present in all month\_year dates in our
+**B.1 Which interests have been present in all month\_year dates in our
 dataset?**
 
 ``` sql
@@ -398,7 +398,7 @@ GROUP BY total_months;
 
 ------------------------------------------------------------------------
 
-**2. Using this same total\_months measure - calculate the cumulative
+**B.2 Using this same total\_months measure - calculate the cumulative
 percentage of all records starting at 14 months - which total\_months
 value passes the 90% cumulative percentage value?**
 
@@ -454,7 +454,7 @@ relatively low clicks and interactions.
 
 ------------------------------------------------------------------------
 
-**3. If we were to remove all interest\_id values which are lower than
+**B.3 If we were to remove all interest\_id values which are lower than
 the total\_months value we found in the previous question - how many
 total data points would we be removing?**
 
@@ -498,7 +498,7 @@ be removed.
 
 ------------------------------------------------------------------------
 
-**4. Does this decision make sense to remove these data points from a
+**B.4 Does this decision make sense to remove these data points from a
 business perspective? Use an example where there are all 14 months
 present to a removed interest example for your arguments - think about
 what it means to have less months present from a segment perspective.**
@@ -511,7 +511,7 @@ percentage.
 
 ------------------------------------------------------------------------
 
-**5. After removing these interests - how many unique interests are
+**B.5 After removing these interests - how many unique interests are
 there for each month?** We first count distinct months per interest\_id,
 filter by number of months, and then summarise each unique interest by
 month.
@@ -571,7 +571,7 @@ Displaying records 1 - 10
 
 #### C. Segment Analysis
 
-**1. Using our filtered dataset by removing the interests with less than
+**C.1 Using our filtered dataset by removing the interests with less than
 6 months worth of data, which are the top 10 and bottom 10 interests
 which have the largest composition values in any month\_year? Only use
 the maximum composition value for each interest but you must keep the
