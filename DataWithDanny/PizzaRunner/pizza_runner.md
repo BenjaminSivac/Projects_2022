@@ -328,7 +328,7 @@ Displaying records 1 - 10
 
 #### A. Pizza Metrics
 
-**1. How many pizzas were ordered?**
+**A.1 How many pizzas were ordered?**
 
 ``` sql
 SELECT
@@ -349,7 +349,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**2. How many unique customer orders were made?**
+**A.2 How many unique customer orders were made?**
 
 ``` sql
 SELECT
@@ -376,7 +376,7 @@ GROUP BY customer_id;
 
 ------------------------------------------------------------------------
 
-**3. How many successful orders were delivered by each runner?**
+**A.3 How many successful orders were delivered by each runner?**
 
 ``` sql
 SELECT
@@ -402,7 +402,7 @@ GROUP BY runner_id;
 
 ------------------------------------------------------------------------
 
-**4. How many of each type of pizza was delivered?**
+**A.4 How many of each type of pizza was delivered?**
 
 ``` sql
 SELECT
@@ -430,7 +430,7 @@ GROUP BY pizza_id;
 
 ------------------------------------------------------------------------
 
-**5. How many Vegetarian and Meatlovers were ordered by each customer?**
+**A.5 How many Vegetarian and Meatlovers were ordered by each customer?**
 
 ``` sql
 SELECT
@@ -465,7 +465,7 @@ ORDER BY customer_id
 
 ------------------------------------------------------------------------
 
-**6. What was the maximum number of pizzas delivered in a single
+**A.6 What was the maximum number of pizzas delivered in a single
 order?**
 
 ``` sql
@@ -497,7 +497,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**7. For each customer, how many delivered pizzas had at least 1 change
+**A.7 For each customer, how many delivered pizzas had at least 1 change
 and how many had no changes?**
 
 ``` sql
@@ -530,7 +530,7 @@ GROUP BY customer_id;
 
 ------------------------------------------------------------------------
 
-**8. How many pizzas were delivered that had both exclusions and
+**A.8 How many pizzas were delivered that had both exclusions and
 extras?**
 
 ``` sql
@@ -556,7 +556,7 @@ WHERE pickup_time IS NOT NULL;
 
 ------------------------------------------------------------------------
 
-**9. What was the total volume of pizzas ordered for each hour of the
+**A.9 What was the total volume of pizzas ordered for each hour of the
 day?**
 
 ``` sql
@@ -585,7 +585,7 @@ GROUP BY DATEPART(HOUR,order_time);
 
 ------------------------------------------------------------------------
 
-**10. What was the volume of orders for each day of the week?**
+**A.10 What was the volume of orders for each day of the week?**
 
 ``` sql
 SELECT
@@ -613,7 +613,7 @@ GROUP BY DATENAME(WEEKDAY,order_time);
 
 #### B. Runner and Customer Experience
 
-**1. How many runners signed up for each 1 week period? (i.e. week
+**B.1 How many runners signed up for each 1 week period? (i.e. week
 starts 2021-01-01)**
 
 ``` sql
@@ -639,7 +639,7 @@ GROUP BY DATEPART(WEEK,registration_date);
 
 ------------------------------------------------------------------------
 
-**2. What was the average time in minutes it took for each runner to
+**B.2 What was the average time in minutes it took for each runner to
 arrive at the Pizza Runner HQ to pickup the order?**
 
 ``` sql
@@ -661,7 +661,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**3. Is there any relationship between the number of pizzas and how long
+**B.3 Is there any relationship between the number of pizzas and how long
 the order takes to prepare?**
 
 ``` sql
@@ -699,7 +699,7 @@ GROUP BY number_of_pizzas;
 
 ------------------------------------------------------------------------
 
-**4. What was the average distance travelled for each customer?**
+**B.4 What was the average distance travelled for each customer?**
 
 ``` sql
 SELECT
@@ -730,7 +730,7 @@ GROUP BY customer_id;
 
 ------------------------------------------------------------------------
 
-**5. What was the difference between the longest and shortest delivery
+**B.5 What was the difference between the longest and shortest delivery
 times for all orders?**
 
 ``` sql
@@ -756,7 +756,7 @@ WHERE pickup_time IS NOT NULL;
 
 ------------------------------------------------------------------------
 
-**6. What was the average speed for each runner for each delivery and do
+**B.6 What was the average speed for each runner for each delivery and do
 you notice any trend for these values?**
 
 ``` sql
@@ -796,7 +796,7 @@ ORDER BY runner_id, co.order_id;
 
 ------------------------------------------------------------------------
 
-**7. What is the successful delivery percentage for each runner?**
+**B.7 What is the successful delivery percentage for each runner?**
 
 ``` sql
 SELECT
@@ -823,7 +823,7 @@ GROUP BY runner_id;
 
 #### C. Ingredient Optimisation
 
-**1. What are the standard ingredients for each pizza?**
+**C.1 What are the standard ingredients for each pizza?**
 
 ``` sql
 WITH cte_split AS (
@@ -860,7 +860,7 @@ GROUP BY pn.pizza_name;
 
 ------------------------------------------------------------------------
 
-**2. What was the most commonly added extra?**
+**C.2 What was the most commonly added extra?**
 
 ``` sql
 WITH cte_split AS(
@@ -891,7 +891,7 @@ just add pictures of the result from SQL server.
 
 ------------------------------------------------------------------------
 
-**3. What was the most common exclusion?**
+**C.3 What was the most common exclusion?**
 
 ``` sql
 WITH cte_split AS(
@@ -917,7 +917,7 @@ ORDER BY COUNT DESC;
 </p>
 ------------------------------------------------------------------------
 
-**4. Generate an order item for each record in the customers\_orders
+**C.4 Generate an order item for each record in the customers\_orders
 table in the format of one of the following:**
 
 -   **Meat Lovers**
@@ -966,7 +966,7 @@ specific instructions. I did however add ‘Vegetarian’ as one label.
 
 #### D. Pricing and Ratings
 
-**1. If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there
+**D.1 If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there
 were no charges for changes - how much money has Pizza Runner made so
 far if there are no delivery fees?**
 
@@ -993,7 +993,7 @@ WHERE pickup_time IS NOT NULL;
 
 ------------------------------------------------------------------------
 
-**2. What if there was an additional $1 charge for any pizza extras?**
+**D.2 What if there was an additional $1 charge for any pizza extras?**
 
 ``` sql
 SELECT
