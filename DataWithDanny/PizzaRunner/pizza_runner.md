@@ -3,6 +3,11 @@ Data With Danny: Pizza Runner
 Benjamin Sivac
 2022-04-26
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/PizzaRunner/figure-gfm/dwd2.png"
+       height="850px" width="850px"/>
+</p>
+
 ### Introduction
 
 Did you know that over 115 million kilograms of pizza is consumed daily
@@ -37,6 +42,10 @@ include this reference within your SQL scripts as you start exploring
 the data and answering the case study questions.
 
 #### Entity Relationship Diagram
+
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/PizzaRunner/figure-gfm/erd.PNG"/>
+</p>
 
 #### Table 1: runners
 
@@ -690,32 +699,6 @@ GROUP BY number_of_pizzas;
 
 ------------------------------------------------------------------------
 
-**1. How many runners signed up for each 1 week period? (i.e. week
-starts 2021-01-01)**
-
-``` sql
-SELECT
-    DATEPART(WEEK,registration_date) AS week,
-    COUNT(runner_id) AS nbr_runners
-FROM
-    runners
-GROUP BY DATEPART(WEEK,registration_date);
-```
-
-<div class="knitsql-table">
-
-| week | nbr\_runners |
-|:-----|-------------:|
-| 1    |            1 |
-| 2    |            2 |
-| 3    |            1 |
-
-3 records
-
-</div>
-
-------------------------------------------------------------------------
-
 **4. What was the average distance travelled for each customer?**
 
 ``` sql
@@ -898,6 +881,9 @@ JOIN
     ON  t.topping = pt.topping_id
 ORDER BY count DESC;
 ```
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/PizzaRunner/figure-gfm/c.2.PNG"/>
+</p>
 
 This and the following code ran properly on SQL server but I kept
 getting “Invalid Descriptor Index” trying to run it in rmarkdown… I’ll
@@ -926,7 +912,9 @@ JOIN
     ON  t.topping = pt.topping_id
 ORDER BY COUNT DESC;
 ```
-
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/PizzaRunner/figure-gfm/c.3.PNG"/>
+</p>
 ------------------------------------------------------------------------
 
 **4. Generate an order item for each record in the customers\_orders
