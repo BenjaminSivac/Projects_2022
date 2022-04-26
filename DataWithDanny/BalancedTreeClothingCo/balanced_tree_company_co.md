@@ -86,7 +86,7 @@ Balanced Tree team can run each month.
 
 #### A. High Level Sales Analysis
 
-**1. What was the total quantity sold for all products?**
+**A.1 What was the total quantity sold for all products?**
 
 ``` sql
 SELECT 
@@ -107,7 +107,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**2. What is the total generated revenue for all products before
+**A.2 What is the total generated revenue for all products before
 discounts?**
 
 ``` sql
@@ -129,7 +129,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**3. What was the total discount amount for all products?**
+**A.3 What was the total discount amount for all products?**
 
 ``` sql
 SELECT
@@ -152,7 +152,7 @@ FROM
 
 #### B. Transaction Analysis
 
-**1. How many unique transactions were there?**
+**B.1 How many unique transactions were there?**
 
 ``` sql
 SELECT
@@ -173,7 +173,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**2. What is the average unique products purchased in each
+**B.2 What is the average unique products purchased in each
 transaction?**
 
 ``` sql
@@ -203,7 +203,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**3. What are the 25th, 50th and 75th percentile values for the revenue
+**B.3 What are the 25th, 50th and 75th percentile values for the revenue
 per transaction?**
 
 ``` sql
@@ -242,7 +242,7 @@ Displaying records 1 - 10
 
 ------------------------------------------------------------------------
 
-**4. What is the average discount value per transaction?**
+**B.4 What is the average discount value per transaction?**
 
 ``` sql
 SELECT
@@ -274,7 +274,7 @@ Displaying records 1 - 10
 
 ------------------------------------------------------------------------
 
-**5. What is the percentage split of all transactions for members vs
+**B.5 What is the percentage split of all transactions for members vs
 non-members?**
 
 ``` sql
@@ -299,7 +299,7 @@ GROUP BY member
 
 ------------------------------------------------------------------------
 
-**6. What is the average revenue for member transactions and non-member
+**B.6 What is the average revenue for member transactions and non-member
 transactions?**
 
 ``` sql
@@ -326,7 +326,7 @@ GROUP BY member;
 
 #### C. Product Analysis
 
-**1. What are the top 3 products by total revenue before discount?**
+**C.1 What are the top 3 products by total revenue before discount?**
 
 ``` sql
 WITH cte_total_revenue AS(
@@ -360,7 +360,7 @@ ORDER BY total_revenue DESC;
 
 ------------------------------------------------------------------------
 
-**2. What is the total quantity, revenue and discount for each
+**C.2 What is the total quantity, revenue and discount for each
 segment?**
 
 ``` sql
@@ -392,7 +392,7 @@ GROUP BY segment_name;
 
 ------------------------------------------------------------------------
 
-**3. What is the top selling product for each segment?**
+**C.3 What is the top selling product for each segment?**
 
 ``` sql
 WITH cte_total_quantity AS(
@@ -443,7 +443,7 @@ WHERE rn=1;
 
 ------------------------------------------------------------------------
 
-**4. What is the total quantity, revenue and discount for each
+**C.4 What is the total quantity, revenue and discount for each
 category?**
 
 ``` sql
@@ -473,7 +473,7 @@ GROUP BY category_name;
 
 ------------------------------------------------------------------------
 
-**5. What is the top selling product for each category?**
+**C.5 What is the top selling product for each category?**
 
 ``` sql
 WITH cte_total_quantity AS(
@@ -522,7 +522,7 @@ WHERE rn=1;
 
 ------------------------------------------------------------------------
 
-**6. What is the percentage split of revenue by product for each
+**C.6 What is the percentage split of revenue by product for each
 segment?**
 
 ``` sql
@@ -579,7 +579,7 @@ confirm percentages.
 
 ------------------------------------------------------------------------
 
-**7. What is the percentage split of revenue by segment for each
+**C.7 What is the percentage split of revenue by segment for each
 category?**
 
 ``` sql
@@ -627,7 +627,7 @@ ORDER BY category_name;
 
 ------------------------------------------------------------------------
 
-**8. What is the percentage split of total revenue by category?**
+**C.8 What is the percentage split of total revenue by category?**
 
 ``` sql
 SELECT
@@ -655,7 +655,7 @@ ON
 
 ------------------------------------------------------------------------
 
-**9. What is the total transaction “penetration” for each product?
+**C.9 What is the total transaction “penetration” for each product?
 (hint: penetration = number of transactions where at least 1 quantity of
 a product was purchased divided by total number of transactions)**
 
