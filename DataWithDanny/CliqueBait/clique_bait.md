@@ -142,7 +142,7 @@ Displaying records 1 - 10
 Using the available datasets - answer the following questions using a
 single query for each one:
 
-**1.How many users are there?**
+**A.1 How many users are there?**
 
 ``` sql
 SELECT 
@@ -163,7 +163,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**2.How many cookies does each user have on average?**
+**A.2 How many cookies does each user have on average?**
 
 ``` sql
 SELECT 
@@ -189,7 +189,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**3. What is the unique number of visits by all users per month?**
+**A.3 What is the unique number of visits by all users per month?**
 
 ``` sql
 SELECT
@@ -217,7 +217,7 @@ ORDER BY MONTH(event_time);
 
 ------------------------------------------------------------------------
 
-**4. What is the number of events for each event type?**
+**A.4 What is the number of events for each event type?**
 
 ``` sql
 SELECT
@@ -248,7 +248,7 @@ ORDER BY nbr_events DESC
 
 ------------------------------------------------------------------------
 
-**5. What is the percentage of visits which have a purchase event?**
+**A.5 What is the percentage of visits which have a purchase event?**
 
 ``` sql
 SELECT
@@ -271,7 +271,7 @@ WHERE event_type=3
 
 ------------------------------------------------------------------------
 
-**6. What is the percentage of visits which view the checkout page but
+**A.6 What is the percentage of visits which view the checkout page but
 do not have a purchase event?**
 
 ``` sql
@@ -301,7 +301,7 @@ FROM cte_checkout_purchase;
 
 ------------------------------------------------------------------------
 
-**7. What are the top 3 pages by number of views?**
+**A.7 What are the top 3 pages by number of views?**
 
 ``` sql
 SELECT TOP 3 
@@ -330,7 +330,7 @@ ORDER BY nbr_views DESC;
 
 ------------------------------------------------------------------------
 
-**8. What is the number of views and cart adds for each product
+**A.8 What is the number of views and cart adds for each product
 category?**
 
 ``` sql
@@ -362,7 +362,7 @@ GROUP BY product_category;
 
 ------------------------------------------------------------------------
 
-**9. What are the top 3 products by purchases?**
+**A.9 What are the top 3 products by purchases?**
 
 ``` sql
 SELECT TOP 3
