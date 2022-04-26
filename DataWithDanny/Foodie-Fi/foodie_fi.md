@@ -174,7 +174,7 @@ his subscription on April the 29th, having access to his account until
 
 #### B. Data Analysis Questions
 
-**1. How many customers has Foodie-Fi ever had?**
+**B.1 How many customers has Foodie-Fi ever had?**
 
 ``` sql
 SELECT
@@ -195,7 +195,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**2. What is the monthly distribution of trial plan start\_date values
+**B.2 What is the monthly distribution of trial plan start\_date values
 for our dataset - use the start of the month as the group by value**
 
 ``` sql
@@ -232,7 +232,7 @@ Displaying records 1 - 12
 
 ------------------------------------------------------------------------
 
-**3. What plan start\_date values occur after the year 2020 for our
+**B.3 What plan start\_date values occur after the year 2020 for our
 dataset? Show the breakdown by count of events for each plan\_name**
 
 ``` sql
@@ -266,7 +266,7 @@ Trial have 0 occurences and does not show in the table.
 
 ------------------------------------------------------------------------
 
-**4. What is the customer count and percentage of customers who have
+**B.4 What is the customer count and percentage of customers who have
 churned rounded to 1 decimal place?**
 
 ``` sql
@@ -294,7 +294,7 @@ WHERE plan_id = 4
 
 ------------------------------------------------------------------------
 
-**5. How many customers have churned straight after their initial free
+**B.5 How many customers have churned straight after their initial free
 trial - what percentage is this rounded to the nearest whole number?**
 
 ``` sql
@@ -331,7 +331,7 @@ AND next_plan = 4
 
 ------------------------------------------------------------------------
 
-**6. What is the number and percentage of customer plans after their
+**B.6 What is the number and percentage of customer plans after their
 initial free trial?**
 
 ``` sql
@@ -372,7 +372,7 @@ GROUP BY next_plan;
 
 ------------------------------------------------------------------------
 
-**7. What is the customer count and percentage breakdown of all 5
+**B.7 What is the customer count and percentage breakdown of all 5
 plan\_name values at 2020-12-31?**
 
 ``` sql
@@ -415,7 +415,7 @@ GROUP BY plan_id;
 
 ------------------------------------------------------------------------
 
-**8. How many customers have upgraded to an annual plan in 2020?**
+**B.8 How many customers have upgraded to an annual plan in 2020?**
 
 ``` sql
 SELECT
@@ -437,7 +437,7 @@ AND plan_id = 3
 
 ------------------------------------------------------------------------
 
-**9. How many days on average does it take for a customer to an annual
+**B.9 How many days on average does it take for a customer to an annual
 plan from the day they join Foodie-Fi?**
 
 ``` sql
@@ -477,7 +477,7 @@ JOIN cte_annual_day a
 
 ------------------------------------------------------------------------
 
-**10. Can you further breakdown this average value into 30 day periods
+**B.10 Can you further breakdown this average value into 30 day periods
 (i.e. 0-30 days, 31-60 days etc)**
 
 ``` sql
@@ -617,7 +617,7 @@ Displaying records 1 - 10
 
 ------------------------------------------------------------------------
 
-**11. How many customers downgraded from a pro monthly to a basic
+**B.11 How many customers downgraded from a pro monthly to a basic
 monthly plan in 2020?**
 
 ``` sql
