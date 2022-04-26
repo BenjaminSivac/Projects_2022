@@ -212,7 +212,7 @@ investigate the data, you may want to do something with some of those
 null values and data types in the customer\_orders and runner\_orders
 tables!
 
-Clean customer\_orders table:
+**Clean customer\_orders table:**
 
 ``` sql
 UPDATE dbo.customer_orders 
@@ -250,7 +250,7 @@ Displaying records 1 - 10
 
 </div>
 
-Clean runner\_orders table:
+**Clean runner\_orders table:**
 
 ``` sql
 -- Fix duration column.
