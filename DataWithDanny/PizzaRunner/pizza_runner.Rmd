@@ -1,0 +1,628 @@
+---
+title: "Data With Danny: Pizza Runner"
+author: "Benjamin Sivac"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::github_document
+---
+```{r, include=FALSE}
+hook_output <- knitr::knit_hooks$get("output")
+```
+
+```{r Loading packages, message=FALSE, warning=FALSE, include=FALSE}
+library(DBI)
+library(odbc)
+library(tidyverse)
+library(datamodelr) # ER diagram
+```
+
+```{r, include=FALSE}
+con <- DBI::dbConnect(odbc::odbc(), 
+                      Driver = "SQL Server", 
+                      Server = "localhost\\SQLEXPRESS", 
+                      Database = "dwd#2", 
+                      Trusted_Connection = "True")
+```
+
+### Introduction
+Did you know that over 115 million kilograms of pizza is consumed daily worldwide??? (Well according to Wikipedia anyway…)
+
+Danny was scrolling through his Instagram feed when something really caught his eye - “80s Retro Styling and Pizza Is The Future!”
+
+Danny was sold on the idea, but he knew that pizza alone was not going to help him get seed funding to expand his new Pizza Empire - so he had one more genius idea to combine with it - he was going to Uberize it - and so Pizza Runner was launched!
+
+Danny started by recruiting “runners” to deliver fresh pizza from Pizza Runner Headquarters (otherwise known as Danny’s house) and also maxed out his credit card to pay freelance developers to build a mobile app to accept orders from customers.
+
+
+### Available Data
+Because Danny had a few years of experience as a data scientist - he was very aware that data collection was going to be critical for his business’ growth.
+
+He has prepared for us an entity relationship diagram of his database design but requires further assistance to clean his data and apply some basic calculations so he can better direct his runners and optimise Pizza Runner’s operations.
+
+All datasets exist within the pizza_runner database schema - be sure to include this reference within your SQL scripts as you start exploring the data and answering the case study questions.
+
+
+#### Entity Relationship Diagram
+
+
+#### Table 1: runners
+The runners table shows the registration_date for each new runner
+
+```{sql echo=FALSE, connection=con}
+SELECT
+  *
+FROM 
+  runners
+```
+
+
+#### Table 2: customer_orders
+Customer pizza orders are captured in the customer_orders table with 1 row for each individual pizza that is part of the order.
+
+
+```{sql echo=FALSE, connection=con}
+SELECT
+  *
+FROM 
+  customer_orders
+```
+
+The pizza_id relates to the type of pizza which was ordered whilst the exclusions are the ingredient_id values which should be removed from the pizza and the extras are the ingredient_id values which need to be added to the pizza.
+
+Note that customers can order multiple pizzas in a single order with varying exclusions and extras values even if the pizza is the same type!
+
+The exclusions and extras columns will need to be cleaned up before using them in your queries.
+
+
+
+#### Table 3: runner_orders
+After each orders are received through the system - they are assigned to a runner - however not all orders are fully completed and can be cancelled by the restaurant or the customer.
+
+
+```{sql echo=FALSE, connection=con}
+SELECT
+  *
+FROM 
+  runner_orders
+```
+
+The pickup_time is the timestamp at which the runner arrives at the Pizza Runner headquarters to pick up the freshly cooked pizzas. The distance and duration fields are related to how far and long the runner had to travel to deliver the order to the respective customer.
+
+There are some known data issues with this table so be careful when using this in your queries - make sure to check the data types for each column in the schema SQL!
+
+
+#### Table 4: pizza_names
+At the moment - Pizza Runner only has 2 pizzas available the Meat Lovers or Vegetarian!
+
+```{sql echo=FALSE, connection=con}
+SELECT
+  *
+FROM 
+  pizza_names
+```
+
+#### Table 5: pizza_recipes
+Each pizza_id has a standard set of toppings which are used as part of the pizza recipe.
+
+
+```{sql echo=FALSE, connection=con}
+SELECT
+  *
+FROM 
+  pizza_recipes
+```
+
+#### Table 6: pizza_toppings
+This table contains all of the topping_name values with their corresponding topping_id value
+
+```{sql echo=FALSE, connection=con}
+SELECT
+  *
+FROM 
+  pizza_toppings
+```
+
+
+### Case Study Questions
+This case study has LOTS of questions - they are broken up by area of focus including:
+
+* Pizza Metrics
+* Runner and Customer Experience
+* Ingredient Optimisation
+* Pricing and Ratings
+
+Each of the following case study questions can be answered using a single SQL statement.
+
+Again, there are many questions in this case study - please feel free to pick and choose which ones you’d like to try!
+
+
+#### Clean tables
+Before you start writing your SQL queries however - you might want to investigate the data, you may want to do something with some of those null values and data types in the customer_orders and runner_orders tables!
+
+Clean customer_orders table:
+```{sql, connection=con}
+UPDATE dbo.customer_orders 
+SET exclusions = NULLIF(exclusions, 'null'),
+	extras = NULLIF(extras, 'null');
+
+UPDATE dbo.customer_orders 
+SET 
+	exclusions = NULLIF(exclusions, ''),
+	extras = NULLIF(extras, '');
+
+-- See end result
+SELECT
+  *
+FROM
+  customer_orders
+```
+
+```{sql echo=FALSE, connection=con}
+-- See end result:
+SELECT
+  *
+FROM
+  customer_orders
+```
+
+Clean runner_orders table:
+```{sql, connection=con}
+-- Fix duration column.
+UPDATE dbo.runner_orders 
+SET 
+	duration = TRIM(REPLACE(duration, 'minutes', ''))
+UPDATE dbo.runner_orders 
+SET 
+	duration = TRIM(REPLACE(duration, 'mins', ''));
+UPDATE dbo.runner_orders 
+SET 
+	duration = TRIM(REPLACE(duration, 'null', ''));
+UPDATE dbo.runner_orders 
+SET 
+	duration = TRIM(REPLACE(duration, 'minute', ''));
+
+ALTER TABLE dbo.runner_orders 
+ALTER COLUMN duration FLOAT;
+
+-- Fix distance column
+UPDATE dbo.runner_orders 
+SET 
+	distance = TRIM(REPLACE(distance, 'km', ''))
+UPDATE dbo.runner_orders 
+SET 
+	distance = TRIM(REPLACE(distance, 'null', ''));
+ALTER TABLE dbo.runner_orders 
+ALTER COLUMN distance FLOAT;
+
+-- Fix cancellation column
+UPDATE dbo.runner_orders 
+SET 
+	cancellation = ISNULL(cancellation, '');
+UPDATE dbo.runner_orders 
+SET 
+	cancellation = TRIM(REPLACE(cancellation, 'null', ''));
+
+-- Fix pickup_time column
+UPDATE dbo.runner_orders 
+SET 
+	pickup_time = NULLIF(pickup_time, 'null');
+ALTER TABLE dbo.runner_orders 
+ALTER COLUMN pickup_time DATETIME2;
+
+ALTER TABLE dbo.pizza_names
+ALTER COLUMN pizza_name NVARCHAR(100);
+
+-- See end result:
+SELECT
+  *
+FROM
+  runner_orders
+```
+
+```{sql echo=FALSE, connection=con}
+-- See end result:
+SELECT
+  *
+FROM
+  runner_orders
+```
+
+***
+
+#### A. Pizza Metrics
+
+**1. How many pizzas were ordered?**
+```{sql, connection = con}
+SELECT
+	COUNT(*) AS ordered_pizzas
+FROM
+	customer_orders;
+```
+***
+
+**2. How many unique customer orders were made?**
+```{sql, connection = con}
+SELECT
+	customer_id,
+	COUNT(customer_id) AS nbr_of_orders
+FROM
+	customer_orders
+GROUP BY customer_id;
+```
+***
+
+**3. How many successful orders were delivered by each runner?**
+```{sql, connection = con}
+SELECT
+	runner_id,
+	COUNT(order_id) AS succesful_orders
+FROM
+	runner_orders
+WHERE pickup_time IS NOT NULL
+GROUP BY runner_id;
+```
+***
+
+**4. How many of each type of pizza was delivered?**
+```{sql, connection = con}
+SELECT
+	pizza_id,
+	COUNT(pizza_id) AS delievered
+FROM
+	runner_orders ro
+JOIN
+	customer_orders co
+	ON ro.order_id = co.order_id
+WHERE pickup_time IS NOT NULL
+GROUP BY pizza_id;
+```
+***
+
+**5. How many Vegetarian and Meatlovers were ordered by each customer?**
+```{sql, connection = con}
+SELECT
+	customer_id,
+	pizza_name,
+	COUNT(order_id) AS orders
+FROM
+	customer_orders co
+JOIN
+	pizza_names pn
+	ON co.pizza_id=pn.pizza_id
+GROUP BY co.customer_id, pizza_name
+ORDER BY customer_id
+```
+***
+
+**6. What was the maximum number of pizzas delivered in a single order?**
+```{sql, connection = con}
+WITH cte_pizza_count AS (
+	SELECT 
+			COUNT(co.order_id) as orders 
+		FROM customer_orders co 
+		JOIN runner_orders ro 
+			ON co.order_id=ro.order_id 
+		WHERE pickup_time IS NOT NULL 
+		GROUP BY co.order_id
+)
+
+SELECT
+	MAX(orders) AS most_pizzas_ordered
+FROM
+	cte_pizza_count;
+```
+***
+
+**7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?**
+```{sql, connection = con}
+SELECT
+	customer_id,
+	SUM(CASE WHEN exclusions IS NOT NULL OR extras IS NOT NULL THEN 1 ELSE 0 END) AS orders_with_changes,
+	SUM(CASE WHEN exclusions IS NULL AND extras IS NULL THEN 1 ELSE 0 END) AS orders_without_changes
+FROM 
+	customer_orders co 
+JOIN 
+	runner_orders ro 
+	ON co.order_id=ro.order_id 
+WHERE pickup_time IS NOT NULL 
+GROUP BY customer_id;
+```
+***
+
+**8. How many pizzas were delivered that had both exclusions and extras?**
+```{sql, connection = con}
+SELECT
+	SUM(CASE WHEN exclusions IS NOT NULL AND extras IS NOT NULL THEN 1 ELSE 0 END) AS excluded_and_added
+FROM 
+	customer_orders co 
+JOIN 
+	runner_orders ro 
+	ON co.order_id=ro.order_id 
+WHERE pickup_time IS NOT NULL;
+```
+***
+
+**9. What was the total volume of pizzas ordered for each hour of the day?**
+```{sql, connection = con}
+SELECT
+	DATEPART(HOUR,order_time) AS hour_of_day,
+	COUNT(order_id) AS nbr_pizza_ordered
+FROM
+	customer_orders
+GROUP BY DATEPART(HOUR,order_time);
+```
+***
+
+**10. What was the volume of orders for each day of the week?**
+```{sql, connection = con}
+SELECT
+	DATENAME(WEEKDAY,order_time) AS day_of_week,
+	COUNT(order_id) AS nbr_pizza_ordered
+FROM
+	customer_orders
+GROUP BY DATENAME(WEEKDAY,order_time);
+```
+***
+
+#### B. Runner and Customer Experience
+
+**1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)**
+```{sql, connection = con}
+SELECT
+	DATEPART(WEEK,registration_date) AS week,
+	COUNT(runner_id) AS nbr_runners
+FROM
+	runners
+GROUP BY DATEPART(WEEK,registration_date);
+```
+***
+
+**2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?**
+```{sql, connection = con}
+SELECT
+	AVG(duration) AS avg_pickup_time_mins
+FROM
+	runner_orders;
+```
+***
+
+**3. Is there any relationship between the number of pizzas and how long the order takes to prepare?**
+```{sql, connection = con}
+WITH cte_prep_time AS(
+	SELECT
+		COUNT(co.order_id) AS number_of_pizzas,
+		AVG(DATEDIFF(MINUTE, order_time, pickup_time)) AS prep_time
+	FROM
+		runner_orders ro
+	JOIN
+		customer_orders co
+		ON	ro.order_id = co.order_id
+	WHERE pickup_time IS NOT NULL
+	GROUP BY co.order_id
+)
+SELECT
+	number_of_pizzas,
+	AVG(prep_time)
+FROM
+	cte_prep_time
+GROUP BY number_of_pizzas;
+```
+***
+
+**1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)**
+```{sql, connection = con}
+SELECT
+	DATEPART(WEEK,registration_date) AS week,
+	COUNT(runner_id) AS nbr_runners
+FROM
+	runners
+GROUP BY DATEPART(WEEK,registration_date);
+```
+***
+
+**4. What was the average distance travelled for each customer?**
+```{sql, connection = con}
+SELECT
+	customer_id,
+	ROUND(AVG(distance),2) AS avg_distance
+FROM
+	customer_orders co
+JOIN
+	runner_orders ro
+	ON	co.order_id=ro.order_id
+WHERE pickup_time IS NOT NULL
+GROUP BY customer_id;
+```
+***
+
+**5. What was the difference between the longest and shortest delivery times for all orders?**
+```{sql, connection = con}
+SELECT
+	MAX(DATEDIFF(MINUTE, order_time, pickup_time)) AS max_delivery_difference
+FROM
+	runner_orders ro
+JOIN
+	customer_orders co
+	ON	ro.order_id = co.order_id
+WHERE pickup_time IS NOT NULL;
+```
+***
+
+**6. What was the average speed for each runner for each delivery and do you notice any trend for these values?**
+```{sql, connection = con}
+SELECT
+	runner_id,
+	co.order_id,
+	COUNT(co.order_id) AS nbr_pizzas,
+	distance,
+	duration,
+	ROUND(AVG(distance/duration*60),2) AS km_h
+FROM
+	runner_orders ro
+JOIN
+	customer_orders co
+	ON	ro.order_id = co.order_id
+WHERE duration != 0
+GROUP BY runner_id, co.order_id, distance, duration
+ORDER BY runner_id, co.order_id;
+```
+***
+
+**7. What is the successful delivery percentage for each runner?**
+```{sql, connection = con}
+SELECT
+	runner_id,
+	FORMAT(CAST(SUM(CASE WHEN pickup_time IS NOT NULL THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*), 'p') AS delivery_pct
+FROM
+	runner_orders
+GROUP BY runner_id;
+```
+***
+
+#### C. Ingredient Optimisation
+
+**1. What are the standard ingredients for each pizza?**
+```{sql, connection = con}
+WITH cte_split AS (
+	SELECT
+		*
+	FROM
+		pizza_recipes CROSS APPLY STRING_SPLIT(toppings,',')
+)
+
+SELECT
+	pn.pizza_name,
+	STRING_AGG(CAST(topping_name AS VARCHAR), ', ') AS ingredients
+FROM
+	cte_split t
+JOIN
+	dbo.pizza_toppings pt
+	ON	t.value = pt.topping_id
+JOIN
+	pizza_names pn
+	ON	t.pizza_id = pn.pizza_id
+GROUP BY pn.pizza_name;
+```
+***
+
+**2. What was the most commonly added extra?**
+```{sql, connection = con, eval=F, echo=T}
+WITH cte_split AS(
+	SELECT
+		value AS topping,
+		COUNT(*) AS count
+	FROM
+		customer_orders co CROSS APPLY STRING_SPLIT(extras,',')
+	GROUP BY value
+)
+SELECT TOP 1
+	topping_name AS most_common_extra,
+	count
+FROM
+	cte_split t
+JOIN
+	pizza_toppings pt
+	ON	t.topping = pt.topping_id
+ORDER BY count DESC;
+```
+This and the following code ran properly on SQL server but I kept getting "Invalid Descriptor Index" trying to run it in rmarkdown... I'll just add pictures of the result from SQL server. 
+
+***
+
+**3. What was the most common exclusion?**
+```{sql, connection = con, eval=F, echo=T}
+WITH cte_split AS(
+	SELECT
+		value AS topping,
+		COUNT(*) AS count
+	FROM
+		customer_orders co CROSS APPLY STRING_SPLIT(exclusions,',')
+	GROUP BY value
+)
+SELECT TOP 1
+	topping_name AS most_excluded_topping,
+	count
+FROM
+	cte_split t
+JOIN
+	pizza_toppings pt
+	ON	t.topping = pt.topping_id
+ORDER BY COUNT DESC;
+```
+***
+
+**4. Generate an order item for each record in the customers_orders table in the format of one of the following:**
+
+* **Meat Lovers**
+* **Meat Lovers - Exclude Beef**
+* **Meat Lovers - Extra Bacon**
+* **Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers**
+```{sql, connection = con}
+SELECT
+	order_id,
+	CASE
+		WHEN CHARINDEX('1', extras) > 0 THEN 'Meat Lovers - Extra Bacon'
+		WHEN CHARINDEX('3', exclusions) > 0 THEN 'Meat Lovers - Exclude Beef'
+		WHEN CHARINDEX('4', exclusions) > 0 AND CHARINDEX('1', exclusions) > 0
+			AND CHARINDEX('1', extras) > 0 AND CHARINDEX('6', extras) > 0 
+			AND CHARINDEX('9', extras) > 0 THEN 'Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers'
+		WHEN pizza_id=1 THEN 'Meat Lovers' 
+		ELSE 'Vegetarian' END as ordered_item
+FROM
+	customer_orders
+```
+Not a very dynamic or elegant solution, but the question had very specific instructions. I did however add 'Vegetarian' as one label.
+
+***
+
+#### D. Pricing and Ratings
+
+**1. If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there were no charges for changes - how much money has Pizza Runner made so far if there are no delivery fees?**
+```{sql, connection = con}
+SELECT
+	SUM(CASE WHEN pizza_id=1 THEN 12 ELSE 10 END) AS total_income
+FROM
+	customer_orders co
+JOIN
+	runner_orders ro
+	ON	co.order_id=ro.order_id
+WHERE pickup_time IS NOT NULL;
+```
+***
+
+**2. What if there was an additional $1 charge for any pizza extras?**
+```{sql, connection = con}
+SELECT
+	SUM(CASE 
+			WHEN pizza_id=1 AND extras IS NOT NULL THEN 13
+			WHEN pizza_id=1 THEN 12
+			WHEN pizza_id=2 AND extras IS NOT NULL THEN 11 ELSE 10 END) AS total_income
+FROM
+	customer_orders co
+JOIN
+	runner_orders ro
+	ON	co.order_id=ro.order_id
+WHERE pickup_time IS NOT NULL;
+```
+***
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
