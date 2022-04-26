@@ -915,6 +915,7 @@ ORDER BY COUNT DESC;
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/PizzaRunner/figure-gfm/c.3.PNG"/>
 </p>
+
 ------------------------------------------------------------------------
 
 **C.4 Generate an order item for each record in the customers\_orders
