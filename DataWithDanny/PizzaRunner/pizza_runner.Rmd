@@ -207,7 +207,7 @@ UPDATE dbo.runner_orders
 SET 
 	pickup_time = NULLIF(pickup_time, 'null');
 ALTER TABLE dbo.runner_orders 
-ALTER COLUMN pickup_time DATETIME2;
+ALTER COLUMN pickup_time DATETIME;
 
 ALTER TABLE dbo.pizza_names
 ALTER COLUMN pizza_name NVARCHAR(100);
