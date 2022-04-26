@@ -133,7 +133,7 @@ core business questions and finishes with a challenging final request!
 
 #### A. Customer Nodes Exploration
 
-**1. How many unique nodes are there on the Data Bank system?**
+**A.1 How many unique nodes are there on the Data Bank system?**
 
 ``` sql
 SELECT 
@@ -154,7 +154,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**2. What is the number of nodes per region?**
+**A.2 What is the number of nodes per region?**
 
 ``` sql
 SELECT 
@@ -186,7 +186,7 @@ ORDER BY region_id;
 
 ------------------------------------------------------------------------
 
-**3. How many customers are allocated to each region?**
+**A.3 How many customers are allocated to each region?**
 
 ``` sql
 SELECT 
@@ -213,7 +213,7 @@ ORDER BY region_id;
 
 ------------------------------------------------------------------------
 
-**4. How many days on average are customers reallocated to a different
+**A.4 How many days on average are customers reallocated to a different
 node?** 
 
 Not entirely sure that I understood the question. I interpret it
@@ -255,7 +255,7 @@ FROM cte_sum_diff;
 
 ------------------------------------------------------------------------
 
-**5. What is the median, 80th and 95th percentile for this same
+**A.5 What is the median, 80th and 95th percentile for this same
 reallocation days metric for each region?** 
 
 Re-used the same CTE from quesiton 4 and added another select query utilizing percentile\_disc
@@ -310,7 +310,7 @@ ORDER BY d.region_id
 
 #### B. Customer Transactions
 
-**1. What is the unique count and total amount for each transaction
+**B.1 What is the unique count and total amount for each transaction
 type?**
 
 ``` sql
@@ -336,7 +336,7 @@ GROUP BY txn_type
 
 ------------------------------------------------------------------------
 
-**2. What is the average total historical deposit counts and amounts for
+**B.2 What is the average total historical deposit counts and amounts for
 all customers?** 
 
 Making do with just a subquery over another CTE.
@@ -365,7 +365,7 @@ FROM
 
 ------------------------------------------------------------------------
 
-**3. For each month - how many Data Bank customers make more than 1
+**B.3 For each month - how many Data Bank customers make more than 1
 deposit and either 1 purchase or 1 withdrawal in a single month?** 
 
 Using case expression to create a counter for each transaction type and then
@@ -408,7 +408,7 @@ GROUP BY month;
 
 ------------------------------------------------------------------------
 
-**4. What is the closing balance for each customer at the end of the
+**B.4 What is the closing balance for each customer at the end of the
 month?** 
 
 Could have utilized more CTE’s for more readability, but I
@@ -458,7 +458,7 @@ Displaying records 1 - 10
 
 ------------------------------------------------------------------------
 
-**5. What is the percentage of customers who increase their closing
+**B.5 What is the percentage of customers who increase their closing
 balance by more than 5%?** 
 
 Again, trying to minimize the amount of CTE’s
