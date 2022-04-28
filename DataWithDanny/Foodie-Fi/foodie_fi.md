@@ -8,7 +8,7 @@ Benjamin Sivac
        height="850px" width="850px"/>
 </p>
 
-### Introduction
+## Introduction
 
 Subscription based businesses are super popular and Danny realised that
 there was a large gap in the market - he wanted to create a new
@@ -25,7 +25,7 @@ all future investment decisions and new features were decided using
 data. This case study focuses on using subscription style digital data
 to answer important business questions.
 
-### Available Data
+## Available Data
 
 Danny has shared the data design for Foodie-Fi and also short
 descriptions on each of the database tables - our case study focuses on
@@ -36,14 +36,13 @@ All datasets exist within the foodie\_fi database schema - be sure to
 include this reference within your SQL scripts as you start exploring
 the data and answering the case study questions.
 
-#### Entity Relationship Diagram
+<h3 id="Entity Relationship Diagram"><code>Entity Relationship Diagram</code></h3>
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Foodie-Fi/figure-gfm/erd_ff.png"/>
 </p>
 
-
-#### Table 1: plans
+<h3 id="Table 1: plans"><code>Table 1: plans</code></h3>
 
 Customers can choose which plans to join Foodie-Fi when they first sign
 up.
@@ -78,7 +77,7 @@ of the billing period.
 
 </div>
 
-#### Table 2: subscriptions
+<h3 id="Table 2: subscriptions"><code>Table 2: subscriptions</code></h3>
 
 Customer subscriptions show the exact date where their specific plan\_id
 starts.
@@ -114,13 +113,13 @@ Displaying records 1 - 10
 
 </div>
 
-### Case Study Questions
+## Case Study Questions
 
 This case study is split into an initial data understanding question
 before diving straight into data analysis questions before finishing
 with 1 single extension challenge.
 
-#### A. Customer Journey
+## A. Customer Journey
 
 **Based off the 8 sample customers provided in the sample from the
 subscriptions table, write a brief description about each customer’s
@@ -172,7 +171,7 @@ monthly subscription right after which has added benefits, then canceled
 his subscription on April the 29th, having access to his account until
 24th of May.
 
-#### B. Data Analysis Questions
+## B. Data Analysis Questions
 
 **B.1 How many customers has Foodie-Fi ever had?**
 
