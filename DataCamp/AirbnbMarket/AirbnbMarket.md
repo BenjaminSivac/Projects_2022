@@ -7,7 +7,7 @@ Benjamin Sivac
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/AirbnbMarket/AirbnbMarket_files/figure-gfm/nyc.jpg"/>
 </p>
 
-### Introduction
+## Introduction
 
 Welcome to New York City, one of the most-visited cities in the world.
 As a result, there are many Airbnb listings in New York City to meet the
@@ -22,7 +22,7 @@ examine this data to answer any questions, but you’ll need to combine
 the different files from your three sources into one dataset and clean
 it in order to calculate the metrics you’re interested in.
 
-### Datasets
+## Datasets
 
 **datasets/airbnb\_price.csv**
 
@@ -53,7 +53,7 @@ dates.
 -   host\_name: name of listing host
 -   last\_review: date when the listing was last reviewed
 
-### Preparing the Environment
+## Preparing the Environment
 
 Importing the required packages for importing data, performing data
 manipulation, and creating visualizations.
@@ -121,7 +121,7 @@ df.data %>% glimpse()
 We need to clean up the data before exploring and answering any
 questions.
 
-### Data wrangling
+## Data wrangling
 
 There are a few columns to fix; there’s no need to have “dollars” in
 each and every cell of the price column, and it needs to be converted
@@ -184,7 +184,7 @@ df.data %>% glimpse()
 It fell neatly into place by just converting each unique value to lower
 case. The data cleaning process is officially done!
 
-### Exploration and Visualization
+## Exploration and Visualization
 
 ``` r
 plot.box <- df.data %>% ggplot(aes(x=log(price), fill="blue")) +
