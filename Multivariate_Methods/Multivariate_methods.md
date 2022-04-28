@@ -3,7 +3,7 @@ Multivariate Methods
 Benjamin Sivac
 2022-03-25
 
-### Introduction
+## Introduction
 
 This report consists of two multivariate analyses upon data exploring
 the relationships between body dimensions. The original authors who
@@ -18,7 +18,7 @@ a way to reduce the number of variables and summarize it into fewer
 variables, and the latter for discerning groups apart, in this case
 between men and women.
 
-### Data and packages
+## Data and packages
 
 Loading packages with pre-built statistical tests, visualizations and
 for general use.
@@ -100,7 +100,7 @@ between the outer points of the hips.
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/Multivariate_Methods/Multivariate_methods_files/figure-gfm/biabiibit.jpg"/>
 </p>
 
-### Principal component analysis
+## Principal component analysis
 
 The goal of Principal components analysis is to reduce the number of
 observed variables by creating new, linearly combined ones, referred to
@@ -253,7 +253,7 @@ A quick plot of the loadings for PC1 and PC2 respectively, their
 positions reflecting their correlations to each other. We can clearly
 see Age being a clear outsider relative to the first two components.
 
-### Discriminant analysis
+## Discriminant analysis
 
 Discriminant analysis is a technique used to identify the so-called best
 set of variables, known as discriminator variables, that are used for
@@ -654,9 +654,9 @@ partimat(as.factor(Gender) ~ Bitrochanteric_diameter + Ankle_diameter, data=df.b
 <img src="Multivariate_methods_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 </p>
 
-### Interpretation of results
+# Interpretation of results
 
-#### Principal Component Analysis
+## Principal Component Analysis
 
 From the results we may interpret the first principal component as
 having strong correlation to measures concerning upper body and size of
@@ -669,7 +669,7 @@ explain the age variable, but it does not have any strong correlations
 to other measurements and would only explain itself, making principal
 component analysis redundant and pointless.
 
-#### Discriminant Analysis
+## Discriminant Analysis
 
 With few acceptable variables to choose from, bitrochanteric diameter
 and ankle diameter proved to have pretty significant discriminant power
@@ -681,7 +681,7 @@ in the discriminant function that the weight of Bitrochanteric diameter
 is a lot smaller compared to the very big value of Ankle diameter,
 reflecting it’s relative small effect on the results.
 
-### Conclusion
+## Conclusion
 
 Principal components analysis proved to be an useful technique for
 reducing the number of variables, from 24 down to 2 (3 if we include the
