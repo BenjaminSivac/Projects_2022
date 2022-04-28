@@ -84,7 +84,7 @@ Displaying records 1 - 15
 
 </div>
 
-#### Table 2: menu
+<h3 id="Table 2: menu"><code>Table 2: menu</code></h3>
 
 The menu table maps the product\_id to the actual product\_name and
 price of each menu item.
@@ -101,7 +101,7 @@ price of each menu item.
 
 </div>
 
-#### Table 3: members
+<h3 id="Table 3: members"><code>Table 3: members</code></h3>
 
 The final members table captures the join\_date when a customer\_id
 joined the beta version of the Danny’s Diner loyalty program.
@@ -117,7 +117,7 @@ joined the beta version of the Danny’s Diner loyalty program.
 
 </div>
 
-### Case Study Questions
+## Case Study Questions
 
 Each of the following case study questions can be answered using a
 single SQL statement:
