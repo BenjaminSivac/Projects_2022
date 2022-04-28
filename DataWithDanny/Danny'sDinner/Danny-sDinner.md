@@ -42,7 +42,7 @@ Danny has shared with you 3 key datasets for this case study:
 -   menu
 -   members
 
-## Entity Relationship Diagram
+<h3 id="Entity Relationship Diagram"><code>Entity Relationship Diagram</code></h3>
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Danny'sDinner/figure-gfm/erd.PNG"/>
