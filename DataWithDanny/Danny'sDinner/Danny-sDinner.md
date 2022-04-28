@@ -19,7 +19,7 @@ afloat - the restaurant has captured some very basic data from their few
 months of operation but have no idea how to use their data to help them
 run the business.
 
-### Problem Statement
+## Problem Statement
 
 Danny wants to use the data to answer a few simple questions about his
 customers, especially about their visiting patterns, how much money
@@ -42,19 +42,19 @@ Danny has shared with you 3 key datasets for this case study:
 -   menu
 -   members
 
-### Entity Relationship Diagram
+## Entity Relationship Diagram
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Danny'sDinner/figure-gfm/erd.PNG"/>
 </p>
 
-### Datasets
+## Datasets
 
 All datasets exist within the dannys\_diner database schema - be sure to
 include this reference within your SQL scripts as you start exploring
 the data and answering the case study questions.
 
-#### Table 1: sales
+<h3 id="Table 1: sales"><code>Table 1: sales</code></h3>
 
 The sales table captures all customer\_id level purchases with an
 corresponding order\_date and product\_id information for when and what
