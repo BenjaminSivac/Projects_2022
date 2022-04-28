@@ -3,7 +3,11 @@ Cyclistic Case Study
 Benjamin Sivac
 2022-03-21
 
-## Preamble
+## Introduction
+
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/GoogleDataAnalytics/Cyclistic_files/figure-gfm/Cyclistic_logo.png"/>
+</p>
 
 This report is to show my approach and work in solving a case study
 provided by Google Data Analytics Course. While there are uses for SQL
@@ -11,12 +15,6 @@ and Tableau in this report, I’ll leave those for future case studies and
 instead only focus on R and Rmarkdown. This will be a good opportunity
 to get accustomed with the tidyverse package while also describing my
 thought process with proper reasoning, comments and visualizations.
-
-## Background
-
-<p align="center">
-  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/GoogleDataAnalytics/Cyclistic_files/figure-gfm/Cyclistic_logo.png"/>
-</p>
 
 Cyclistic is a bike-share program that features more than 5,800 bicycles
 and 600 docking stations. Cyclistic sets itself apart by also offering
