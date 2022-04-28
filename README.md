@@ -48,7 +48,7 @@ I'm working my way through various SQL casestudies that are part of a 8 week lon
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/DataCamp">DataCamp</a>
 While Datacamp do have a few projects for testing out ones abilities in SQL, they are quite shallow and boring. I'll upload the ones that I find worthwhile doing.
 
-* <a https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/SportsRetail/sports_retail.md">Optimizing Online Sports Retail Revenue</a>
+* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/SportsRetail/sports_retail.md">Optimizing Online Sports Retail Revenue</a>
 ***
 # Tableau
 *[On hold]*
