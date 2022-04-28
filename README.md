@@ -29,7 +29,7 @@ I decided to try out a few Datacamp courses in R, and possibly SQL, which has so
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/AirbnbMarket/AirbnbMarket.md">Exploring the NYC Airbnb Market</a>
 
 ## Covid-19 And The Swedish Housing Market
-Based on my Bachelor's thesis in Statisics, explaining my work and thoughtprocess handling imputation and modelling timeseries. 
+Based on my Bachelor's thesis in Statisics, explaining the work and thoughtprocess handling imputation, decomposition and modelling timeseries. 
 *[Ongoing]*
 ***
 # SQL
