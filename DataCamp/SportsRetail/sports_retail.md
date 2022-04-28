@@ -368,43 +368,43 @@ ORDER BY total_revenue DESC
     <tr>
         <td>Adidas</td>
         <td>849</td>
-        <td>4626980.069999999</td>
+        <td>4626980</td>
         <td>Expensive</td>
     </tr>
     <tr>
         <td>Adidas</td>
         <td>1060</td>
-        <td>3233661.060000001</td>
+        <td>3233661</td>
         <td>Average</td>
     </tr>
     <tr>
         <td>Adidas</td>
         <td>307</td>
-        <td>3014316.8299999987</td>
+        <td>3014316</td>
         <td>Elite</td>
     </tr>
     <tr>
         <td>Adidas</td>
         <td>359</td>
-        <td>651661.1200000002</td>
+        <td>651661</td>
         <td>Budget</td>
     </tr>
     <tr>
         <td>Nike</td>
         <td>357</td>
-        <td>595341.0199999992</td>
+        <td>595341</td>
         <td>Budget</td>
     </tr>
     <tr>
         <td>Nike</td>
         <td>82</td>
-        <td>128475.59000000003</td>
+        <td>128475</td>
         <td>Elite</td>
     </tr>
     <tr>
         <td>Nike</td>
         <td>90</td>
-        <td>71843.15000000004</td>
+        <td>71843</td>
         <td>Expensive</td>
     </tr>
     <tr>
@@ -425,7 +425,7 @@ ORDER BY total_revenue DESC
 
 SELECT
     brand,
-    100*AVG(discount) as avg_discount
+    CONCAT(100*AVG(discount), '%') as avg_discount
 FROM
     brands b
 INNER JOIN
@@ -447,7 +447,7 @@ ORDER BY avg_discount DESC;
     </tr>
     <tr>
         <td>Adidas</td>
-        <td>33.452427184465606</td>
+        <td>33.50%</td>
     </tr>
     <tr>
         <td>Nike</td>
@@ -465,7 +465,7 @@ ORDER BY avg_discount DESC;
 ```sql
 
 SELECT
-    corr(f.revenue, r.reviews) AS review_revenue_corr
+    ROUND(corr(f.revenue, r.reviews),2) AS review_revenue_corr
 FROM
     reviews r
 INNER JOIN
@@ -482,7 +482,7 @@ INNER JOIN
         <th>review_revenue_corr</th>
     </tr>
     <tr>
-        <td>0.6518512283481301</td>
+        <td>0.65</td>
     </tr>
 </table>
 
@@ -521,31 +521,31 @@ ORDER BY description_length;
     </tr>
     <tr>
         <td>0</td>
-        <td>2.00</td>
+        <td>2.0</td>
     </tr>
     <tr>
         <td>100</td>
-        <td>3.00</td>
+        <td>3.0</td>
     </tr>
     <tr>
         <td>200</td>
-        <td>3.00</td>
+        <td>3.0</td>
     </tr>
     <tr>
         <td>300</td>
-        <td>3.00</td>
+        <td>3.0</td>
     </tr>
     <tr>
         <td>400</td>
-        <td>3.00</td>
+        <td>3.0</td>
     </tr>
     <tr>
         <td>500</td>
-        <td>3.00</td>
+        <td>3.0</td>
     </tr>
     <tr>
         <td>600</td>
-        <td>4.00</td>
+        <td>4.0</td>
     </tr>
 </table>
 
