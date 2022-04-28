@@ -8,7 +8,7 @@ Benjamin Sivac
        height="850px" width="850px"/>
 </p>
 
-### Introduction
+## Introduction
 
 Did you know that over 115 million kilograms of pizza is consumed daily
 worldwide??? (Well according to Wikipedia anyway…)
@@ -26,7 +26,7 @@ Runner Headquarters (otherwise known as Danny’s house) and also maxed
 out his credit card to pay freelance developers to build a mobile app to
 accept orders from customers.
 
-### Available Data
+## Available Data
 
 Because Danny had a few years of experience as a data scientist - he was
 very aware that data collection was going to be critical for his
@@ -41,13 +41,13 @@ All datasets exist within the pizza\_runner database schema - be sure to
 include this reference within your SQL scripts as you start exploring
 the data and answering the case study questions.
 
-#### Entity Relationship Diagram
+## Entity Relationship Diagram
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/PizzaRunner/figure-gfm/erd.PNG"/>
 </p>
 
-#### Table 1: runners
+<h3 id="Table 1: runners"><code>Table 1: runners</code></h3>
 
 The runners table shows the registration\_date for each new runner
 
@@ -64,7 +64,7 @@ The runners table shows the registration\_date for each new runner
 
 </div>
 
-#### Table 2: customer\_orders
+<h3 id="Table 2: customer\_orders"><code>Table 2: customer\_orders</code></h3>
 
 Customer pizza orders are captured in the customer\_orders table with 1
 row for each individual pizza that is part of the order.
@@ -99,7 +99,7 @@ varying exclusions and extras values even if the pizza is the same type!
 The exclusions and extras columns will need to be cleaned up before
 using them in your queries.
 
-#### Table 3: runner\_orders
+<h3 id="Table 3: runner\_orders"><code>Table 3: runner\_orders</code></h3>
 
 After each orders are received through the system - they are assigned to
 a runner - however not all orders are fully completed and can be
@@ -133,7 +133,7 @@ There are some known data issues with this table so be careful when
 using this in your queries - make sure to check the data types for each
 column in the schema SQL!
 
-#### Table 4: pizza\_names
+<h3 id="Table 4: pizza\_names"><code>Table 4: pizza\_names</code></h3>
 
 At the moment - Pizza Runner only has 2 pizzas available the Meat Lovers
 or Vegetarian!
@@ -149,7 +149,7 @@ or Vegetarian!
 
 </div>
 
-#### Table 5: pizza\_recipes
+<h3 id="Table 5: pizza\_recipes"><code>Table 5: pizza\_recipes</code></h3>
 
 Each pizza\_id has a standard set of toppings which are used as part of
 the pizza recipe.
@@ -165,7 +165,7 @@ the pizza recipe.
 
 </div>
 
-#### Table 6: pizza\_toppings
+<h3 id="Table 6: pizza\_toppings"><code>Table 6: pizza\_toppings</code></h3>
 
 This table contains all of the topping\_name values with their
 corresponding topping\_id value
@@ -189,7 +189,7 @@ Displaying records 1 - 10
 
 </div>
 
-### Case Study Questions
+## Case Study Questions
 
 This case study has LOTS of questions - they are broken up by area of
 focus including:
@@ -205,7 +205,7 @@ single SQL statement.
 Again, there are many questions in this case study - please feel free to
 pick and choose which ones you’d like to try!
 
-#### Clean tables
+### Clean tables
 
 Before you start writing your SQL queries however - you might want to
 investigate the data, you may want to do something with some of those
@@ -326,7 +326,7 @@ Displaying records 1 - 10
 
 ------------------------------------------------------------------------
 
-#### A. Pizza Metrics
+## A. Pizza Metrics
 
 **A.1 How many pizzas were ordered?**
 
@@ -611,7 +611,7 @@ GROUP BY DATENAME(WEEKDAY,order_time);
 
 ------------------------------------------------------------------------
 
-#### B. Runner and Customer Experience
+## B. Runner and Customer Experience
 
 **B.1 How many runners signed up for each 1 week period? (i.e. week
 starts 2021-01-01)**
@@ -821,7 +821,7 @@ GROUP BY runner_id;
 
 ------------------------------------------------------------------------
 
-#### C. Ingredient Optimisation
+## C. Ingredient Optimisation
 
 **C.1 What are the standard ingredients for each pizza?**
 
@@ -965,7 +965,7 @@ specific instructions. I did however add ‘Vegetarian’ as one label.
 
 ------------------------------------------------------------------------
 
-#### D. Pricing and Ratings
+## D. Pricing and Ratings
 
 **D.1 If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there
 were no charges for changes - how much money has Pizza Runner made so
