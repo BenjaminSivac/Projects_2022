@@ -3,7 +3,7 @@ Cyclistic Case Study
 Benjamin Sivac
 2022-03-21
 
-### Preamble
+## Preamble
 
 This report is to show my approach and work in solving a case study
 provided by Google Data Analytics Course. While there are uses for SQL
@@ -12,7 +12,7 @@ instead only focus on R and Rmarkdown. This will be a good opportunity
 to get accustomed with the tidyverse package while also describing my
 thought process with proper reasoning, comments and visualizations.
 
-### Background
+## Background
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/GoogleDataAnalytics/Cyclistic_files/figure-gfm/Cyclistic_logo.png"/>
@@ -34,7 +34,7 @@ annual memberships are Cyclistic members. **Aid the marketing team in
 converting casual bike riders into annual members, by profiling each
 group and giving recommendations.**
 
-### Preparations
+## Preparations
 
 This report uses a fictional, publicly available dataset on bike trips
 in Chicago. The data was accessed on March the 1st 2022, by the
@@ -132,7 +132,7 @@ data, leaving 11 remaining variables in the data frame.
 df_trips <- df_trips %>% dplyr::select(-start_station_id, -end_station_id)
 ```
 
-### Data Wrangling
+## Data Wrangling
 
 Again, the purpose of this report is to find meaningful insights by
 profiling different customers and informing the marketing team of said
@@ -255,7 +255,7 @@ is highly inaccurate but making use of every piece of data could be
 considered good practice. It might also make a good reference for future
 cases.
 
-### Analysis
+## Analysis and Visualizations
 
 With the data cleaned, adjusted and prepared the analysis can finally
 begin. It will cover ratios, time series, and frequencies for gaining
@@ -526,7 +526,7 @@ Advertisement along common routes would have a far more effective reach
 on members than on casual riders, if that is an option Cyclistic would
 like to pursue.
 
-### Recommendations
+## Recommendations
 
 -   While a small portion of casual riders do favor the docked bikes,
     the majority prefer classical and electrical bikes. Any promotion
