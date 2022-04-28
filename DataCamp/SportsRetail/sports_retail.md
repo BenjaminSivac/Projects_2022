@@ -301,6 +301,7 @@ LIMIT 15;
         <td>110</td>
         <td>91</td>
     </tr>
+  </table>
 
 ```sql
 
@@ -310,10 +311,7 @@ FROM
     finance
 ```
 
-    
     1 rows affected.
-
-
 
 <table>
     <tr>
