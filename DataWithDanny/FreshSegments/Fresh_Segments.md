@@ -8,7 +8,7 @@ Benjamin Sivac
        height="850px" width="850px"/>
 </p>
 
-### Task
+## Task
 
 Danny created Fresh Segments, a digital marketing agency that helps
 other businesses analyse trends in online ad click behaviour for their
@@ -27,12 +27,12 @@ Danny has asked for your assistance to analyse aggregated metrics for an
 example client and provide some high level insights about the customer
 list and their interests.
 
-### Available Data
+## Available Data
 
 For this case study there is a total of 2 datasets which you will need
 to use to solve the questions.
 
-### Interest Metrics
+<h3 id="Interest Metrics"><code>Interest Metrics</code></h3>
 
 This table contains information about aggregated interest metrics for a
 specific major client of Fresh Segments which makes up a large
@@ -75,7 +75,7 @@ this particular interest in the month of July 2018.
 The ranking and percentage\_ranking relates to the order of index\_value
 records in each month year.
 
-### Interest Map
+<h3 id="Interest Map"><code>Interest Map</code></h3>
 
 This mapping table links the interest\_id with their relevant interest
 information. You will need to join this table onto the previous
@@ -101,12 +101,12 @@ Displaying records 1 - 10
 
 </div>
 
-### Case Study Questions
+# Case Study Questions
 The following questions can be considered key business questions that are required to be answered for the Fresh Segments team.
 
 Most questions can be answered using a single query however some questions are more open ended and require additional thought and not just a coded solution!
 
-#### A. Data Exploration and Cleansing
+## A. Data Exploration and Cleansing
 
 **A.1 Update the interest\_metrics table by modifying the month\_year
 column to be a date data type with the start of the month**
@@ -359,9 +359,7 @@ table was created at a later date which is what the created\_at column
 is referring to. It would then not share any connections to the other
 time stamp columns, and is therefore valid and accurate.
 
-------------------------------------------------------------------------
-
-#### B. Interest Analysis
+## B. Interest Analysis
 
 **B.1 Which interests have been present in all month\_year dates in our
 dataset?**
@@ -567,9 +565,7 @@ Displaying records 1 - 10
 
 </div>
 
-------------------------------------------------------------------------
-
-#### C. Segment Analysis
+## C. Segment Analysis
 
 **C.1 Using our filtered dataset by removing the interests with less than
 6 months worth of data, which are the top 10 and bottom 10 interests
