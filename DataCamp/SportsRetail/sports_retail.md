@@ -659,7 +659,7 @@ ORDER BY total_revenue DESC
 
 ```
 
-     * postgresql:///sports
+   
     8 rows affected.
 
 
@@ -781,7 +781,7 @@ INNER JOIN
     ON r.product_id = f.product_id
 ```
 
-     * postgresql:///sports
+ 
     1 rows affected.
 
 
