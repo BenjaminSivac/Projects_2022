@@ -64,7 +64,7 @@ The runners table shows the registration\_date for each new runner
 
 </div>
 
-<h3 id="Table 2: customer\_orders"><code>Table 2: customer\_orders</code></h3>
+<h3 id="Table 2: customer_orders"><code>Table 2: customer_orders</code></h3>
 
 Customer pizza orders are captured in the customer\_orders table with 1
 row for each individual pizza that is part of the order.
@@ -99,7 +99,7 @@ varying exclusions and extras values even if the pizza is the same type!
 The exclusions and extras columns will need to be cleaned up before
 using them in your queries.
 
-<h3 id="Table 3: runner\_orders"><code>Table 3: runner\_orders</code></h3>
+<h3 id="Table 3: runner_orders"><code>Table 3: runner_orders</code></h3>
 
 After each orders are received through the system - they are assigned to
 a runner - however not all orders are fully completed and can be
@@ -133,7 +133,7 @@ There are some known data issues with this table so be careful when
 using this in your queries - make sure to check the data types for each
 column in the schema SQL!
 
-<h3 id="Table 4: pizza\_names"><code>Table 4: pizza\_names</code></h3>
+<h3 id="Table 4: pizza_names"><code>Table 4: pizza_names</code></h3>
 
 At the moment - Pizza Runner only has 2 pizzas available the Meat Lovers
 or Vegetarian!
@@ -149,7 +149,7 @@ or Vegetarian!
 
 </div>
 
-<h3 id="Table 5: pizza\_recipes"><code>Table 5: pizza\_recipes</code></h3>
+<h3 id="Table 5: pizza_recipes"><code>Table 5: pizza_recipes</code></h3>
 
 Each pizza\_id has a standard set of toppings which are used as part of
 the pizza recipe.
@@ -165,7 +165,7 @@ the pizza recipe.
 
 </div>
 
-<h3 id="Table 6: pizza\_toppings"><code>Table 6: pizza\_toppings</code></h3>
+<h3 id="Table 6: pizza_toppings"><code>Table 6: pizza_toppings</code></h3>
 
 This table contains all of the topping\_name values with their
 corresponding topping\_id value
