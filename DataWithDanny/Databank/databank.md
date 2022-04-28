@@ -306,7 +306,7 @@ ORDER BY d.region_id
 
 </div>
 
-#### B. Customer Transactions
+## B. Customer Transactions
 
 **B.1 What is the unique count and total amount for each transaction
 type?**
