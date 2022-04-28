@@ -41,7 +41,7 @@ All datasets exist within the pizza\_runner database schema - be sure to
 include this reference within your SQL scripts as you start exploring
 the data and answering the case study questions.
 
-## Entity Relationship Diagram
+<h3 id="Entity Relationship Diagram"><code>Entity Relationship Diagram</code></h3>
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/PizzaRunner/figure-gfm/erd.PNG"/>
@@ -323,8 +323,6 @@ FROM
 Displaying records 1 - 10
 
 </div>
-
-------------------------------------------------------------------------
 
 ## A. Pizza Metrics
 
@@ -609,8 +607,6 @@ GROUP BY DATENAME(WEEKDAY,order_time);
 
 </div>
 
-------------------------------------------------------------------------
-
 ## B. Runner and Customer Experience
 
 **B.1 How many runners signed up for each 1 week period? (i.e. week
@@ -819,8 +815,6 @@ GROUP BY runner_id;
 
 </div>
 
-------------------------------------------------------------------------
-
 ## C. Ingredient Optimisation
 
 **C.1 What are the standard ingredients for each pizza?**
@@ -962,8 +956,6 @@ Displaying records 1 - 10
 
 Not a very dynamic or elegant solution, but the question had very
 specific instructions. I did however add ‘Vegetarian’ as one label.
-
-------------------------------------------------------------------------
 
 ## D. Pricing and Ratings
 
