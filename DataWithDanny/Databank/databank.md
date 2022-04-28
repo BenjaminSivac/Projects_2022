@@ -8,7 +8,7 @@ Benjamin Sivac
        height="850px" width="850px"/>
 </p>
 
-### Task
+## Task
 
 There is a new innovation in the financial industry called Neo-Banks:
 new aged digital only banks without physical branches.
@@ -34,19 +34,19 @@ This case study is all about calculating metrics, growth and helping the
 business analyse their data in a smart way to better forecast and plan
 for their future developments!
 
-### Avaiable Data
+## Avaiable Data
 
 The Data Bank team have prepared a data model for this case study as
 well as a few example rows from the complete dataset below to get you
 familiar with their tables.
 
-#### Entity Relationship Diagram
+<h3 id="Entity Relationship Diagram"><code>Entity Relationship Diagram</code></h3>
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Databank/figure-gfm/erd.png"/>
 </p>
 
-#### Table 1: Regions
+<h3 id="Table 1: Regions"><code>Table 1: Regions</code></h3>
 
 Just like popular cryptocurrency platforms - Data Bank is also run off a
 network of nodes where both money and data is stored across the globe.
@@ -70,7 +70,7 @@ region\_name values
 
 </div>
 
-#### Table 2: Customer Nodes
+<h3 id="Table 2: Customer Nodes"><code>Table 2: Customer Nodes</code></h3>
 
 Customers are randomly distributed across the nodes according to their
 region - this also specifies exactly which node contains both their cash
@@ -101,7 +101,7 @@ Displaying records 1 - 10
 
 </div>
 
-#### Table 3: Customer Transactions
+<h3 id="Table 3: Customer Transactions"><code>Table 3: Customer Transactions</code></h3>
 
 This table stores all customer deposits, withdrawals and purchases made
 using their Data Bank debit card.
@@ -125,13 +125,13 @@ Displaying records 1 - 10
 
 </div>
 
-### Case Study Questions
+## Case Study Questions
 
 The following case study questions include some general data exploration
 analysis for the nodes and transactions before diving right into the
 core business questions and finishes with a challenging final request!
 
-#### A. Customer Nodes Exploration
+## A. Customer Nodes Exploration
 
 **A.1 How many unique nodes are there on the Data Bank system?**
 
@@ -305,8 +305,6 @@ ORDER BY d.region_id
 5 records
 
 </div>
-
-------------------------------------------------------------------------
 
 #### B. Customer Transactions
 
