@@ -3,6 +3,11 @@ Data With Danny: Data Mart
 Benjamin Sivac
 2022-04-29
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/DataMart/figure-gfm/dwd5.png"
+       height="850px" width="850px"/>
+</p>
+
 ## Introduction
 
 Data Mart is Danny’s latest venture and after running international
@@ -100,8 +105,16 @@ table in the data\_mart schema named clean\_weekly\_sales:
 -   Add a new column called age\_band after the original segment column
     using the following mapping on the number inside the segment value
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/DataMart/figure-gfm/sg_ab.PNG"/>
+</p>
+
 -   Add a new demographic column using the following mapping for the
     first letter in the segment values: segment demographic
+
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/DataMart/figure-gfm/sg_dm.PNG"/>
+</p>
 
 -   Ensure all null string values with an “unknown” string value in the
     original segment column as well as the new age\_band and demographic
