@@ -21,7 +21,7 @@ I will take on various projects to prepare myself for a career in data analysis,
 My first take on a data analytics project where I profile users and share insights on how to improve marketing. 
 
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/Multivariate_Methods/Multivariate_methods.md">Multivariate Methods</a>
-I got tired of seeing basic, descriptive statistics while browsing for project inspirations, and so I reimagined and improved upon an old assignment I did last year. It mainly covers machine learning methods, probability, and hypothesis testing. 
+I got tired of seeing basic, descriptive statistics while browsing for project inspirations, and so I reimagined and improved upon an old assignment I did last year. It mainly covers two machine learning methods. 
 
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/DataCamp">DataCamp</a>
 I decided to try out a few Datacamp courses in R, and possibly SQL, which has so far been a good learning experience. I also get access to a few projects/datasets that I'm going to try out, nothing too fancy, but they are short and sweat which is a nice change of pace compared to my previous ones.
