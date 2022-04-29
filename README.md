@@ -34,13 +34,13 @@ Based on my Bachelor's thesis in Statisics, explaining the work and thoughtproce
 ***
 # SQL
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/DataWithDanny">Data With Danny</a>
-I'm working my way through various SQL casestudies that are part of a 8 week long challenge. The casestudies ranges from health, marketing and people analytics to financial markets, consumer goods and digital marketing. It has so far been a great opportunity to reiterate basics, hone and utilise interesting concepts like recursive CTEs, cumulative aggregates, and indexing. 
+This 8 week long challenge filled with various, difficult SQL casestudies has been time well spent! They domains ranges from health, marketing and people analytics to financial markets, consumer goods and digital marketing, and consisted of data cleaning, data exploration, and sales-, product-, segment analysis and much more. It has been a great opportunity to reiterate basics, hone and utilise interesting concepts like recursive CTEs, cumulative aggregates, and indexing.
 
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Danny'sDinner/Danny-sDinner.md">Case Study #1 - Danny’s Diner</a>
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/PizzaRunner/pizza_runner.md">Case Study #2 - Pizza Runner</a>
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Foodie-Fi/foodie_fi.md">Case Study #3 - Foodie-Fi</a>
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Databank/databank.md">Case Study #4 - Data Bank</a>
-* Case Study #5 - Data Mart
+* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/DataMart/data_mart.md">Case Study #5 - Data Mart</a>
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/CliqueBait/clique_bait.md">Case Study #6 - Clique Bait</a>
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/balanced_tree_company_co.md">Case Study #7 - Balanced Tree Clothing Co.</a>
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/FreshSegments/Fresh_Segments.md">Case Study #8 - Fresh Segments</a>
