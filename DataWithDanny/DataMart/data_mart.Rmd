@@ -1,0 +1,512 @@
+---
+title: "Data With Danny: Data Mart"
+author: "Benjamin Sivac"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::github_document
+---
+```{r, include=FALSE}
+hook_output <- knitr::knit_hooks$get("output")
+```
+
+```{r Loading packages, message=FALSE, warning=FALSE, include=FALSE}
+library(DBI)
+library(odbc)
+library(tidyverse)
+library(datamodelr) # ER diagram
+```
+
+
+```{r, include=FALSE}
+con <- DBI::dbConnect(odbc::odbc(), 
+                      Driver = "SQL Server", 
+                      Server = "localhost\\SQLEXPRESS", 
+                      Database = "dwd#5", 
+                      Trusted_Connection = "True")
+```
+
+## Introduction
+Data Mart is Danny’s latest venture and after running international operations for his online supermarket that specialises in fresh produce - Danny is asking for your support to analyse his sales performance.
+
+In June 2020 - large scale supply changes were made at Data Mart. All Data Mart products now use sustainable packaging methods in every single step from the farm all the way to the customer.
+
+Danny needs your help to quantify the impact of this change on the sales performance for Data Mart and it’s separate business areas.
+
+The key business question he wants you to help him answer are the following:
+
+* What was the quantifiable impact of the changes introduced in June 2020?
+* Which platform, region, segment and customer types were the most impacted by this change?
+* What can we do about future introduction of similar sustainability updates to the business to minimise impact on sales?
+
+
+## Available Data
+For this case study there is only a single table: data_mart.weekly_sales
+
+The Entity Relationship Diagram is shown below with the data types made clear, please note that there is only this one table - hence why it looks a little bit lonely!
+
+### Column Dictionary
+The columns are pretty self-explanatory based on the column names but here are some further details about the dataset:
+
+1. Data Mart has international operations using a multi-region strategy
+2. Data Mart has both, a retail and online platform in the form of a Shopify store front to serve their customers
+3. Customer segment and customer_type data relates to personal age and demographics information that is shared with Data Mart
+transactions is the count of unique purchases made through Data Mart and sales is the actual dollar amount of purchases
+4. Each record in the dataset is related to a specific aggregated slice of the underlying sales data rolled up into a week_date value which represents the start of the sales week.
+
+
+### Example Rows
+10 random rows are shown in the table output below from data_mart.weekly_sales:
+
+```{sql echo=FALSE, connection=con, message = FALSE}
+SELECT
+  *
+FROM
+  data_mart.weekly_sales
+```
+
+## Case Study Questions
+The following case study questions require some data cleaning steps before we start to unpack Danny’s key business questions in more depth.
+
+## A. Data Cleansing Steps
+In a single query, perform the following operations and generate a new table in the data_mart schema named clean_weekly_sales:
+
+* Convert the week_date to a DATE format
+
+* Add a week_number as the second column for each week_date value, for example any value from the 1st of January to 7th of January will be 1, 8th to 14th will be 2 etc
+
+* Add a month_number with the calendar month for each week_date value as the 3rd column
+
+* Add a calendar_year column as the 4th column containing either 2018, 2019 or 2020 values
+
+* Add a new column called age_band after the original segment column using the following mapping on the number inside the segment value
+
+* Add a new demographic column using the following mapping for the first letter in the segment values:
+segment	demographic
+
+
+* Ensure all null string values with an "unknown" string value in the original segment column as well as the new age_band and demographic columns
+
+* Generate a new avg_transaction column as the sales value divided by transactions rounded to 2 decimal places for each record
+
+```{sql eval=F, echo=T, connection=con}
+SELECT
+	CONVERT(DATE, week_date, 3) AS week_date,
+	DATEPART(WEEK, CONVERT(DATE, week_date, 3)) AS week_number,
+	DATEPART(MONTH, CONVERT(DATE, week_date, 3)) AS month_number,
+	DATEPART(YEAR, CONVERT(DATE, week_date, 3)) AS calender_year,
+	region,
+	platform,
+	CASE 
+		WHEN segment='null' THEN 'Unknown'
+		ELSE segment END AS segment,
+	CASE 
+		WHEN CHARINDEX('1', segment, 2) > 0 THEN 'Young Adults'
+		WHEN CHARINDEX('2', segment, 2) > 0 THEN 'Middle Aged'
+		WHEN CHARINDEX('3', segment, 2) > 0 OR CHARINDEX('4', segment, 2) > 0 THEN 'Retirees' 
+		ELSE 'Unknown' END as age_band,
+	CASE 
+		WHEN CHARINDEX('C', segment, 1) > 0 THEN 'Couples'
+		WHEN CHARINDEX('F', segment, 1) > 0 THEN 'Families'
+		ELSE 'Unknown' END as demographic,
+		
+	customer_type,
+	transactions,
+	ROUND((sales/CAST(transactions AS FLOAT)),2) AS avg_transaction,
+	sales
+INTO
+	clean_weekly_sales
+FROM
+	data_mart.weekly_sales;
+```
+```{sql echo=FALSE, connection=con}
+SELECT
+  *
+FROM
+  clean_weekly_sales
+```
+
+## B. Data Exploration
+
+**B.1 What day of the week is used for each week_date value?**
+```{sql, connection = con}
+SELECT
+	DATENAME(WEEKDAY, week_date) AS weekday
+FROM
+	clean_weekly_sales
+```
+***
+
+**B.2 What range of week numbers are missing from the dataset?**
+```{sql, connection = con}
+WITH series AS(
+	SELECT 
+		n 
+	FROM 
+		GenerateSequence(1, 52)
+)
+SELECT
+	n
+FROM
+	series s
+LEFT OUTER JOIN
+	clean_weekly_sales c
+	ON s.n = c.week_number
+WHERE c.week_number IS NULL
+ORDER BY n;
+```
+There are 18 more rows that are not displayed.
+
+***
+
+**B.3 How many total transactions were there for each year in the dataset?**
+```{sql, connection=con}
+SELECT
+	calender_year,
+	COUNT(transactions) AS nbr_transactions
+FROM
+	clean_weekly_sales
+GROUP BY calender_year
+ORDER BY calender_year DESC;
+
+```
+***
+
+**B.4 What is the total sales for each region for each month?**
+```{sql, connection=con}
+SELECT
+	region,
+	month_number,
+	SUM(CAST(sales AS FLOAT)) AS total_sales
+FROM
+	clean_weekly_sales
+GROUP BY region, month_number
+ORDER BY region, month_number;
+```
+***
+
+**B.5 What is the total count of transactions for each platform**
+```{sql, connection=con}
+SELECT
+	platform,
+	SUM(transactions) AS nbr_txn
+FROM
+	clean_weekly_sales
+GROUP BY platform;
+```
+***
+
+**B.6 What is the percentage of sales for Retail vs Shopify for each month?**
+```{sql, connection=con}
+WITH cte_platform_sales AS(
+	SELECT
+		calender_year,
+		month_number,
+		CASE
+			WHEN platform = 'Retail' THEN SUM(CAST(sales AS FLOAT)) / SUM(SUM(CAST(sales AS FLOAT))) OVER(PARTITION BY calender_year, month_number) END AS retail_pct,
+		CASE
+			WHEN platform = 'shopify' THEN SUM(CAST(sales AS FLOAT)) / SUM(SUM(CAST(sales AS FLOAT))) OVER(PARTITION BY calender_year, month_number) END AS shopify_pct
+	FROM
+		clean_weekly_sales
+	GROUP BY calender_year, month_number, platform
+)
+SELECT
+	calender_year,
+	month_number,
+	FORMAT(MAX(retail_pct),'p') AS retail_pct_sales,
+	FORMAT(MAX(shopify_pct),'p') AS shopify_pct_sales
+FROM
+	cte_platform_sales
+	GROUP BY calender_year, month_number;
+```
+***
+
+**B.7 What is the percentage of sales by demographic for each year in the dataset?**
+```{sql, connection=con}
+WITH cte_demographic_sales AS(
+	SELECT
+		calender_year,
+		demographic,
+		CASE
+			WHEN demographic = 'Families' THEN SUM(CAST(sales AS FLOAT)) / SUM(SUM(CAST(sales AS FLOAT))) OVER(PARTITION BY calender_year) END AS families_pct,
+		CASE
+			WHEN demographic = 'Couples' THEN SUM(CAST(sales AS FLOAT)) / SUM(SUM(CAST(sales AS FLOAT))) OVER(PARTITION BY calender_year) END AS couples_pct,
+		CASE	
+			WHEN demographic = 'Unknown' THEN SUM(CAST(sales AS FLOAT)) / SUM(SUM(CAST(sales AS FLOAT))) OVER(PARTITION BY calender_year) END AS unknown_pct
+	FROM
+		clean_weekly_sales
+	GROUP BY calender_year, demographic
+)
+SELECT
+	calender_year,
+	FORMAT(MAX(families_pct),'p') AS families_pct_sales,
+	FORMAT(MAX(couples_pct),'p') AS couples_pct_sales,
+	FORMAT(MAX(unknown_pct),'p') AS unknown_pct_sales
+FROM
+	cte_demographic_sales
+GROUP BY calender_year
+```
+***
+
+**B.8 Which age_band and demographic values contribute the most to Retail sales?**
+```{sql, connection = con}
+
+SELECT
+	age_band,
+	demographic,
+	SUM(CAST(sales AS FLOAT)) AS total_sales,
+	FORMAT(SUM(CAST(sales AS FLOAT)) / SUM(SUM(CAST(sales AS FLOAT))) OVER(),'p') AS test
+FROM
+	clean_weekly_sales
+WHERE platform = 'Retail'
+GROUP BY age_band, demographic
+ORDER BY total_sales DESC;
+```
+***
+
+**B.9 Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?**
+```{sql, connection = con}
+SELECT
+	calender_year,
+	platform,
+	ROUND(AVG(avg_transaction),2) AS avg_by_row,
+	ROUND(SUM(CAST(sales AS FLOAT)) / SUM(transactions),2) AS avg_by_year
+FROM	
+	clean_weekly_sales
+GROUP BY calender_year, platform
+ORDER BY calender_year
+```
+Using the avg_transaction column gets us the average transaction size by each row of each year, 
+while calculating the total sum by number of transactions per year in the next column is more accurate.
+
+
+## C. Before & After Analysis
+
+This technique is usually used when we inspect an important event and want to inspect the impact before and after a certain point in time.
+
+Taking the week_date value of **2020-06-15** as the baseline week where the Data Mart sustainable packaging changes came into effect.
+
+We would include all week_date values for **2020-06-15** as the start of the period after the change and the previous week_date values would be before
+
+Using this analysis approach - answer the following questions:
+
+**C.1 What is the total sales for the 4 weeks before and after 2020-06-15? What is the growth or reduction rate in actual values and percentage of sales?**
+```{sql, connection=con}
+
+WITH cte_weekly_sales AS (
+	SELECT
+		week_number,
+		SUM(CAST(sales AS FLOAT)) AS weekly_sales
+	FROM
+		clean_weekly_sales
+	WHERE calender_year = 2020 
+		AND week_number BETWEEN 21 AND 28
+	GROUP BY week_number
+),
+cte_categorise AS(
+	SELECT
+		SUM(CASE WHEN week_number < 25 THEN weekly_sales END) AS total_sales_before,
+		SUM(CASE WHEN week_number >= 25 THEN weekly_sales END) AS total_sales_after
+	FROM
+		cte_weekly_sales
+)
+SELECT
+	total_sales_before,
+	total_sales_after,
+	total_sales_after - total_sales_before AS total_change,
+	FORMAT((total_sales_after - total_sales_before) / total_sales_before, 'p') AS pct_change
+FROM
+	cte_categorise;
+```
+***
+
+**C.2 What about the entire 12 weeks before and after?**
+```{sql, connection = con}
+WITH cte_weekly_sales AS (
+	SELECT
+		week_number,
+		SUM(CAST(sales AS FLOAT)) AS weekly_sales
+	FROM
+		clean_weekly_sales
+	WHERE calender_year = 2020 
+		AND week_number BETWEEN 13 AND 36
+	GROUP BY week_number
+),
+cte_categorise AS(
+	SELECT
+		SUM(CASE WHEN week_number < 25 THEN weekly_sales END) AS total_sales_before,
+		SUM(CASE WHEN week_number >= 25 THEN weekly_sales END) AS total_sales_after
+	FROM
+		cte_weekly_sales
+)
+SELECT
+	total_sales_before,
+	total_sales_after,
+	total_sales_after - total_sales_before AS total_change,
+	FORMAT((total_sales_after - total_sales_before) / total_sales_before, 'p') AS pct_change
+FROM
+	cte_categorise;
+```
+***
+
+**C.3 How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019?**
+
+**For the 4 week before- and after periods:**
+```{sql, connection=con}
+WITH cte_weekly_sales AS (
+	SELECT
+		calender_year,
+		week_number,
+		SUM(CAST(sales AS FLOAT)) AS weekly_sales
+	FROM
+		clean_weekly_sales
+	WHERE week_number BETWEEN 21 AND 28
+	GROUP BY calender_year, week_number
+),
+cte_categorise AS(
+	SELECT
+		calender_year,
+		SUM(CASE WHEN week_number < 25 THEN weekly_sales END) AS total_sales_before,
+		SUM(CASE WHEN week_number >= 25 THEN weekly_sales END) AS total_sales_after
+	FROM
+		cte_weekly_sales
+	GROUP BY calender_year
+)
+SELECT
+	calender_year,
+	total_sales_before,
+	total_sales_after,
+	total_sales_after - total_sales_before AS total_change,
+	FORMAT((total_sales_after - total_sales_before) / total_sales_before, 'p') AS pct_change
+FROM
+	cte_categorise;
+```
+
+**For the 12 week before- and after periods:**
+
+```{sql, connection=con}
+WITH cte_weekly_sales AS (
+	SELECT
+		calender_year,
+		week_number,
+		SUM(CAST(sales AS FLOAT)) AS weekly_sales
+	FROM
+		clean_weekly_sales
+	WHERE week_number BETWEEN 13 AND 36
+	GROUP BY calender_year, week_number
+),
+cte_categorise AS(
+	SELECT
+		calender_year,
+		SUM(CASE WHEN week_number < 25 THEN weekly_sales END) AS total_sales_before,
+		SUM(CASE WHEN week_number >= 25 THEN weekly_sales END) AS total_sales_after
+	FROM
+		cte_weekly_sales
+	GROUP BY calender_year
+)
+SELECT
+	calender_year,
+	total_sales_before,
+	total_sales_after,
+	total_sales_after - total_sales_before AS total_change,
+	FORMAT((total_sales_after - total_sales_before) / total_sales_before, 'p') AS pct_change
+FROM
+	cte_categorise;
+```
+***
+
+## Bonus Question
+
+**Which areas of the business have the highest negative impact in sales metrics performance in 2020 for the 12 week before and after period?**
+
+* **region**
+* **platform**
+* **age_band**
+* **demographic**
+* **customer_type**
+
+The only way I can think of solving this question is to group up and calculating the difference in amount and rate, similar to the questions in C. It wont naturally tell us which of columns are to blame for the negative impact, but we can see which specific areas are doing the worst.
+
+I'll insert the query into a new table, that way I avoid duplicating the code for just reordering the results by amount and rate respectively.
+```{sql, eval=F, echo=T, connection = con}
+WITH cte_sales AS (
+	SELECT
+		region,
+		platform,
+		age_band,
+		demographic,
+		customer_type,
+		week_number,
+		SUM(CAST(sales AS FLOAT)) AS sales
+	FROM
+		clean_weekly_sales
+	WHERE week_number BETWEEN 13 AND 36
+	GROUP BY region,
+		platform,
+		age_band,
+		demographic,
+		customer_type,
+		week_number
+),
+cte_categorise AS(
+	SELECT
+		region,
+		platform,
+		age_band,
+		demographic,
+		customer_type,
+		SUM(CASE WHEN week_number < 25 THEN sales END) AS total_sales_before,
+		SUM(CASE WHEN week_number >= 25 THEN sales END) AS total_sales_after
+	FROM
+		cte_sales
+	GROUP BY region,
+		platform,
+		age_band,
+		demographic,
+		customer_type
+)
+SELECT
+	region,
+	platform,
+	age_band,
+	demographic,
+	customer_type,
+	total_sales_before,
+	total_sales_after,
+	total_sales_after - total_sales_before AS total_change,
+	ROUND(100*((total_sales_after - total_sales_before) / total_sales_before),2) AS pct_change
+INTO
+	temp_sales_metrics
+FROM
+	cte_categorise;
+```
+
+Highest negative impact on sales in terms of amount:
+```{sql, connection=con}
+SELECT TOP 1
+	*
+FROM
+	temp_sales_metrics
+ORDER BY pct_change;
+```
+
+Highest negative impact on sales in terms of rate of decrease:
+```{sql, connection=con}
+SELECT TOP 1
+	*
+FROM
+	temp_sales_metrics
+ORDER BY total_change;
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
