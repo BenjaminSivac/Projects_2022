@@ -680,8 +680,6 @@ FROM
 
 </div>
 
-------------------------------------------------------------------------
-
 ## Bonus Question
 
 **Which areas of the business have the highest negative impact in sales
