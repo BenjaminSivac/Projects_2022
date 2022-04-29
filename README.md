@@ -34,7 +34,7 @@ Based on my Bachelor's thesis in Statisics, explaining the work and thoughtproce
 ***
 # SQL
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/DataWithDanny">Data With Danny</a>
-This 8 week long challenge filled with difficult SQL casestudies has been time well spent! It covered various domains ranging from health, marketing and people analytics to financial markets, consumer goods and digital marketing. It consisted of data cleaning, data exploration, and sales-, product-, segment analysis and much much more. It has been a great opportunity to reiterate basics and test interesting concepts like recursive CTEs, running total and cumulative frequency, lag() and lead() etc.
+This 8 week long challenge filled with difficult SQL casestudies has been time well spent! It covered various domains ranging from health, marketing and people analytics to financial markets, consumer goods and digital marketing. It consisted of data cleaning, data exploration, and sales-, product-, segment analysis and much much more. It has been a great opportunity to reiterate basics and test interesting concepts like recursive CTEs, running total and cumulative frequency, lag() and lead() etc. There are some unfinished solutions left to do in due time.
 
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/Danny'sDinner/Danny-sDinner.md">Case Study #1 - Danny’s Diner</a>
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/PizzaRunner/pizza_runner.md">Case Study #2 - Pizza Runner</a>
