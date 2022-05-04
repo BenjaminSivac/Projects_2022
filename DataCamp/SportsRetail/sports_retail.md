@@ -1,13 +1,13 @@
 Optimizing Online Sports Retail Revenue
 ================
-Benjamin Sivac
-2022-04-28
-
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/SportsRetail/retail.jpg"
        height="600" width="1000""/>
 </p>
 
+Benjamin Sivac
+2022-04-28
+                                 
 ## Introduction
 <p>Sports clothing and athleisure attire is a huge industry, worth approximately <a href="https://www.statista.com/statistics/254489/total-revenue-of-the-global-sports-apparel-market/">$193 billion in 2021</a> with a strong growth forecast over the next decade! </p>
 <p>In this notebook, we play the role of a product analyst for an online sports clothing company. The company is specifically interested in how it can improve revenue. We will dive into product data such as pricing, reviews, descriptions, and ratings, as well as revenue and website traffic, to produce recommendations for its marketing and sales teams.  </p>
