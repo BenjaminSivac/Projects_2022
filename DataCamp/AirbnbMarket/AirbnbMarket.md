@@ -9,45 +9,31 @@ Benjamin Sivac
 
 ## Introduction
 
-Welcome to New York City, one of the most-visited cities in the world.
-As a result, there are many Airbnb listings in New York City to meet the
-high demand for temporary lodging for anywhere between a few nights to
-many months. In this notebook, we will take a closer look at the New
-York Airbnb market by combining data from multiple file types.
+Welcome to New York City, one of the most-visited cities in the world. As a result, there are many Airbnb listings in New York City to meet the high demand for temporary lodging for anywhere between a few nights to many months. In this notebook, we will take a closer look at the New York Airbnb market by combining data from multiple file types.
 
-You are a consultant working for a real estate start-up and have been
-asked to look into the short-term rental market in New York, so you’ve
-gathered Airbnb listing data from several different sources. You’ll
-examine this data to answer any questions, but you’ll need to combine
-the different files from your three sources into one dataset and clean
-it in order to calculate the metrics you’re interested in.
+You are a consultant working for a real estate start-up and have been asked to look into the short-term rental market in New York, so you’ve gathered Airbnb listing data from several different sources. You’ll examine this data to answer any questions, but you’ll need to combine the different files from your three sources into one dataset and clean it in order to calculate the metrics you’re interested in.
 
 ## Datasets
 
 **datasets/airbnb\_price.csv**
 
-This is a CSV file containing data on the prices and neighborhoods of
-Airbnbs.
+This is a CSV file containing data on the prices and neighborhoods of Airbnbs.
 
 -   listing\_id: unique identifier of listing
 -   price: nightly listing price in USD
--   nbhood\_full: name of borough and neighborhood where listing is
-    located
+-   nbhood\_full: name of borough and neighborhood where listing is located
 
 **datasets/airbnb\_room\_type.xlsx**
 
-This is an Excel file containing data on Airbnb listing descriptions and
-room types.
+This is an Excel file containing data on Airbnb listing descriptions and room types.
 
 -   listing\_id: unique identifier of listing
 -   description: listing description
--   room\_type: Airbnb has three types of rooms: shared rooms, private
-    rooms, and entire homes/apartments
+-   room\_type: Airbnb has three types of rooms: shared rooms, private rooms, and entire homes/apartments
 
 **datasets/airbnb\_last\_review.tsv**
 
-This is a TSV file containing data on Airbnb host names and review
-dates.
+This is a TSV file containing data on Airbnb host names and review dates.
 
 -   listing\_id: unique identifier of listing
 -   host\_name: name of listing host
@@ -55,8 +41,7 @@ dates.
 
 ## Preparing the Environment
 
-Importing the required packages for importing data, performing data
-manipulation, and creating visualizations.
+Importing the required packages for importing data, performing data manipulation, and creating visualizations.
 
 ``` r
 library(tidyverse)
@@ -98,8 +83,7 @@ df.last_review %>% glimpse()
     ## $ host_name   <chr> "Jennifer", "LisaRoxanne", "Chris", "Shunichi", "Ben", "Le~
     ## $ last_review <chr> "May 21 2019", "July 05 2019", "June 22 2019", "June 24 20~
 
-They have the same number of rows and the same key identifier,
-listing\_id, for joining them together into one single dataset.
+They have the same number of rows and the same key identifier, listing\_id, for joining them together into one single dataset.
 
 ``` r
 df.data <- df.prices %>% full_join(df.last_review, by="listing_id") %>% 
@@ -118,16 +102,11 @@ df.data %>% glimpse()
     ## $ description <chr> "Skylit Midtown Castle", "Cozy Entire Floor of Brownstone"~
     ## $ room_type   <chr> "Entire home/apt", "Entire home/apt", "Entire home/apt", "~
 
-We need to clean up the data before exploring and answering any
-questions.
+We need to clean up the data before exploring and answering any questions.
 
 ## Data wrangling
 
-There are a few columns to fix; there’s no need to have “dollars” in
-each and every cell of the price column, and it needs to be converted
-from string to numeric type. The last\_review column needs to be
-converted to a date type, and nbhood\_full would look better by
-splitting it up into borough and neighborhood.
+There are a few columns to fix; there’s no need to have “dollars” in each and every cell of the price column, and it needs to be converted from string to numeric type. The last\_review column needs to be converted to a date type, and nbhood\_full would look better by splitting it up into borough and neighborhood.
 
 ``` r
 df.data <- df.data %>% mutate(price = str_remove(price, " dollars"), price = as.numeric(price)) # remove dollars and convert to numeric
@@ -147,8 +126,7 @@ df.data %>% glimpse()
     ## $ description  <chr> "Skylit Midtown Castle", "Cozy Entire Floor of Brownstone~
     ## $ room_type    <chr> "Entire home/apt", "Entire home/apt", "Entire home/apt", ~
 
-Everything looks good now except for room\_type which seems to have
-random capitalization. We’ll check how many unique values it has.
+Everything looks good now except for room\_type which seems to have random capitalization. We’ll check how many unique values it has.
 
 ``` r
 unique(df.data$room_type) # We find 8 different unique values
@@ -181,8 +159,7 @@ df.data %>% glimpse()
     ## $ description  <chr> "Skylit Midtown Castle", "Cozy Entire Floor of Brownstone~
     ## $ room_type    <fct> entire home/apt, entire home/apt, entire home/apt, privat~
 
-It fell neatly into place by just converting each unique value to lower
-case. The data cleaning process is officially done!
+It fell neatly into place by just converting each unique value to lower case. The data cleaning process is officially done!
 
 ## Exploration and Visualization
 
@@ -205,14 +182,7 @@ ggarrange(plot.box, plot.density,
 <img src="AirbnbMarket_files/figure-gfm/plots-1.png" style="display: block; margin: auto;" />
 </p>
 
-The natural log of listing prices closely resembles a bell curve, albeit
-a bit skewed to the right which would suggest comparing median prices
-rather than mean.  
-Looking at the boxplot, there seems to be a number of free listings in
-the data, there are also a couple of extremely expensive ones. Out of
-curiosity, let’s have a closer look to see if these values are
-reasonable or widely inaccurate due to measurement
-errors.
+The natural log of listing prices closely resembles a bell curve, albeit a bit skewed to the right which would suggest comparing median prices rather than mean.   Looking at the boxplot, there seems to be a number of free listings in the data, there are also a couple of extremely expensive ones. Out of curiosity, let’s have a closer look to see if these values are reasonable or widely inaccurate due to measurement errors.
 
 ``` r
 df.data %>% group_by(borough, neighborhood, room_type) %>% 
@@ -249,10 +219,7 @@ df.data %>% filter(price=="7500")
     ##            description    room_type
     ## 1 Gem of east Flatbush private room
 
-Brooklyn East Flatbush do have a fair number of listings with reasonable
-stats, except for the maximum price listing. Looking at its description-
-“Gem of east Flatbush”, it seems to be an intended, appropriate pricing.
-Let’s have a look at the free listings:
+Brooklyn East Flatbush do have a fair number of listings with reasonable stats, except for the maximum price listing. Looking at its description- “Gem of east Flatbush”, it seems to be an intended, appropriate pricing. Let’s have a look at the free listings:
 
 ``` r
 df.data %>% filter(price=="0")
@@ -275,13 +242,9 @@ df.data %>% filter(price=="0")
     ## 6  Coliving in Brooklyn! Modern design / Shared room  shared room
     ## 7             Best Coliving space ever! Shared room.  shared room
 
-5 private rooms and 2 shared rooms in Brooklyn and Bronx with very
-appealing descriptions. They probably just forgot to list a price value.
+5 private rooms and 2 shared rooms in Brooklyn and Bronx with very appealing descriptions. They probably just forgot to list a price value.
 
-Let’s explore the listing prices by different groups and subgroups.
-First we’ll check the amount of listings by type of room, doing so will
-give us an idea of the distribution of listings and validate any
-following comparisons between them.
+Let’s explore the listing prices by different groups and subgroups. First we’ll check the amount of listings by type of room, doing so will give us an idea of the distribution of listings and validate any following comparisons between them.
 
 ``` r
 df.data %>% group_by(room_type) %>% 
@@ -296,8 +259,7 @@ df.data %>% group_by(room_type) %>%
 <img src="AirbnbMarket_files/figure-gfm/room_dist-1.png" style="display: block; margin: auto;" />
 </p>
 
-There are close to no listings for shared rooms, but both
-apartments/houses and private rooms have over 10000 listings.
+There are close to no listings for shared rooms, but both apartments/houses and private rooms have over 10000 listings.
 
 ``` r
 stat.groups <- df.data %>% group_by(borough, room_type) %>% 
@@ -325,17 +287,4 @@ stat.count %>% ggplot(aes(y=mean, x=borough, fill=borough, color=borough)) +
 <p align="center">
 <img src="AirbnbMarket_files/figure-gfm/stats-1.png" style="display: block; margin: auto;" />
 </p>
-We can with point and box plots combined observe the distribution of
-prices across boroughs and type of rooms that are listed. It also shows
-labels for the most commonly listed neighborhoods by each borough. Homes and
-apartments are close to being twice as expensive as private rooms, and
-probably three times as expensive than shared rooms. Manhattan is
-clearly the most expensive across each housing type with the average
-listing price being 240 dollars per night for entire homes and
-apartments, about 105 dollars for private rooms, and 75 dollars for
-shared rooms. It seems to also have the biggest range, with Queens and
-Staten Island showing similar distributions. Staten Island and Bronx are
-both very close to being the cheapest amongst the 5 boroughs. Having
-never been to NYC and never heard of Bronx or Staten Island, it seems
-reasonable that they are the two cheapest ones and that the other three
-have higher standards of living and are therefore higher priced.
+We can with point and box plots combined observe the distribution of prices across boroughs and type of rooms that are listed. It also shows labels for the most commonly listed neighborhoods by each borough. Homes and apartments are close to being twice as expensive as private rooms, and probably three times as expensive than shared rooms. Manhattan is clearly the most expensive across each housing type with the average listing price being 240 dollars per night for entire homes and apartments, about 105 dollars for private rooms, and 75 dollars for shared rooms. It seems to also have the biggest range, with Queens and Staten Island showing similar distributions. Staten Island and Bronx are both very close to being the cheapest amongst the 5 boroughs. Having never been to NYC and never heard of Bronx or Staten Island, it seems reasonable that they are the two cheapest ones and that the other three have higher standards of living and are therefore higher priced.
