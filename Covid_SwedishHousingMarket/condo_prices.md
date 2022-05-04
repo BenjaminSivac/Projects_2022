@@ -1,13 +1,12 @@
 Covid-19 Pandemic & The Swedish Housing Market
 ================
-Benjamin Sivac
-2022-05-04
-
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/Covid_SwedishHousingMarket/condo_prices_files/figure-gfm/hsmrkt.jpg"
        height="450px" width="1000""/>
 </p>
 
+Benjamin Sivac
+2022-05-04
 
 ## Introduction
 
