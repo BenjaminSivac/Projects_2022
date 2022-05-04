@@ -1,12 +1,12 @@
 Data With Danny: Balanced Tree Clothing Co.
 ================
+Benjamin Sivac
+2022-04-08
+
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/figures-gfm/7.png"
        height="850px" width="850px"/>
 </p>
-
-Benjamin Sivac
-2022-04-08
 
 ## Introduction
 
