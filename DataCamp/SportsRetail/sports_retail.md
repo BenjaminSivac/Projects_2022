@@ -5,7 +5,7 @@ Benjamin Sivac
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/SportsRetail/retail.jpg"
-       height="500" width="1000""/>
+       height="600" width="1000""/>
 </p>
 
 ## Introduction
