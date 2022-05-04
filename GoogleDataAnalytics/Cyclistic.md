@@ -3,11 +3,11 @@ Cyclistic Case Study
 Benjamin Sivac
 2022-03-21
 
-## Introduction
-
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/GoogleDataAnalytics/Cyclistic_files/figure-gfm/Cyclistic_logo.png"/>
 </p>
+
+## Introduction
 
 This report is to show my approach and work in solving a case study
 provided by Google Data Analytics Course. While there are uses for SQL
