@@ -10,23 +10,17 @@ Benjamin Sivac
 
 ## Introduction
 
-Clique Bait is not like your regular online seafood store - the founder
-and CEO Danny, was also a part of a digital data analytics team and
-wanted to expand his knowledge into the seafood industry!
+Clique Bait is not like your regular online seafood store - the founder and CEO Danny, was also a part of a digital data analytics team and wanted to expand his knowledge into the seafood industry!
 
-In this case study - you are required to support Danny’s vision and
-analyse his dataset and come up with creative solutions to calculate
-funnel fallout rates for the Clique Bait online store.
+In this case study - you are required to support Danny’s vision and analyse his dataset and come up with creative solutions to calculate funnel fallout rates for the Clique Bait online store.
 
 ## Available Data
 
-For this case study there is a total of 5 datasets which you will need
-to combine to solve all of the questions.
+For this case study there is a total of 5 datasets which you will need to combine to solve all of the questions.
 
 <h3 id="Users"><code>Users</code></h3>
 
-Customers who visit the Clique Bait website are tagged via their
-cookie\_id.
+Customers who visit the Clique Bait website are tagged via their cookie\_id.
 
 <div class="knitsql-table">
 
@@ -49,10 +43,7 @@ Displaying records 1 - 10
 
 <h3 id="Events"><code>Events</code></h3>
 
-Customer visits are logged in this events table at a cookie\_id level
-and the event\_type and page\_id values can be used to join onto
-relevant satellite tables to obtain further information about each
-event.
+Customer visits are logged in this events table at a cookie\_id level and the event\_type and page\_id values can be used to join onto relevant satellite tables to obtain further information about each event.
 
 The sequence\_number is used to order the events within each visit.
 
@@ -77,8 +68,7 @@ Displaying records 1 - 10
 
 <h3 id="Event Identifier"><code>Event Identifier</code></h3>
 
-The event\_identifier table shows the types of events which are captured
-by Clique Bait’s digital data systems.
+The event\_identifier table shows the types of events which are captured by Clique Bait’s digital data systems.
 
 <div class="knitsql-table">
 
@@ -96,8 +86,7 @@ by Clique Bait’s digital data systems.
 
 <h3 id="Campaign Identifier"><code>Campaign Identifier</code></h3>
 
-This table shows information for the 3 campaigns that Clique Bait has
-ran on their website so far in 2020.
+This table shows information for the 3 campaigns that Clique Bait has ran on their website so far in 2020.
 
 <div class="knitsql-table">
 
@@ -113,8 +102,7 @@ ran on their website so far in 2020.
 
 <h3 id="Page Hierarchy"><code>Page Hierarchy</code></h3>
 
-This table lists all of the pages on the Clique Bait website which are
-tagged and have data passing through from user interaction events.
+This table lists all of the pages on the Clique Bait website which are tagged and have data passing through from user interaction events.
 
 <div class="knitsql-table">
 
@@ -139,8 +127,7 @@ Displaying records 1 - 10
 
 ## A. Digital Analysis
 
-Using the available datasets - answer the following questions using a
-single query for each one:
+Using the available datasets - answer the following questions using a single query for each one:
 
 **A.1 How many users are there?**
 
@@ -393,8 +380,7 @@ ORDER BY bought DESC;
 
 ## B. Product Funnel Analysis
 
-Using a single SQL query - create a new output table which has the
-following details:
+Using a single SQL query - create a new output table which has the following details:
 
 -   **How many times was each product viewed?**
 -   **How many times was each product added to cart?**
@@ -482,9 +468,7 @@ JOIN
 
 ------------------------------------------------------------------------
 
-**Additionally, create another table which further aggregates the data
-for the above points but this time for each product category instead of
-individual products.**
+**Additionally, create another table which further aggregates the data for the above points but this time for each product category instead of individual products.**
 
 ``` sql
 SELECT
@@ -630,8 +614,7 @@ FROM
 
 ## C. Campaigns Analysis
 
-Generate a table that has 1 single row for every unique visit\_id record
-and has the following columns:
+Generate a table that has 1 single row for every unique visit\_id record and has the following columns:
 
 -   **user\_id**
 -   **visit\_id**
@@ -698,9 +681,4 @@ Displaying records 1 - 10
 
 </div>
 
-Pretty clean. I first planned to filter everything on first
-sequence\_number by adding another join, and just SUM by partition of
-visit\_id for each column, but STRING\_AGG() wasn’t “a valid windowing
-function” and it “cannot be used with the OVER() clause”, so I settled
-on using group by instead and removed the partitions. I also learnt that
-it’s possible to join tables by time !
+Pretty clean. I first planned to filter everything on first sequence\_number by adding another join, and just SUM by partition of visit\_id for each column, but STRING\_AGG() wasn’t “a valid windowing function” and it “cannot be used with the OVER() clause”, so I settled on using group by instead and removed the partitions. I also learnt that it’s possible to join tables by time !
