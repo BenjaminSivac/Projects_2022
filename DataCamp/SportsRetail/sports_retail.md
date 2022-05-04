@@ -4,7 +4,8 @@ Benjamin Sivac
 2022-04-28
 
 <p align="center">
-  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/SportsRetail/retail.jpg"/>
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/SportsRetail/retail.jpg"
+       width="850""/>
 </p>
 
 ## Introduction
