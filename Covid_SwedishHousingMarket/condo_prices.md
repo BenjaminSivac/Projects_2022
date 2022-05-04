@@ -403,3 +403,4 @@ variance, but since the major part of the information lies within the
 trend, it’ll suffice.
 
 ## Choosing a time series model
+*[To be continued]*
