@@ -1,34 +1,27 @@
 Data With Danny: Balanced Tree Clothing Co.
 ================
-Benjamin Sivac
-2022-04-08
-
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/figures-gfm/7.png"
        height="850px" width="850px"/>
 </p>
 
+Benjamin Sivac
+2022-04-08
+
 ## Introduction
 
-Balanced Tree Clothing Company prides themselves on providing an
-optimised range of clothing and lifestyle wear for the modern
-adventurer!
+Balanced Tree Clothing Company prides themselves on providing an optimised range of clothing and lifestyle wear for the modern adventurer!
 
-Danny, the CEO of this trendy fashion company has asked you to assist
-the team’s merchandising teams analyse their sales performance and
-generate a basic financial report to share with the wider business.
+Danny, the CEO of this trendy fashion company has asked you to assist the team’s merchandising teams analyse their sales performance and generate a basic financial report to share with the wider business.
 
 ## Available Data
 
-For this case study there is a total of 4 datasets for this case study -
-however you will only need to utilise 2 main tables to solve all of the
-regular questions, and the additional 2 tables are used only for the
-bonus challenge question!
+For this case study there is a total of 4 datasets for this case study - however you will only need to utilise 2 main tables to solve all of the
+regular questions, and the additional 2 tables are used only for the bonus challenge question!
 
 <h3 id="Product Details"><code>Product Details</code></h3>
 
-product\_details includes all information about the entire range that
-Balanced Clothing sells in their store.
+product\_details includes all information about the entire range that Balanced Clothing sells in their store.
 
 <div class="knitsql-table">
 
@@ -51,9 +44,7 @@ Displaying records 1 - 10
 
 <h3 id="Product Sales"><code>Product Sales</code></h3>
 
-sales contains product level information for all the transactions made
-for Balanced Tree including quantity, price, percentage discount, member
-status, a transaction ID and also the transaction timestamp.
+sales contains product level information for all the transactions made for Balanced Tree including quantity, price, percentage discount, member status, a transaction ID and also the transaction timestamp.
 
 <div class="knitsql-table">
 
@@ -76,13 +67,9 @@ Displaying records 1 - 10
 
 # Case Study Questions
 
-The following questions can be considered key business questions and
-metrics that the Balanced Tree team requires for their monthly reports.
+The following questions can be considered key business questions and metrics that the Balanced Tree team requires for their monthly reports.
 
-Each question can be answered using a single query - but as you are
-writing the SQL to solve each individual problem, keep in mind how you
-would generate all of these metrics in a single SQL script which the
-Balanced Tree team can run each month.
+Each question can be answered using a single query - but as you are writing the SQL to solve each individual problem, keep in mind how you would generate all of these metrics in a single SQL script which the Balanced Tree team can run each month.
 
 ## A. High Level Sales Analysis
 
