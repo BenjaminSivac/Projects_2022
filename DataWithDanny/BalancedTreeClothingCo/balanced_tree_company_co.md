@@ -563,7 +563,7 @@ confirm percentages.
 ------------------------------------------------------------------------
 
 **C.7 What is the percentage split of revenue by segment for each
-category?**
+category?** (INCORRECT OUTPUT! WIP)
 
 ``` sql
 WITH cte_total_revenue AS(
