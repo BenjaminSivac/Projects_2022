@@ -643,3 +643,9 @@ ON
 a product was purchased divided by total number of transactions)**
 
 To be continued
+
+## PowerBI Dashboard
+
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/figures-gfm/BTCC.PNG"/>
+</p>
