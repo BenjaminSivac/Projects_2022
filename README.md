@@ -51,5 +51,8 @@ While I was first surprised that Datacamp had courses and projects for SQL, I en
 
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/SportsRetail/sports_retail.md">Optimizing Online Sports Retail Revenue</a>
 ***
-# Tableau
-*[On hold]*
+# PowerBI
+*[Work In Progress]*
+
+* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/balanced_tree_company_co.md#powerbi-dashboard">Product Dashboard</a>
+
