@@ -54,5 +54,5 @@ While I was first surprised that Datacamp had courses and projects for SQL, I en
 # Power BI
 I decided to try out Power BI Desktop as I found it a lot more intuitive and less frustrating to work with than Tableau Public, but it also integrates really well with SQL Server. The plan is to visualize a few datasets that I've worked with before and learn DAX syntax.
 
-* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/balanced_tree_company_co.md#powerbi-dashboard">Balanced Tree Clothing Co. - Product Dashboard</a>
+* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/balanced_tree_company_co.md#power-bi-dashboard">Balanced Tree Clothing Co. - Product Dashboard</a>
 
