@@ -55,5 +55,4 @@ While I was first surprised that Datacamp had courses and projects for SQL, I en
 *[Work In Progress]*
 
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/balanced_tree_company_co.md#powerbi-dashboard">Product Dashboard</a>
-* <iframe title="BalancedTreeClothingCo" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=9f0bc6c1-dca3-420e-aa94-8ffb98f554b1&autoAuth=true&ctid=1e586649-7317-42fb-8949-66923d34ba7e&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLW5vcnRoLWV1cm9wZS1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe>
 
