@@ -649,3 +649,5 @@ To be continued
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/figures-gfm/BTCC.PNG"/>
 </p>
+
+The above dashboard will soon be available to interact with <a> href="https://app.powerbi.com/reportEmbed?reportId=9f0bc6c1-dca3-420e-aa94-8ffb98f554b1&autoAuth=true&ctid=1e586649-7317-42fb-8949-66923d34ba7e&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLW5vcnRoLWV1cm9wZS1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D">at this link</a>
