@@ -52,7 +52,7 @@ While I was first surprised that Datacamp had courses and projects for SQL, I en
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/SportsRetail/sports_retail.md">Optimizing Online Sports Retail Revenue</a>
 ***
 # Power BI
-*[Work In Progress]*
+I decided to try Power BI as it's a lot less frustrating to work with Power BI desktop than Tableau Public, and I found it a lot more intuitive but it also integrates really well with SQL Server. The plan is to visualize a few datasets that I've worked with before and learn DAX syntax.
 
-* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/balanced_tree_company_co.md#powerbi-dashboard">Product Dashboard</a>
+* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/balanced_tree_company_co.md#powerbi-dashboard">Balanced Tree Clothing Co. - Product Dashboard</a>
 
