@@ -47,12 +47,12 @@ This 8 week long challenge filled with difficult SQL casestudies has been time w
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/FreshSegments/Fresh_Segments.md">Case Study #8 - Fresh Segments</a>
 
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/DataCamp">DataCamp</a>
-While I was first surprised that Datacamp had courses and projects for SQL, I ended up finding them quite shallow and unintersting. I'll upload the ones that I find worthwhile doing.
+While I was first surprised and intrigued with the fact that Datacamp had courses and projects for SQL, I ended up finding them quite shallow and unintersting. I'll upload the ones that I find worthwhile doing.
 
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/SportsRetail/sports_retail.md">Optimizing Online Sports Retail Revenue</a>
 ***
 # Power BI
-I decided to try out Power BI Desktop as I found it a lot more intuitive and less frustrating to work with than Tableau Public, but it also integrates really well with SQL Server. The plan is to visualize a few datasets that I've worked with before and learn DAX syntax.
+I swapped to Power BI Desktop as I found it a lot more intuitive and less frustrating to work with than Tableau Public, but it also integrates really well with SQL Server and other Microsoft programs. The plan is to visualize a few datasets that I've worked with and learn DAX syntax.
 
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/BalancedTreeClothingCo/balanced_tree_company_co.md#power-bi-dashboard">Balanced Tree Clothing Co. - Product Dashboard</a>
 
