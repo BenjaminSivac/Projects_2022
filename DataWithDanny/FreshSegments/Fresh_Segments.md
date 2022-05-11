@@ -1,14 +1,9 @@
 Data With Danny: Fresh Segments
 ================
 Benjamin Sivac
-2022-03-24
+2022-05-11
 
-<p align="center">
-  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/FreshSegments/fs.png"
-       height="850px" width="850px"/>
-</p>
-
-## Task
+## Introduction
 
 Danny created Fresh Segments, a digital marketing agency that helps
 other businesses analyse trends in online ad click behaviour for their
@@ -32,7 +27,7 @@ list and their interests.
 For this case study there is a total of 2 datasets which you will need
 to use to solve the questions.
 
-<h3 id="Interest Metrics"><code>Interest Metrics</code></h3>
+### Interest Metrics
 
 This table contains information about aggregated interest metrics for a
 specific major client of Fresh Segments which makes up a large
@@ -75,7 +70,7 @@ this particular interest in the month of July 2018.
 The ranking and percentage\_ranking relates to the order of index\_value
 records in each month year.
 
-<h3 id="Interest Map"><code>Interest Map</code></h3>
+### Interest Map
 
 This mapping table links the interest\_id with their relevant interest
 information. You will need to join this table onto the previous
@@ -102,9 +97,13 @@ Displaying records 1 - 10
 </div>
 
 # Case Study Questions
-The following questions can be considered key business questions that are required to be answered for the Fresh Segments team.
 
-Most questions can be answered using a single query however some questions are more open ended and require additional thought and not just a coded solution!
+The following questions can be considered key business questions that
+are required to be answered for the Fresh Segments team.
+
+Most questions can be answered using a single query however some
+questions are more open ended and require additional thought and not
+just a coded solution!
 
 ## A. Data Exploration and Cleansing
 
@@ -240,8 +239,8 @@ are not in interest\_map.
 
 ------------------------------------------------------------------------
 
-**A.5 Summarise the id values in the fresh\_segments.interest\_map by its
-total record count in this table**
+**A.5 Summarise the id values in the fresh\_segments.interest\_map by
+its total record count in this table**
 
 ``` sql
 SELECT
@@ -264,9 +263,9 @@ An unusually simple question…
 
 ------------------------------------------------------------------------
 
-**A.6 What sort of table join should we perform for our analysis and why?
-Check your logic by checking the rows where interest\_id = 21246 in your
-joined output and include all columns from
+**A.6 What sort of table join should we perform for our analysis and
+why? Check your logic by checking the rows where interest\_id = 21246 in
+your joined output and include all columns from
 fresh\_segments.interest\_metrics and all columns from
 fresh\_segments.interest\_map except from the id column.**
 
@@ -358,6 +357,8 @@ Confirmed to also be 4972 observations. I assume that the interest\_map
 table was created at a later date which is what the created\_at column
 is referring to. It would then not share any connections to the other
 time stamp columns, and is therefore valid and accurate.
+
+------------------------------------------------------------------------
 
 ## B. Interest Analysis
 
@@ -510,9 +511,7 @@ percentage.
 ------------------------------------------------------------------------
 
 **B.5 After removing these interests - how many unique interests are
-there for each month?** 
-
-We first count distinct months per interest\_id,
+there for each month?** We first count distinct months per interest\_id,
 filter by number of months, and then summarise each unique interest by
 month.
 
@@ -567,67 +566,207 @@ Displaying records 1 - 10
 
 </div>
 
+------------------------------------------------------------------------
+
 ## C. Segment Analysis
 
-**C.1 Using our filtered dataset by removing the interests with less than
-6 months worth of data, which are the top 10 and bottom 10 interests
-which have the largest composition values in any month\_year? Only use
-the maximum composition value for each interest but you must keep the
-corresponding month\_year**
+**C.1 Using our filtered dataset by removing the interests with less
+than 6 months worth of data, which are the top 10 and bottom 10
+interests which have the largest composition values in any month\_year?
+Only use the maximum composition value for each interest but you must
+keep the corresponding month\_year**
+
+Note that there are no results below for this analysis, I kept getting
+“Invalid Descriptor Index” when I put the code into Rmarkdown and I
+found no quick solution. I’ll for now share my code but hopefully find a
+fix sooner rather than later.
 
 ``` sql
-WITH cte_total_months AS(
-    SELECT 
-        DISTINCT interest_id AS unique_interests,
-        COUNT(DISTINCT month_year) AS total_months
+WITH cte_filtered AS(
+    SELECT
+        DISTINCT interest_id AS unique_interest_id,
+        MAX(composition) AS max_comp
     FROM
         interest_metrics
     WHERE month_year IS NOT NULL
     GROUP BY interest_id
-),
-cte_filter AS(
+    HAVING COUNT(DISTINCT month_year)>5
+)
     SELECT
-        unique_interests,
-        me.month_year,
-        MAX(composition) AS max_comp
+        interest_name,
+        max_comp,
+        FORMAT(month_year, 'MMM yyyy') AS month_year
+    INTO
+        #temp_table
     FROM
-        cte_total_months cte
-        INNER JOIN
-            interest_metrics me
-        ON
-            cte.unique_interests = me.interest_id       
-    GROUP BY total_months, me.month_year, composition, unique_interests
-    HAVING total_months > 5
+        cte_filtered cte
+    INNER JOIN
+        interest_metrics me
+        ON  cte.unique_interest_id = me.interest_id AND cte.max_comp=me.composition
+    INNER JOIN
+        interest_map ma
+        ON cte.unique_interest_id = ma.id;
+
+-- Top 10:
+SELECT TOP 10
+    *
+FROM
+    #temp_table
+ORDER BY max_comp DESC;
+
+-- bottom 10:
+SELECT TOP 10
+    *
+FROM
+    #temp_table
+ORDER BY max_comp;
+```
+
+------------------------------------------------------------------------
+
+**C.2 Which 5 interests had the lowest average ranking value?**
+
+``` sql
+WITH cte_avg_rank AS(
+    SELECT TOP 5
+        interest_id,
+        AVG(ranking) AS avg_rank
+    FROM
+        interest_metrics 
+    GROUP BY interest_id
+    ORDER BY AVG(ranking) DESC
 )
 SELECT
-    month_year,
-    max_comp,
-    unique_interests
+    interest_name,
+    avg_rank
 FROM
-    cte_filter
-GROUP BY month_year, max_comp, unique_interests
-ORDER BY unique_interests
+    cte_avg_rank ar
+INNER JOIN
+    interest_map ma
+    ON  ar.interest_id = ma.id
+ORDER BY avg_rank DESC;
+```
+
+------------------------------------------------------------------------
+
+**C.3 Which 5 interests had the largest standard deviation in their
+percentile\_ranking value?**
+
+``` sql
+WITH cte_sd AS(
+    SELECT TOP 5
+        interest_id,
+        STDEV(percentile_ranking) AS sd_centile_rank
+    FROM
+        interest_metrics 
+    GROUP BY interest_id
+    ORDER BY STDEV(percentile_ranking) DESC
+)
+SELECT
+    interest_name,
+    ROUND(sd_centile_rank,2) AS sd_centile_rank
+FROM
+    cte_sd sd
+INNER JOIN
+    interest_map ma
+    ON  sd.interest_id = ma.id
+ORDER BY sd_centile_rank DESC;
+```
+
+------------------------------------------------------------------------
+
+**C.4 For the 5 interests found in the previous question - what was
+minimum and maximum percentile\_ranking values for each interest and its
+corresponding year\_month value? Can you describe what is happening for
+these 5 interests?**
+
+``` sql
+WITH cte_sd AS(
+    SELECT TOP 5
+        interest_id,
+        MAX(percentile_ranking) AS max_centile,
+        MIN(percentile_ranking) AS min_centile
+    FROM
+        interest_metrics 
+    GROUP BY interest_id
+    ORDER BY STDEV(percentile_ranking) DESC
+),
+cte_max_month AS(
+    SELECT
+        sd.interest_id as interest_id,
+        max_centile,
+        min_centile,
+        month_year AS max_month_year
+    FROM
+        cte_sd sd
+    INNER JOIN
+        interest_metrics t1
+        ON  sd.interest_id = t1.interest_id AND max_centile=t1.percentile_ranking
+)
+SELECT
+    interest_name,
+    max_centile,
+    FORMAT(max_month_year, 'MMM yyyy') AS max_month_year,
+    min_centile,
+    FORMAT(t2.month_year, 'MMM yyyy') AS min_month_year
+FROM
+    cte_max_month mm
+INNER JOIN
+    interest_metrics t2
+    ON  mm.interest_id = t2.interest_id AND min_centile=t2.percentile_ranking
+INNER JOIN
+    interest_map ma
+    ON mm.interest_id = ma.id
+```
+
+Probably not the most efficient solution for retrieving an output with
+months for each max and min value on the same row. I’d bet that there is
+an obviously better format, perhaps by doing it in a long format and not
+minding any null values, but I thought this would look somewhat nicer.
+
+------------------------------------------------------------------------
+
+**C.5 How would you describe our customers in this segment based off
+their composition and ranking values? What sort of products or services
+should we show to these customers and what should we avoid?**
+
+Highly seasonal variation, and a big reliance on new products and shows
+to engage them. I believe new flagship phones do release in July, and
+hype for seasonal tv shows peak for their finales in late july,
+resulting in a following drought before the next season begins.
+
+## D. Index Analysis
+
+**D.1 What is the top 10 interests by the average composition for each
+month?**
+
+``` sql
+SELECT TOP 10
+    interest_id,
+    ROUND(composition / index_value, 2) AS avg_composition,
+    month_year
+FROM
+    interest_metrics
+ORDER BY ROUND(composition / index_value, 2) DESC
 ```
 
 <div class="knitsql-table">
 
-| month\_year | max\_comp | unique\_interests |
-|:------------|----------:|:------------------|
-| 2018-07-01  |      7.02 | 1                 |
-| 2018-08-01  |      3.44 | 1                 |
-| 2018-09-01  |      2.44 | 1                 |
-| 2018-10-01  |      3.71 | 1                 |
-| 2018-11-01  |      2.79 | 1                 |
-| 2018-12-01  |      2.94 | 1                 |
-| 2019-01-01  |      2.38 | 1                 |
-| 2019-02-01  |      2.55 | 1                 |
-| 2019-03-01  |      2.76 | 1                 |
-| 2019-04-01  |      2.28 | 1                 |
+| interest\_id | avg\_composition | month\_year |
+|:-------------|-----------------:|:------------|
+| 21057        |             9.14 | 2018-10-01  |
+| 21057        |             8.31 | 2018-12-01  |
+| 21057        |             8.28 | 2018-11-01  |
+| 21057        |             8.26 | 2018-09-01  |
+| 21057        |             7.66 | 2019-01-01  |
+| 21057        |             7.66 | 2019-02-01  |
+| 21245        |             7.60 | 2018-09-01  |
+| 6324         |             7.36 | 2018-07-01  |
+| 7541         |             7.27 | 2018-09-01  |
+| 6324         |             7.21 | 2018-08-01  |
 
 Displaying records 1 - 10
 
 </div>
 
-WIP. Query unique\_interests by max\_comp.
-
-------------------------------------------------------------------------
+**WIP**

@@ -25,7 +25,7 @@ con <- DBI::dbConnect(odbc::odbc(),
                       Trusted_Connection = "True")
 ```
 
-### Task 
+## Introduction 
 
 Danny created Fresh Segments, a digital marketing agency that helps other businesses analyse trends in online ad click behaviour for their unique customer base.
 
@@ -35,7 +35,7 @@ In particular - the composition and rankings for different interests are provide
 
 Danny has asked for your assistance to analyse aggregated metrics for an example client and provide some high level insights about the customer list and their interests.
 
-### Available Data
+## Available Data
 For this case study there is a total of 2 datasets which you will need to use to solve the questions.
 
 ### Interest Metrics
@@ -61,10 +61,15 @@ This mapping table links the interest_id with their relevant interest informatio
 SELECT id, interest_name, interest_summary
 FROM dbo.interest_map
 ```
-#### A. Data Exploration and Cleansing
 
+# Case Study Questions
+The following questions can be considered key business questions that are required to be answered for the Fresh Segments team.
 
-**1. Update the interest_metrics table by modifying the month_year column to be a date data type with the start of the month**
+Most questions can be answered using a single query however some questions are more open ended and require additional thought and not just a coded solution!
+
+## A. Data Exploration and Cleansing
+
+**A.1 Update the interest_metrics table by modifying the month_year column to be a date data type with the start of the month**
 
 MSQL can't convert MM-YYYY format to date, so we'll instead create another column with DATE type, set new column equal to old values + another date stamp, remove old one, and finally rename the new column to month_year
 ```{sql, connection=con, eval=FALSE}
@@ -86,7 +91,7 @@ exec sp_RENAME 'interest_metrics.month','month_year', 'COLUMN' -- rename our new
 ***
 
 
-**2. What is count of records in the fresh_segments.interest_metrics for each month_year value sorted in chronological order (earliest to latest) with the null values appearing first?**
+**A.2 What is count of records in the fresh_segments.interest_metrics for each month_year value sorted in chronological order (earliest to latest) with the null values appearing first?**
 
 ```{sql, connection=con}
 SELECT 
@@ -99,7 +104,7 @@ ORDER BY month_year
 ```
 ***
 
-**3. What do you think we should do with these null values in the fresh_segments.interest_metrics**
+**A.3 What do you think we should do with these null values in the fresh_segments.interest_metrics**
 
 ```{sql, connection=con}
 SELECT 
@@ -114,7 +119,7 @@ so we either drop or filter em out.
 
 ***
 
-**4. How many interest_id values exist in the fresh_segments.interest_metrics table but not in the fresh_segments.interest_map table? What about the other way around?**
+**A.4 How many interest_id values exist in the fresh_segments.interest_metrics table but not in the fresh_segments.interest_map table? What about the other way around?**
 
 ```{sql, connection=con}
 SELECT
@@ -133,7 +138,7 @@ There are 7 id values in interest_map that are not in interest_metrics, and 0 in
 
 ***
 
-**5. Summarise the id values in the fresh_segments.interest_map by its total record count in this table**
+**A.5 Summarise the id values in the fresh_segments.interest_map by its total record count in this table**
 
 ```{sql, connection = con}
 SELECT
@@ -145,7 +150,7 @@ An unusually simple question...
 
 ***
 
-**6. What sort of table join should we perform for our analysis and why? Check your logic by checking the rows where interest_id = 21246 in your joined output and include all columns from fresh_segments.interest_metrics and all columns from fresh_segments.interest_map except from the id column.**
+**A.6 What sort of table join should we perform for our analysis and why? Check your logic by checking the rows where interest_id = 21246 in your joined output and include all columns from fresh_segments.interest_metrics and all columns from fresh_segments.interest_map except from the id column.**
 
 To query all columns from both tables, while filtering for only id 21245, we can use INNER JOIN.
 ```{sql, connection = con}
@@ -160,7 +165,7 @@ Note that we get one record with NULL time stamps values, which wont neccesarily
 
 ***
 
-**7. Are there any records in your joined table where the month_year value is before the created_at value from the fresh_segments.interest_map table? Do you think these values are valid and why?**
+**A.7 Are there any records in your joined table where the month_year value is before the created_at value from the fresh_segments.interest_map table? Do you think these values are valid and why?**
 
 ```{sql, connection=con}
 SELECT 
@@ -183,9 +188,9 @@ Confirmed to also be 4972 observations. I assume that the interest_map table was
 
 ***
 
-#### B. Interest Analysis
+## B. Interest Analysis
 
-**1. Which interests have been present in all month_year dates in our dataset?**
+**B.1 Which interests have been present in all month_year dates in our dataset?**
 
 ```{sql, connection = con}
 WITH cte_total_months AS(
@@ -208,7 +213,7 @@ GROUP BY total_months;
 ```
 ***
 
-**2. Using this same total_months measure - calculate the cumulative percentage of all records starting at 14 months - which total_months value passes the 90% cumulative percentage value?**
+**B.2 Using this same total_months measure - calculate the cumulative percentage of all records starting at 14 months - which total_months value passes the 90% cumulative percentage value?**
 ```{sql, connection = con}
 WITH cte_total_months AS(
 	SELECT 
@@ -240,7 +245,7 @@ Cumulative percentaget value passes 90% by 6 months and above. Rest have relativ
 
 ***
 
-**3. If we were to remove all interest_id values which are lower than the total_months value we found in the previous question - how many total data points would we be removing?**
+**B.3 If we were to remove all interest_id values which are lower than the total_months value we found in the previous question - how many total data points would we be removing?**
 
 ```{sql, connection = con}
 WITH cte_total_months AS(
@@ -270,7 +275,7 @@ FROM
 
 ***
 
-**4. Does this decision make sense to remove these data points from a business perspective? Use an example where there are all 14 months present to a removed interest example for your arguments - think about what it means to have less months present from a segment perspective.** 
+**B.4 Does this decision make sense to remove these data points from a business perspective? Use an example where there are all 14 months present to a removed interest example for your arguments - think about what it means to have less months present from a segment perspective.** 
 
 No they should be investigated and improved upon to garner more clicks and interactions. 
 The more segments there are, the harder it is to reach these arbitrary thresholds. 
@@ -278,7 +283,7 @@ Removing an interest with 14 months present vs one with 1 present months has the
 
 ***
 
-**5. After removing these interests - how many unique interests are there for each month?**
+**B.5 After removing these interests - how many unique interests are there for each month?**
 We first count distinct months per interest_id, filter by number of months, and then summarise each unique interest by month. 
 ```{sql, connection = con}
 WITH cte_total_months AS(
@@ -315,48 +320,177 @@ GROUP BY month_year;
 ***
 
 
-#### C. Segment Analysis
+## C. Segment Analysis
  
-**1. Using our filtered dataset by removing the interests with less than 6 months worth of data, which are the top 10 and bottom 10 interests which have the largest composition values in any month_year? Only use the maximum composition value for each interest but you must keep the corresponding month_year**
+**C.1 Using our filtered dataset by removing the interests with less than 6 months worth of data, which are the top 10 and bottom 10 interests which have the largest composition values in any month_year? Only use the maximum composition value for each interest but you must keep the corresponding month_year**
 
-```{sql, connection = con}
-WITH cte_total_months AS(
-	SELECT 
-		DISTINCT interest_id AS unique_interests,
-		COUNT(DISTINCT month_year) AS total_months
+Note that there are no results below for this analysis, I kept getting "Invalid Descriptor Index" when I put the code into Rmarkdown and I found no quick solution. I'll for now share my code but hopefully find a fix sooner rather than later.
+
+```{sql, connection = con, eval=F, echo=T}
+WITH cte_filtered AS(
+	SELECT
+		DISTINCT interest_id AS unique_interest_id,
+		MAX(composition) AS max_comp
 	FROM
 		interest_metrics
 	WHERE month_year IS NOT NULL
 	GROUP BY interest_id
-),
-cte_filter AS(
-	SELECT
-		unique_interests,
-		me.month_year,
-		MAX(composition) AS max_comp
-	FROM
-		cte_total_months cte
-		INNER JOIN
-			interest_metrics me
-		ON
-			cte.unique_interests = me.interest_id		
-	GROUP BY total_months, me.month_year, composition, unique_interests
-	HAVING total_months > 5
+	HAVING COUNT(DISTINCT month_year)>5
 )
-SELECT
-	month_year,
-	max_comp,
-	unique_interests
+	SELECT
+		interest_name,
+		max_comp,
+		FORMAT(month_year, 'MMM yyyy') AS month_year
+	INTO
+		#temp_table
+	FROM
+		cte_filtered cte
+	INNER JOIN
+		interest_metrics me
+		ON	cte.unique_interest_id = me.interest_id AND cte.max_comp=me.composition
+	INNER JOIN
+		interest_map ma
+		ON cte.unique_interest_id = ma.id;
+
+-- Top 10:
+SELECT TOP 10
+	*
 FROM
-	cte_filter
-GROUP BY month_year, max_comp, unique_interests
-ORDER BY unique_interests
+	#temp_table
+ORDER BY max_comp DESC;
+
+-- bottom 10:
+SELECT TOP 10
+	*
+FROM
+	#temp_table
+ORDER BY max_comp;
 ```
-WIP. Query unique_interests by max_comp. 
+
 
 ***
 
-	
+**C.2 Which 5 interests had the lowest average ranking value?**
+```{sql, connection=con, eval=F, echo=T}
+WITH cte_avg_rank AS(
+	SELECT TOP 5
+		interest_id,
+		AVG(ranking) AS avg_rank
+	FROM
+		interest_metrics 
+	GROUP BY interest_id
+	ORDER BY AVG(ranking) DESC
+)
+SELECT
+	interest_name,
+	avg_rank
+FROM
+	cte_avg_rank ar
+INNER JOIN
+	interest_map ma
+	ON	ar.interest_id = ma.id
+ORDER BY avg_rank DESC;
+```
+***
+
+**C.3 Which 5 interests had the largest standard deviation in their percentile_ranking value?**
+```{sql, connection=con, eval=F, echo=T}
+WITH cte_sd AS(
+	SELECT TOP 5
+		interest_id,
+		STDEV(percentile_ranking) AS sd_centile_rank
+	FROM
+		interest_metrics 
+	GROUP BY interest_id
+	ORDER BY STDEV(percentile_ranking) DESC
+)
+SELECT
+	interest_name,
+	ROUND(sd_centile_rank,2) AS sd_centile_rank
+FROM
+	cte_sd sd
+INNER JOIN
+	interest_map ma
+	ON	sd.interest_id = ma.id
+ORDER BY sd_centile_rank DESC;
+```
+***
+
+**C.4 For the 5 interests found in the previous question - what was minimum and maximum percentile_ranking values for each interest and its corresponding year_month value? Can you describe what is happening for these 5 interests?**
+```{sql, connection=con, eval=F, echo=T}
+WITH cte_sd AS(
+	SELECT TOP 5
+		interest_id,
+		MAX(percentile_ranking) AS max_centile,
+		MIN(percentile_ranking) AS min_centile
+	FROM
+		interest_metrics 
+	GROUP BY interest_id
+	ORDER BY STDEV(percentile_ranking) DESC
+),
+cte_max_month AS(
+	SELECT
+		sd.interest_id as interest_id,
+		max_centile,
+		min_centile,
+		month_year AS max_month_year
+	FROM
+		cte_sd sd
+	INNER JOIN
+		interest_metrics t1
+		ON	sd.interest_id = t1.interest_id AND max_centile=t1.percentile_ranking
+)
+SELECT
+	interest_name,
+	max_centile,
+	FORMAT(max_month_year, 'MMM yyyy') AS max_month_year,
+	min_centile,
+	FORMAT(t2.month_year, 'MMM yyyy') AS min_month_year
+FROM
+	cte_max_month mm
+INNER JOIN
+	interest_metrics t2
+	ON	mm.interest_id = t2.interest_id AND min_centile=t2.percentile_ranking
+INNER JOIN
+	interest_map ma
+	ON mm.interest_id = ma.id
+```
+
+Probably not the most efficient solution for retrieving an output with months for each max and min value on the same row.
+I'd bet that there is an obviously better format, perhaps by doing it in a long format and not minding any null values, 
+but I thought this would look somewhat nicer.
+
+***
+
+**C.5 How would you describe our customers in this segment based off their composition and ranking values? What sort of products or services should we show to these customers and what should we avoid?**
+
+Highly seasonal variation, and a big reliance on new products and shows to engage them. 
+I believe new flagship phones do release in July, and hype for seasonal tv shows peak
+for their finales in late july, resulting in a following drought before the next season begins.
+
+## D. Index Analysis
+
+**D.1 What is the top 10 interests by the average composition for each month?**
+
+```{sql, connection=con}
+SELECT TOP 10
+	interest_id,
+	ROUND(composition / index_value, 2) AS avg_composition,
+	month_year
+FROM
+	interest_metrics
+ORDER BY ROUND(composition / index_value, 2) DESC
+```
+**WIP**
+
+
+
+
+
+
+
+
+
 
 
 
