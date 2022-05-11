@@ -430,7 +430,7 @@ SELECT
     age_band,
     demographic,
     SUM(CAST(sales AS FLOAT)) AS total_sales,
-    FORMAT(SUM(CAST(sales AS FLOAT)) / SUM(SUM(CAST(sales AS FLOAT))) OVER(),'p') AS test
+    FORMAT(SUM(CAST(sales AS FLOAT)) / SUM(SUM(CAST(sales AS FLOAT))) OVER(),'p') AS pct_sales
 FROM
     clean_weekly_sales
 WHERE platform = 'Retail'
@@ -440,7 +440,7 @@ ORDER BY total_sales DESC;
 
 <div class="knitsql-table">
 
-| age\_band    | demographic | total\_sales | test   |
+| age\_band    | demographic | total\_sales | pct_sales   |
 |:-------------|:------------|-------------:|:-------|
 | Unknown      | Unknown     |  16067285533 | 40.52% |
 | Retirees     | Families    |   6634686916 | 16.73% |
