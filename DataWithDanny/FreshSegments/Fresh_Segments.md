@@ -571,8 +571,6 @@ Displaying records 1 - 10
 
 </div>
 
-------------------------------------------------------------------------
-
 ## C. Segment Analysis
 
 **C.1 Using our filtered dataset by removing the interests with less
