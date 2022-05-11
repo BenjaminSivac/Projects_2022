@@ -511,6 +511,7 @@ percentage.
 
 **B.5 After removing these interests - how many unique interests are
 there for each month?** 
+
 We first count distinct months per interest\_id,
 filter by number of months, and then summarise each unique interest by
 month.
