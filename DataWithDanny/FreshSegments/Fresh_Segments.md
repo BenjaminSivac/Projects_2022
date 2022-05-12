@@ -1,12 +1,7 @@
 Data With Danny: Fresh Segments
 ================
 Benjamin Sivac
-2022-05-11
-
-<p align="center">
-  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/DataWithDanny/FreshSegments/fs.png"
-       height="850px" width="850px"/>
-</p>
+2022-05-12
 
 ## Introduction
 
@@ -571,6 +566,8 @@ Displaying records 1 - 10
 
 </div>
 
+------------------------------------------------------------------------
+
 ## C. Segment Analysis
 
 **C.1 Using our filtered dataset by removing the interests with less
@@ -579,10 +576,9 @@ interests which have the largest composition values in any month\_year?
 Only use the maximum composition value for each interest but you must
 keep the corresponding month\_year**
 
-Note that there are no results below for this analysis, I kept getting
-“Invalid Descriptor Index” when I put the code into Rmarkdown and I
-found no quick solution. I’ll for now share my code but hopefully find a
-fix sooner rather than later.
+Note that I was not able to join the tables for each question below this
+analysis for querying interest\_name, as it resulted in an “Invalid
+Descriptor Index” error when I wrote it in Rmarkdown.
 
 ``` sql
 WITH cte_filtered AS(
@@ -594,61 +590,99 @@ WITH cte_filtered AS(
     WHERE month_year IS NOT NULL
     GROUP BY interest_id
     HAVING COUNT(DISTINCT month_year)>5
-)
-    SELECT
-        interest_name,
+),
+cte_t1 AS(
+SELECT
+        unique_interest_id,
         max_comp,
         FORMAT(month_year, 'MMM yyyy') AS month_year
-    INTO
-        #temp_table
     FROM
         cte_filtered cte
     INNER JOIN
         interest_metrics me
         ON  cte.unique_interest_id = me.interest_id AND cte.max_comp=me.composition
-    INNER JOIN
-        interest_map ma
-        ON cte.unique_interest_id = ma.id;
-
--- Top 10:
+)
+        
 SELECT TOP 10
-    *
+  *
 FROM
-    #temp_table
-ORDER BY max_comp DESC;
-
--- bottom 10:
-SELECT TOP 10
-    *
-FROM
-    #temp_table
-ORDER BY max_comp;
+  cte_t1
+ORDER BY max_comp DESC
 ```
+
+<div class="knitsql-table">
+
+| unique\_interest\_id | max\_comp | month\_year |
+|:---------------------|----------:|:------------|
+| 21057                |     21.20 | Dec 2018    |
+| 6284                 |     18.82 | Jul 2018    |
+| 39                   |     17.44 | Jul 2018    |
+| 77                   |     17.19 | Jul 2018    |
+| 12133                |     15.15 | Oct 2018    |
+| 5969                 |     15.05 | Dec 2018    |
+| 171                  |     14.91 | Jul 2018    |
+| 4898                 |     14.23 | Jul 2018    |
+| 6286                 |     14.10 | Jul 2018    |
+| 4                    |     13.97 | Jul 2018    |
+
+Displaying records 1 - 10
+
+</div>
+
+``` sql
+SELECT TOP 10
+  *
+FROM
+  cte_t1
+ORDER BY max_comp
+```
+
+<div class="knitsql-table">
+
+| unique\_interest\_id | max\_comp | month\_year |
+|:---------------------|----------:|:------------|
+| 33958                |      1.88 | Aug 2018    |
+| 37412                |      1.94 | Oct 2018    |
+| 19599                |      1.97 | Mar 2019    |
+| 19635                |      2.05 | Jul 2018    |
+| 19591                |      2.08 | Oct 2018    |
+| 42011                |      2.09 | Jan 2019    |
+| 37421                |      2.09 | Aug 2019    |
+| 22408                |      2.12 | Jul 2018    |
+| 34085                |      2.14 | Aug 2019    |
+| 58                   |      2.18 | Jul 2018    |
+
+Displaying records 1 - 10
+
+</div>
 
 ------------------------------------------------------------------------
 
 **C.2 Which 5 interests had the lowest average ranking value?**
 
 ``` sql
-WITH cte_avg_rank AS(
-    SELECT TOP 5
-        interest_id,
-        AVG(ranking) AS avg_rank
-    FROM
-        interest_metrics 
-    GROUP BY interest_id
-    ORDER BY AVG(ranking) DESC
-)
-SELECT
-    interest_name,
-    avg_rank
+SELECT TOP 5
+    interest_id,
+    AVG(ranking) AS avg_rank
 FROM
-    cte_avg_rank ar
-INNER JOIN
-    interest_map ma
-    ON  ar.interest_id = ma.id
-ORDER BY avg_rank DESC;
+    interest_metrics 
+GROUP BY interest_id
+ORDER BY AVG(ranking) DESC
 ```
+
+<div class="knitsql-table">
+
+| interest\_id | avg\_rank |
+|:-------------|----------:|
+| 42401        |      1141 |
+| 42008        |      1135 |
+| 45522        |      1110 |
+| 43552        |      1110 |
+| 46567        |      1078 |
+
+5 records
+
+</div>
 
 ------------------------------------------------------------------------
 
@@ -666,15 +700,26 @@ WITH cte_sd AS(
     ORDER BY STDEV(percentile_ranking) DESC
 )
 SELECT
-    interest_name,
+    interest_id,
     ROUND(sd_centile_rank,2) AS sd_centile_rank
 FROM
     cte_sd sd
-INNER JOIN
-    interest_map ma
-    ON  sd.interest_id = ma.id
 ORDER BY sd_centile_rank DESC;
 ```
+
+<div class="knitsql-table">
+
+| interest\_id | sd\_centile\_rank |
+|:-------------|------------------:|
+| 6260         |             41.27 |
+| 131          |             30.72 |
+| 150          |             30.36 |
+| 23           |             30.18 |
+| 20764        |             28.97 |
+
+5 records
+
+</div>
 
 ------------------------------------------------------------------------
 
@@ -707,7 +752,7 @@ cte_max_month AS(
         ON  sd.interest_id = t1.interest_id AND max_centile=t1.percentile_ranking
 )
 SELECT
-    interest_name,
+    mm.interest_id,
     max_centile,
     FORMAT(max_month_year, 'MMM yyyy') AS max_month_year,
     min_centile,
@@ -717,10 +762,21 @@ FROM
 INNER JOIN
     interest_metrics t2
     ON  mm.interest_id = t2.interest_id AND min_centile=t2.percentile_ranking
-INNER JOIN
-    interest_map ma
-    ON mm.interest_id = ma.id
 ```
+
+<div class="knitsql-table">
+
+| interest\_id | max\_centile | max\_month\_year | min\_centile | min\_month\_year |
+|:-------------|-------------:|:-----------------|-------------:|:-----------------|
+| 150          |        93.28 | Jul 2018         |        10.01 | Aug 2019         |
+| 23           |        86.69 | Jul 2018         |         7.92 | Aug 2019         |
+| 20764        |        86.15 | Jul 2018         |        11.23 | Aug 2019         |
+| 131          |        75.03 | Jul 2018         |         4.84 | Mar 2019         |
+| 6260         |        60.63 | Jul 2018         |         2.26 | Aug 2019         |
+
+5 records
+
+</div>
 
 Probably not the most efficient solution for retrieving an output with
 months for each max and min value on the same row. I’d bet that there is
@@ -733,10 +789,14 @@ minding any null values, but I thought this would look somewhat nicer.
 their composition and ranking values? What sort of products or services
 should we show to these customers and what should we avoid?**
 
-Highly seasonal variation, and a big reliance on new products and shows
-to engage them. I believe new flagship phones do release in July, and
-hype for seasonal tv shows peak for their finales in late july,
-resulting in a following drought before the next season begins.
+The interest id’s are in order: ‘Tv Junkies’, ‘Techies’, ‘Entertainment
+Industry Decision Makers’, ‘Android Fans’, and ‘Blackbuster Movie Fans’.
+
+As for my observations; There’s a High variation by seasons, and a big
+reliance on new products and shows to engage them. I believe new
+flagship phones do release in July, and hype for seasonal tv shows peak
+for their finales in late july, resulting in a following drought before
+the next season begins.
 
 ## D. Index Analysis
 
@@ -744,32 +804,195 @@ resulting in a following drought before the next season begins.
 month?**
 
 ``` sql
-SELECT TOP 10
+WITH cte_rn AS(
+    SELECT
+        interest_id,
+        ROUND(composition / index_value, 2) AS avg_composition,
+        ROW_NUMBER() OVER(PARTITION BY month_year ORDER BY ROUND(composition / index_value, 2) DESC) AS rank,
+        month_year
+    FROM
+        interest_metrics
+)
+SELECT
     interest_id,
-    ROUND(composition / index_value, 2) AS avg_composition,
-    month_year
+    avg_composition,
+    FORMAT(month_year, 'MMM yyyy') AS month_year
 FROM
-    interest_metrics
-ORDER BY ROUND(composition / index_value, 2) DESC
+    cte_rn rn
+WHERE rank < 11 AND interest_id IS NOT NULL
+ORDER BY month_year, rank
 ```
 
 <div class="knitsql-table">
 
 | interest\_id | avg\_composition | month\_year |
 |:-------------|-----------------:|:------------|
-| 21057        |             9.14 | 2018-10-01  |
-| 21057        |             8.31 | 2018-12-01  |
-| 21057        |             8.28 | 2018-11-01  |
-| 21057        |             8.26 | 2018-09-01  |
-| 21057        |             7.66 | 2019-01-01  |
-| 21057        |             7.66 | 2019-02-01  |
-| 21245        |             7.60 | 2018-09-01  |
-| 6324         |             7.36 | 2018-07-01  |
-| 7541         |             7.27 | 2018-09-01  |
-| 6324         |             7.21 | 2018-08-01  |
+| 6065         |             6.28 | Apr 2019    |
+| 7541         |             6.21 | Apr 2019    |
+| 5969         |             6.05 | Apr 2019    |
+| 21245        |             6.02 | Apr 2019    |
+| 18783        |             6.01 | Apr 2019    |
+| 10981        |             5.65 | Apr 2019    |
+| 19620        |             5.52 | Apr 2019    |
+| 34           |             5.39 | Apr 2019    |
+| 15878        |             5.30 | Apr 2019    |
+| 13497        |             5.07 | Apr 2019    |
 
 Displaying records 1 - 10
 
 </div>
 
-**WIP**
+------------------------------------------------------------------------
+
+**D.2. For all of these top 10 interests - which interest appears the
+most often?**
+
+``` sql
+WITH cte_rn AS(
+    SELECT
+        interest_id,
+        ROUND(composition / index_value, 2) AS avg_composition,
+        ROW_NUMBER() OVER(PARTITION BY month_year ORDER BY ROUND(composition / index_value, 2) DESC) AS rank,
+        month_year
+    FROM
+        interest_metrics
+)
+SELECT
+    interest_id,
+    COUNT(interest_id) AS count
+FROM
+    cte_rn rn
+WHERE rank < 11 AND interest_id IS NOT NULL
+GROUP BY interest_id
+ORDER BY count DESC
+```
+
+<div class="knitsql-table">
+
+| interest\_id | count |
+|:-------------|------:|
+| 5969         |    10 |
+| 6065         |    10 |
+| 7541         |    10 |
+| 18783        |     9 |
+| 21245        |     9 |
+| 10981        |     9 |
+| 34           |     8 |
+| 21057        |     8 |
+| 10977        |     6 |
+| 4898         |     5 |
+
+Displaying records 1 - 10
+
+</div>
+
+------------------------------------------------------------------------
+
+**D.3 What is the average of the average composition for the top 10
+interests for each month?**
+
+``` sql
+WITH cte_rn AS(
+    SELECT
+        interest_id,
+        ROUND(composition / index_value, 2) AS avg_composition,
+        ROW_NUMBER() OVER(PARTITION BY month_year ORDER BY ROUND(composition / index_value, 2) DESC) AS rank,
+        month_year
+    FROM
+        interest_metrics
+)
+SELECT
+    DISTINCT FORMAT(month_year, 'MMM yyyy') AS month_year,
+    AVG(avg_composition) OVER(PARTITION BY month_year) AS avg_avg_comp
+FROM
+    cte_rn rn
+WHERE rank < 11 AND interest_id IS NOT NULL
+ORDER BY month_year DESC
+```
+
+<div class="knitsql-table">
+
+| month\_year | avg\_avg\_comp |
+|:------------|---------------:|
+| Sep 2018    |          6.895 |
+| Oct 2018    |          7.066 |
+| Nov 2018    |          6.623 |
+| May 2019    |          3.537 |
+| Mar 2019    |          6.168 |
+| Jun 2019    |          2.427 |
+| Jul 2019    |          2.765 |
+| Jul 2018    |          6.038 |
+| Jan 2019    |          6.399 |
+| Feb 2019    |          6.579 |
+
+Displaying records 1 - 10
+
+</div>
+
+------------------------------------------------------------------------
+
+**D.4 What is the 3 month rolling average of the max average composition
+value from September 2018 to August 2019 and include the previous top
+ranking interests in the same output shown below.**
+
+``` sql
+WITH cte_rn AS(
+    SELECT
+        interest_id,
+        ROUND(composition / index_value, 2) AS avg_composition,
+        ROW_NUMBER() OVER(PARTITION BY month_year ORDER BY ROUND(composition / index_value, 2) DESC) AS rank,
+        month_year
+    FROM
+        interest_metrics
+    WHERE month_year BETWEEN '2018-07-01' AND '2019-08-01'
+),
+cte_max AS(
+    SELECT
+        DISTINCT CAST(month_year AS DATE) AS month_year,
+        MAX(avg_composition) OVER(PARTITION BY month_year) AS max_avg_comp
+    FROM
+        cte_rn rn
+),
+cte_lags AS(
+    SELECT
+        month_year,
+        max_avg_comp,
+        LAG(max_avg_comp, 1, 0) OVER (ORDER BY CAST(month_year AS DATE)) AS _1_month_ago,
+        LAG(max_avg_comp, 2, 0) OVER (ORDER BY CAST(month_year AS DATE)) AS _2_months_ago
+    FROM
+        cte_max max
+)
+SELECT
+    month_year,
+    max_avg_comp,
+    ROUND((max_avg_comp + _1_month_ago + _2_months_ago)/3,2) AS _3_month_moving_avg,
+    _1_month_ago,
+    _2_months_ago
+FROM
+    cte_lags lags
+WHERE month_year >= '2018-09-01'
+```
+
+<div class="knitsql-table">
+
+| month\_year | max\_avg\_comp | \_3\_month\_moving\_avg | \_1\_month\_ago | \_2\_months\_ago |
+|:------------|---------------:|------------------------:|----------------:|-----------------:|
+| 2018-09-01  |           8.26 |                    7.61 |            7.21 |             7.36 |
+| 2018-10-01  |           9.14 |                    8.20 |            8.26 |             7.21 |
+| 2018-11-01  |           8.28 |                    8.56 |            9.14 |             8.26 |
+| 2018-12-01  |           8.31 |                    8.58 |            8.28 |             9.14 |
+| 2019-01-01  |           7.66 |                    8.08 |            8.31 |             8.28 |
+| 2019-02-01  |           7.66 |                    7.88 |            7.66 |             8.31 |
+| 2019-03-01  |           6.54 |                    7.29 |            7.66 |             7.66 |
+| 2019-04-01  |           6.28 |                    6.83 |            6.54 |             7.66 |
+| 2019-05-01  |           4.41 |                    5.74 |            6.28 |             6.54 |
+| 2019-06-01  |           2.77 |                    4.49 |            4.41 |             6.28 |
+
+Displaying records 1 - 10
+
+</div>
+
+I dislike hardcoding the average but I didn’t find another solution
+since the AVG() function doesn’t work across multiple columns. I have
+yet to add interest\_name and concatenate it with the lagged values,
+it’ll likely require 1-2 more CTEs to pull off.

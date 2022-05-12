@@ -324,9 +324,9 @@ GROUP BY month_year;
  
 **C.1 Using our filtered dataset by removing the interests with less than 6 months worth of data, which are the top 10 and bottom 10 interests which have the largest composition values in any month_year? Only use the maximum composition value for each interest but you must keep the corresponding month_year**
 
-Note that there are no results below for this analysis, I kept getting "Invalid Descriptor Index" when I put the code into Rmarkdown and I found no quick solution. I'll for now share my code but hopefully find a fix sooner rather than later.
+Note that I was not able to join the tables for each question below this analysis for querying interest_name, as it resulted in an “Invalid Descriptor Index” error when I wrote it in Rmarkdown.  
 
-```{sql, connection = con, eval=F, echo=T}
+```{sql, connection = con}
 WITH cte_filtered AS(
 	SELECT
 		DISTINCT interest_id AS unique_interest_id,
@@ -336,65 +336,83 @@ WITH cte_filtered AS(
 	WHERE month_year IS NOT NULL
 	GROUP BY interest_id
 	HAVING COUNT(DISTINCT month_year)>5
-)
-	SELECT
-		interest_name,
+),
+cte_t1 AS(
+SELECT
+		unique_interest_id,
 		max_comp,
 		FORMAT(month_year, 'MMM yyyy') AS month_year
-	INTO
-		#temp_table
 	FROM
 		cte_filtered cte
 	INNER JOIN
 		interest_metrics me
 		ON	cte.unique_interest_id = me.interest_id AND cte.max_comp=me.composition
+)
+		
+SELECT TOP 10
+  *
+FROM
+  cte_t1
+ORDER BY max_comp DESC
+```
+
+```{sql eval=FALSE, connection=con}
+SELECT TOP 10
+  *
+FROM
+  cte_t1
+ORDER BY max_comp
+```
+
+```{sql echo=FALSE, connection=con}
+WITH cte_filtered AS(
+	SELECT
+		DISTINCT interest_id AS unique_interest_id,
+		MAX(composition) AS max_comp
+	FROM
+		interest_metrics
+	WHERE month_year IS NOT NULL
+	GROUP BY interest_id
+	HAVING COUNT(DISTINCT month_year)>5
+),
+cte_t1 AS(
+SELECT
+		unique_interest_id,
+		max_comp,
+		FORMAT(month_year, 'MMM yyyy') AS month_year
+	FROM
+		cte_filtered cte
 	INNER JOIN
-		interest_map ma
-		ON cte.unique_interest_id = ma.id;
-
--- Top 10:
+		interest_metrics me
+		ON	cte.unique_interest_id = me.interest_id AND cte.max_comp=me.composition
+)
+		
 SELECT TOP 10
-	*
+  *
 FROM
-	#temp_table
-ORDER BY max_comp DESC;
-
--- bottom 10:
-SELECT TOP 10
-	*
-FROM
-	#temp_table
-ORDER BY max_comp;
+  cte_t1
+ORDER BY max_comp
 ```
 
 
 ***
 
 **C.2 Which 5 interests had the lowest average ranking value?**
-```{sql, connection=con, eval=F, echo=T}
-WITH cte_avg_rank AS(
-	SELECT TOP 5
-		interest_id,
-		AVG(ranking) AS avg_rank
-	FROM
-		interest_metrics 
-	GROUP BY interest_id
-	ORDER BY AVG(ranking) DESC
-)
-SELECT
-	interest_name,
-	avg_rank
+```{sql, connection=con}
+
+SELECT TOP 5
+	interest_id,
+	AVG(ranking) AS avg_rank
 FROM
-	cte_avg_rank ar
-INNER JOIN
-	interest_map ma
-	ON	ar.interest_id = ma.id
-ORDER BY avg_rank DESC;
+	interest_metrics 
+GROUP BY interest_id
+ORDER BY AVG(ranking) DESC
+
 ```
 ***
 
 **C.3 Which 5 interests had the largest standard deviation in their percentile_ranking value?**
-```{sql, connection=con, eval=F, echo=T}
+```{sql, connection=con}
 WITH cte_sd AS(
 	SELECT TOP 5
 		interest_id,
@@ -405,19 +423,16 @@ WITH cte_sd AS(
 	ORDER BY STDEV(percentile_ranking) DESC
 )
 SELECT
-	interest_name,
+	interest_id,
 	ROUND(sd_centile_rank,2) AS sd_centile_rank
 FROM
 	cte_sd sd
-INNER JOIN
-	interest_map ma
-	ON	sd.interest_id = ma.id
 ORDER BY sd_centile_rank DESC;
 ```
 ***
 
 **C.4 For the 5 interests found in the previous question - what was minimum and maximum percentile_ranking values for each interest and its corresponding year_month value? Can you describe what is happening for these 5 interests?**
-```{sql, connection=con, eval=F, echo=T}
+```{sql, connection=con}
 WITH cte_sd AS(
 	SELECT TOP 5
 		interest_id,
@@ -441,7 +456,7 @@ cte_max_month AS(
 		ON	sd.interest_id = t1.interest_id AND max_centile=t1.percentile_ranking
 )
 SELECT
-	interest_name,
+	mm.interest_id,
 	max_centile,
 	FORMAT(max_month_year, 'MMM yyyy') AS max_month_year,
 	min_centile,
@@ -451,9 +466,6 @@ FROM
 INNER JOIN
 	interest_metrics t2
 	ON	mm.interest_id = t2.interest_id AND min_centile=t2.percentile_ranking
-INNER JOIN
-	interest_map ma
-	ON mm.interest_id = ma.id
 ```
 
 Probably not the most efficient solution for retrieving an output with months for each max and min value on the same row.
@@ -464,7 +476,9 @@ but I thought this would look somewhat nicer.
 
 **C.5 How would you describe our customers in this segment based off their composition and ranking values? What sort of products or services should we show to these customers and what should we avoid?**
 
-Highly seasonal variation, and a big reliance on new products and shows to engage them. 
+The interest id's are in order: 'Tv Junkies', 'Techies', 'Entertainment Industry Decision Makers', 'Android Fans', and 'Blackbuster Movie Fans'.
+
+As for my observations; There's a High variation by seasons, and a big reliance on new products and shows to engage them.
 I believe new flagship phones do release in July, and hype for seasonal tv shows peak
 for their finales in late july, resulting in a following drought before the next season begins.
 
@@ -473,17 +487,109 @@ for their finales in late july, resulting in a following drought before the next
 **D.1 What is the top 10 interests by the average composition for each month?**
 
 ```{sql, connection=con}
-SELECT TOP 10
+WITH cte_rn AS(
+	SELECT
+		interest_id,
+		ROUND(composition / index_value, 2) AS avg_composition,
+		ROW_NUMBER() OVER(PARTITION BY month_year ORDER BY ROUND(composition / index_value, 2) DESC) AS rank,
+		month_year
+	FROM
+		interest_metrics
+)
+SELECT
 	interest_id,
-	ROUND(composition / index_value, 2) AS avg_composition,
-	month_year
+	avg_composition,
+	FORMAT(month_year, 'MMM yyyy') AS month_year
 FROM
-	interest_metrics
-ORDER BY ROUND(composition / index_value, 2) DESC
+	cte_rn rn
+WHERE rank < 11 AND interest_id IS NOT NULL
+ORDER BY month_year, rank
 ```
-**WIP**
+***
 
+**D.2. For all of these top 10 interests - which interest appears the most often?**
+```{sql, connection=con}
+WITH cte_rn AS(
+	SELECT
+		interest_id,
+		ROUND(composition / index_value, 2) AS avg_composition,
+		ROW_NUMBER() OVER(PARTITION BY month_year ORDER BY ROUND(composition / index_value, 2) DESC) AS rank,
+		month_year
+	FROM
+		interest_metrics
+)
+SELECT
+	interest_id,
+	COUNT(interest_id) AS count
+FROM
+	cte_rn rn
+WHERE rank < 11 AND interest_id IS NOT NULL
+GROUP BY interest_id
+ORDER BY count DESC
+```
+***
 
+**D.3 What is the average of the average composition for the top 10 interests for each month?**
+```{sql, connection=con}
+WITH cte_rn AS(
+	SELECT
+		interest_id,
+		ROUND(composition / index_value, 2) AS avg_composition,
+		ROW_NUMBER() OVER(PARTITION BY month_year ORDER BY ROUND(composition / index_value, 2) DESC) AS rank,
+		month_year
+	FROM
+		interest_metrics
+)
+SELECT
+	DISTINCT FORMAT(month_year, 'MMM yyyy') AS month_year,
+	AVG(avg_composition) OVER(PARTITION BY month_year) AS avg_avg_comp
+FROM
+	cte_rn rn
+WHERE rank < 11 AND interest_id IS NOT NULL
+ORDER BY month_year DESC
+```
+***
+
+**D.4 What is the 3 month rolling average of the max average composition value from September 2018 to August 2019 and include the previous top ranking interests in the same output shown below.**
+```{sql, connection=con}
+WITH cte_rn AS(
+	SELECT
+		interest_id,
+		ROUND(composition / index_value, 2) AS avg_composition,
+		ROW_NUMBER() OVER(PARTITION BY month_year ORDER BY ROUND(composition / index_value, 2) DESC) AS rank,
+		month_year
+	FROM
+		interest_metrics
+	WHERE month_year BETWEEN '2018-07-01' AND '2019-08-01'
+),
+cte_max AS(
+	SELECT
+		DISTINCT CAST(month_year AS DATE) AS month_year,
+		MAX(avg_composition) OVER(PARTITION BY month_year) AS max_avg_comp
+	FROM
+		cte_rn rn
+),
+cte_lags AS(
+	SELECT
+		month_year,
+		max_avg_comp,
+		LAG(max_avg_comp, 1, 0) OVER (ORDER BY CAST(month_year AS DATE)) AS _1_month_ago,
+		LAG(max_avg_comp, 2, 0) OVER (ORDER BY CAST(month_year AS DATE)) AS _2_months_ago
+	FROM
+		cte_max max
+)
+SELECT
+	month_year,
+	max_avg_comp,
+	ROUND((max_avg_comp + _1_month_ago + _2_months_ago)/3,2) AS _3_month_moving_avg,
+	_1_month_ago,
+	_2_months_ago
+FROM
+	cte_lags lags
+WHERE month_year >= '2018-09-01'
+```
+
+I dislike hardcoding the average but I didn't find another solution since the AVG() function doesn't work across multiple columns. I have yet to add interest_name and concatenate it with the lagged values, it'll likely require 1-2 more CTEs to pull off.
 
 
 
