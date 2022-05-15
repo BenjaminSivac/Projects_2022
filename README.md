@@ -29,7 +29,7 @@ I decided to try out a few Datacamp courses in R, and possibly SQL, which has so
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/DataCamp/AirbnbMarket/AirbnbMarket.md">Exploring the NYC Airbnb Market</a>
 
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/Covid_SwedishHousingMarket/condo_prices.md">Covid-19 And The Swedish Housing Market</a>
-*[On-hold]* Based on my Bachelor's thesis in Statisics, explaining the work and thoughtprocess handling imputation, decomposition and modelling timeseries. Since there are a lot of cleaning and structuring left to do in the notebook, I have decided to upload the old R files.
+*[On-hold]* Based on my Bachelor's thesis in Statisics, explaining the work and thoughtprocess handling imputation, decomposition and modelling timeseries. It is also  a chance for me to practice tidyverse, improve techniques, and give a proper structure to the code. Since there are a lot of cleaning and structuring left to do in the notebook, I have decided to upload the old R files.
 
 
 ***
