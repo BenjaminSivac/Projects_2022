@@ -3,6 +3,9 @@ Tidy Tuesday: Billboard 100
 Benjamin Sivac
 2022-05-23
 
+<p align="center">
+  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/TidyTuesday/Billboard100_files/figure-gfm/bbhot100.jpg"</p>
+
 # Introduction
 
 This EDA is done by following a video uploaded by an esteemed R-user
