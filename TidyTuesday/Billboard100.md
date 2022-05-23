@@ -9,10 +9,9 @@ Benjamin Sivac
 # Introduction
 
 This EDA is done by following a video uploaded by an esteemed R-user
-named David Robinsson. I figured it would be a great opportunity for me
+named David Robinson. I figured it would be a great opportunity for me
 to see another analyst’s approach to EDA and how he applies more
-advanced techniques in a somewhat more casual manner than what I
-personally am used to.
+advanced techniques.
 
 ## Data
 
