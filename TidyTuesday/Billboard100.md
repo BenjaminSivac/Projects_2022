@@ -1,4 +1,4 @@
-Tidy Tuesday: Billboard 100
+Tidy Tuesday: Top 100 Billboard
 ================
 Benjamin Sivac
 2022-05-23
@@ -50,7 +50,10 @@ df.bb100 %>% head()
 This dataset already has a few interesting aggregated columns for each
 performer and his/her respective song; weekly number, number of
 instances it has appeared on the billboard, positions on the chart, and
-a variable for cumulative weeks on the chart. We will first fix the
+a variable for cumulative weeks on the chart. 
+  
+## Exploratory data analysis
+We will first fix the
 week\_id variable as it needs to be converted into a date format.
 
 ``` r
