@@ -36,7 +36,7 @@ I decided to upload the old R files since I underestimated the time it would tak
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/tree/main/TidyTuesday">Tidy Tuesday </a>
 I have yet to decide whether or not I will commit to this weekly community activity, but I'll at the least have a look at old projects and see what it is about.
 
-* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/TidyTuesday/Billboard100_files/figure-gfm/bbhot100.jpg">Top 100 Billboard</a>
+* <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/TidyTuesday/Billboard100.md">Top 100 Billboard</a>
 
 ***
 # SQL
