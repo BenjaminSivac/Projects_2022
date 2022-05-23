@@ -1,0 +1,164 @@
+---
+title: "Tidy Tuesday: Billboard 100"
+author: "Benjamin Sivac"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::github_document
+---
+```{r, include=FALSE}
+hook_output <- knitr::knit_hooks$get("output")
+```
+
+# Introduction
+This EDA is done by following a video uploaded by an esteemed R-user named David Robinsson. I figured it would be a great opportunity for me to see another analyst's approach to EDA and how he applies more advanced techniques in a somewhat more casual manner than what I personally am used to. 
+
+## Data
+
+The data comes from Data.World by way of Sean Miller, Billboard.com and Spotify.
+
+The Billboard Hot 100 is the music industry standard record chart in the United States for songs, published weekly by Billboard magazine. Chart rankings are based on sales (physical and digital), radio play, and online streaming in the United States.
+
+
+```{r Loading packages, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(scales)
+library(lubridate)
+theme_set(theme_light())
+df.bb100 <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv')
+df.af <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/audio_features.csv')
+```
+
+Let's have our first look at the data.
+```{r}
+df.bb100 %>% glimpse()
+```
+
+This dataset already has a few interesting aggregated columns for each performer and his/her respective song; weekly number, number of instances it has appeared on the billboard, positions on the chart, and a variable for cumulative weeks on the chart. We will first fix the week_id variable as it needs to be converted into a date format.
+
+```{r}
+df.bb100 <- df.bb100 %>% 
+  mutate(week = mdy(week_id)) %>% 
+  select(-week_id)
+```
+
+Let's find out which songs have remained at number 1 position the longest.
+```{r}
+(longest_top_song <- df.bb100 %>% 
+  filter(week_position==1) %>% 
+  count(song_id, song, performer, sort= TRUE))
+```
+
+Let's find any patterns across time for these songs.
+```{r}
+df.bb100 %>% 
+  semi_join(head(longest_top_song, 9), by = "song_id") %>% 
+  ggplot(aes(week, week_position, group = instance)) +
+  geom_line() +
+  facet_wrap(~song, scales="free_x") +
+  scale_y_reverse() +
+  labs(x="Time",
+       y="Billboard position",
+       title = "Trajectories of #1 hits")
+```
+
+Most songs seem to rapidly reach the number 1 spot and remain for 3-4 months before slowly losing placements by the following 6 months. 
+
+Let's evaluate the performers by how many songs and for how long they have been at top 100 and number 1 respectively.
+```{r}
+summarize_songs <- function(tbl) {
+  tbl %>% 
+    summarize(total_weeks_on_top100 = n(),
+            total_weeks_at_number1 = sum(week_position == 1),
+            n_songs_top100 = n_distinct(song),
+            n_songs_at_number1 = n_distinct(song[week_position==1]),
+            .groups = "drop") %>% 
+  arrange(desc(total_weeks_at_number1))
+}
+
+(by_performer <- df.bb100 %>% 
+  group_by(performer) %>% 
+  summarize_songs())
+```
+
+We can create a scatter plot to observe how many songs each performer got at number 1 out of their total number of songs in the top 100.
+```{r}
+by_performer %>% 
+  arrange(desc(n_songs_top100)) %>% 
+  ggplot(aes(n_songs_top100, n_songs_at_number1)) +
+  geom_point() +
+  labs(x = "# of songs on the billboard top 100",
+       y="# of songs at #1") +
+  geom_text(aes(label=performer), check_overlap = TRUE, vjust = 1, hjust = 1) +
+  expand_limits(x=-10)
+```
+
+There's a pretty high concentration of performers within the range of 1 to 7 songs at number 1 out of 10 to 50 at top100 songs.
+
+It is also reasonable to observe stats by decade and also see which performer had the best numbers by each decade.
+```{r}
+(by_performer_decade <- df.bb100 %>% 
+  group_by(performer, 
+           decade = 10 * year(week) %/% 10) %>% 
+  summarize_songs())
+```
+
+```{r}
+by_performer_decade %>% 
+  group_by(decade) %>% 
+  slice_max(total_weeks_at_number1, n = 1)
+```
+
+We can visualize which performer had the most average weeks on the billboard per 5 year periods, by lumping together top 16 performers, filtering out the rest/"Other", and utilizing an area plot. We also use facet wrap to make it more readable.
+```{r}
+df.bb100 %>% 
+  mutate(performer_lumped = fct_lump(performer, 16)) %>% 
+  count(performer_lumped,
+        year = 5 * year(week) %/% 5) %>% 
+  filter(performer_lumped != "Other") %>% 
+  mutate(performer_lumped = fct_reorder(performer_lumped, year)) %>% 
+  ggplot(aes(year, n/5, fill = performer_lumped)) + 
+  geom_area() +
+  facet_wrap(~performer_lumped, scales="free_y") +
+  scale_fill_discrete(guide="none") +
+  labs(x = "Year", 
+       y = "Average weeks on Billboard Top 100 / year")
+```
+
+
+Next is to perform ML for predicting each song's popularity by number of weeks!
+
+## Machine Learning
+
+What we'll do is predict log_n_weeks by certain stats and characteristics found in the audio_features data, which we'll join together by an inner join.
+```{r}
+(by_song <- df.bb100 %>% 
+  group_by(song_id) %>% 
+  summarize(peak=max(week_position),
+            week_started = min(week),
+            n_weeks = n(),
+            log_n_weeks = log2(n_weeks)))
+```
+
+```{r}
+songs_joined <- by_song %>%
+  inner_join(df.af, by = "song_id") %>%
+  filter(!is.na(spotify_track_id))
+```
+
+
+*[To be continued]*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
