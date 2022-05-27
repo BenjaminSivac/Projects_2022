@@ -229,7 +229,7 @@ df.bb100 %>%
 Next is to perform ML for predicting each song’s popularity by number of
 weeks!
 
-## Machine Learning
+## Machine Learning **[Work in progress]**
 
 We’ll utilise XGBoost to predict log\_n\_weeks by certain stats and
 characteristics found in the audio\_features data, which we’ll join
