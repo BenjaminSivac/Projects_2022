@@ -1,27 +1,23 @@
-Tidy Tuesday: Top 100 Billboard
+Tidy Tuesday: Billboard 100
 ================
 Benjamin Sivac
-2022-05-23
-
-<p align="center">
-  <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/TidyTuesday/Billboard100_files/figure-gfm/bbhot100.jpg"</p>
+2022-05-27
 
 # Introduction
 
 This EDA is done by following a video uploaded by an esteemed R-user
-named David Robinson. I figured it would be a great opportunity for me
+named David Robinsson. I figured it would be a great opportunity for me
 to see another analyst’s approach to EDA and how he applies more
-advanced techniques.
+advanced techniques. I’ll aim to describe and explain every step of the
+way to understand for both the reader and myself.
 
-## Data
+## Data & Exploratory data analysis
 
 The data comes from Data.World by way of Sean Miller, Billboard.com and
-Spotify.
-
-The Billboard Hot 100 is the music industry standard record chart in the
-United States for songs, published weekly by Billboard magazine. Chart
-rankings are based on sales (physical and digital), radio play, and
-online streaming in the United States.
+Spotify. The Billboard Hot 100 is the music industry standard record
+chart in the United States for songs, published weekly by Billboard
+magazine. Chart rankings are based on sales (physical and digital),
+radio play, and online streaming in the United States.
 
 ``` r
 library(tidyverse)
@@ -32,28 +28,29 @@ df.bb100 <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/t
 df.af <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/audio_features.csv')
 ```
 
+Let’s have our first look at the data.
+
 ``` r
-df.bb100 %>% head()
+df.bb100 %>% glimpse()
 ```
 
-    ## # A tibble: 6 x 10
-    ##   url    week_id week_position song  performer song_id instance previous_week_p~
-    ##   <chr>  <chr>           <dbl> <chr> <chr>     <chr>      <dbl>            <dbl>
-    ## 1 http:~ 7/17/1~            34 Don'~ Patty Du~ Don't ~        1               45
-    ## 2 http:~ 7/24/1~            22 Don'~ Patty Du~ Don't ~        1               34
-    ## 3 http:~ 7/31/1~            14 Don'~ Patty Du~ Don't ~        1               22
-    ## 4 http:~ 8/7/19~            10 Don'~ Patty Du~ Don't ~        1               14
-    ## 5 http:~ 8/14/1~             8 Don'~ Patty Du~ Don't ~        1               10
-    ## 6 http:~ 8/21/1~             8 Don'~ Patty Du~ Don't ~        1                8
-    ## # ... with 2 more variables: peak_position <dbl>, weeks_on_chart <dbl>
+    ## Rows: 327,895
+    ## Columns: 10
+    ## $ url                    <chr> "http://www.billboard.com/charts/hot-100/1965-0~
+    ## $ week_id                <chr> "7/17/1965", "7/24/1965", "7/31/1965", "8/7/196~
+    ## $ week_position          <dbl> 34, 22, 14, 10, 8, 8, 14, 36, 97, 90, 97, 97, 9~
+    ## $ song                   <chr> "Don't Just Stand There", "Don't Just Stand The~
+    ## $ performer              <chr> "Patty Duke", "Patty Duke", "Patty Duke", "Patt~
+    ## $ song_id                <chr> "Don't Just Stand TherePatty Duke", "Don't Just~
+    ## $ instance               <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,~
+    ## $ previous_week_position <dbl> 45, 34, 22, 14, 10, 8, 8, 14, NA, 97, 90, 97, 9~
+    ## $ peak_position          <dbl> 34, 22, 14, 10, 8, 8, 8, 8, 97, 90, 90, 90, 90,~
+    ## $ weeks_on_chart         <dbl> 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4, 5, 6, 1, ~
 
 This dataset already has a few interesting aggregated columns for each
 performer and his/her respective song; weekly number, number of
 instances it has appeared on the billboard, positions on the chart, and
-a variable for cumulative weeks on the chart. 
-  
-## Exploratory data analysis
-We will first fix the
+a variable for cumulative weeks on the chart. We will first fix the
 week\_id variable as it needs to be converted into a date format.
 
 ``` r
@@ -156,7 +153,7 @@ by_performer %>%
 ![](Billboard100_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 There’s a pretty high concentration of performers within the range of 1
-to 7 songs at number 1 out of 10 to 50 top100 songs.
+to 7 songs at number 1 out of 10 to 50 at top100 songs.
 
 It is also reasonable to observe stats by decade and also see which
 performer had the best numbers by each decade.
@@ -230,7 +227,7 @@ weeks!
 
 ## Machine Learning
 
-What we’ll do is predict log\_n\_weeks by certain stats and
+We’ll utilise XGBoost to predict log\_n\_weeks by certain stats and
 characteristics found in the audio\_features data, which we’ll join
 together by an inner join.
 
@@ -264,4 +261,104 @@ songs_joined <- by_song %>%
   filter(!is.na(spotify_track_id))
 ```
 
-*\[To be continued\]*
+We perform an initial split to the data, creating a training set for
+estimating parameters and a testing set for evaluating the machine
+learning method, across 3 blocks for cross validation which is rather
+few but we are only doing a quick test.
+
+``` r
+library(tidymodels)
+library(textrecipes)
+
+set.seed(2022)
+split <- initial_split(songs_joined) #Initial data split
+train <- training(split) #training set for estimating parameters
+test <- testing(split) #testing set for evaluating the ML method
+folds <- vfold_cv(train, 3) # Divide the data into 3 blocks for cross validation
+```
+
+Onto preprocessing our recipe; we include all attributes to a song but
+also what genre it has been listed as on spotify, and what month they
+hit the billboard. Using step\_mutate to adjust and clean the latter two
+variables to fit, while also converting the genres into individual
+variables through tokenization.
+
+``` r
+# Preprocessing "recipe"
+xg_workflow <- recipe(log_n_weeks ~ danceability + energy + key + loudness + mode + speechiness +
+         acousticness + instrumentalness + liveness + valence + tempo + time_signature +
+         spotify_genre + week_started, data = train) %>% 
+  step_mutate(month = month(week_started),
+              # parse the genre
+              spotify_genre = str_remove_all(spotify_genre, "\\['|'\\]")) %>% 
+  step_rm(week_started) %>% 
+  # create tokens as variables for each spotify genre
+  step_tokenize(spotify_genre, token = "regex", options = list(pattern = "', '")) %>% 
+  step_tokenfilter(spotify_genre, max_tokens = tune()) %>% 
+  step_tf(spotify_genre) %>% 
+  workflow(boost_tree("regression", # create a decision tree
+                      mtry = tune(), # tunes hyperparameters (like booster parameters such as eta, gamma, and lambda)
+                      trees=tune(),
+                      learn_rate = .02))
+tune <- xg_workflow %>% 
+  tune_grid(folds,
+            metrics = metric_set(rmse),
+            grid = crossing(mtry = c(3, 5),
+                            max_tokens = c(1,10,30),
+                            trees = seq(25, 500, 25)))
+autoplot(tune)
+```
+
+![](Billboard100_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+We find that the amount of predictors have no effect on the estimated
+rmse value while the number of tokens do.
+
+We’ll select the best hyperparameters and perform an estimated rmse
+value:
+
+``` r
+xg_fit <- xg_workflow %>%
+  finalize_workflow(select_best(tune)) %>%
+  fit(train)
+
+xg_fit %>%
+  augment(test) %>%
+  rmse(log_n_weeks, .pred)
+```
+
+    ## # A tibble: 1 x 3
+    ##   .metric .estimator .estimate
+    ##   <chr>   <chr>          <dbl>
+    ## 1 rmse    standard        1.23
+
+Visualizing the fitted line through our test data.
+
+``` r
+xg_fit %>%
+  augment(test) %>%
+  ggplot(aes(2 ^ .pred, 2 ^ log_n_weeks)) +
+  geom_point(alpha = .25) +
+  geom_smooth(method = "lm") +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(x = "Predicted weeks on top 100",
+       y = "Actual weeks on top 100")
+```
+
+![](Billboard100_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+## Interpreting the features
+
+``` r
+importances <- xg_fit %>%
+  extract_fit_engine() %>%
+  xgb.importance(mod = .)
+importances %>%
+  mutate(Feature = fct_reorder(Feature, Gain)) %>%
+  ggplot(aes(Gain, Feature)) +
+  geom_col() +
+  labs(x = "Importance")
+```
+
+![](Billboard100_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->

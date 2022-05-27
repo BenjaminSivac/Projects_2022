@@ -10,14 +10,18 @@ hook_output <- knitr::knit_hooks$get("output")
 ```
 
 # Introduction
-This EDA is done by following a video uploaded by an esteemed R-user named David Robinsson. I figured it would be a great opportunity for me to see another analyst's approach to EDA and how he applies more advanced techniques in a somewhat more casual manner than what I personally am used to. 
+This EDA is done by following a video uploaded by an esteemed R-user named David
+Robinsson. I figured it would be a great opportunity for me to see another 
+analyst's approach to EDA and how he applies more advanced techniques. I'll aim
+to describe and explain every step of the way to understand for both the reader 
+and myself. 
 
-## Data
-
-The data comes from Data.World by way of Sean Miller, Billboard.com and Spotify.
-
-The Billboard Hot 100 is the music industry standard record chart in the United States for songs, published weekly by Billboard magazine. Chart rankings are based on sales (physical and digital), radio play, and online streaming in the United States.
-
+## Data & Exploratory data analysis
+The data comes from Data.World by way of Sean Miller, Billboard.com and Spotify. 
+The Billboard Hot 100 is the music industry standard record chart in the United 
+States for songs, published weekly by Billboard magazine. Chart rankings are 
+based on sales (physical and digital), radio play, and online streaming in the
+United States.
 
 ```{r Loading packages, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -33,8 +37,11 @@ Let's have our first look at the data.
 df.bb100 %>% glimpse()
 ```
 
-This dataset already has a few interesting aggregated columns for each performer and his/her respective song; weekly number, number of instances it has appeared on the billboard, positions on the chart, and a variable for cumulative weeks on the chart. We will first fix the week_id variable as it needs to be converted into a date format.
-
+This dataset already has a few interesting aggregated columns for each performer
+and his/her respective song; weekly number, number of instances it has appeared 
+on the billboard, positions on the chart, and a variable for cumulative weeks on
+the chart. We will first fix the week_id variable as it needs to be converted 
+into a date format.
 ```{r}
 df.bb100 <- df.bb100 %>% 
   mutate(week = mdy(week_id)) %>% 
@@ -61,9 +68,11 @@ df.bb100 %>%
        title = "Trajectories of #1 hits")
 ```
 
-Most songs seem to rapidly reach the number 1 spot and remain for 3-4 months before slowly losing placements by the following 6 months. 
+Most songs seem to rapidly reach the number 1 spot and remain for 3-4 months 
+before slowly losing placements by the following 6 months. 
 
-Let's evaluate the performers by how many songs and for how long they have been at top 100 and number 1 respectively.
+Let's evaluate the performers by how many songs and for how long they have been
+at top 100 and number 1 respectively.
 ```{r}
 summarize_songs <- function(tbl) {
   tbl %>% 
@@ -80,7 +89,8 @@ summarize_songs <- function(tbl) {
   summarize_songs())
 ```
 
-We can create a scatter plot to observe how many songs each performer got at number 1 out of their total number of songs in the top 100.
+We can create a scatter plot to observe how many songs each performer got at 
+number 1 out of their total number of songs in the top 100.
 ```{r}
 by_performer %>% 
   arrange(desc(n_songs_top100)) %>% 
@@ -92,9 +102,11 @@ by_performer %>%
   expand_limits(x=-10)
 ```
 
-There's a pretty high concentration of performers within the range of 1 to 7 songs at number 1 out of 10 to 50 at top100 songs.
+There's a pretty high concentration of performers within the range of 1 to 7 
+songs at number 1 out of 10 to 50 at top100 songs.
 
-It is also reasonable to observe stats by decade and also see which performer had the best numbers by each decade.
+It is also reasonable to observe stats by decade and also see which performer 
+had the best numbers by each decade.
 ```{r}
 (by_performer_decade <- df.bb100 %>% 
   group_by(performer, 
@@ -108,7 +120,10 @@ by_performer_decade %>%
   slice_max(total_weeks_at_number1, n = 1)
 ```
 
-We can visualize which performer had the most average weeks on the billboard per 5 year periods, by lumping together top 16 performers, filtering out the rest/"Other", and utilizing an area plot. We also use facet wrap to make it more readable.
+We can visualize which performer had the most average weeks on the billboard per
+5 year periods, by lumping together top 16 performers, filtering out the 
+rest/"Other", and utilizing an area plot. We also use facet wrap to make it more
+readable.
 ```{r}
 df.bb100 %>% 
   mutate(performer_lumped = fct_lump(performer, 16)) %>% 
@@ -124,12 +139,11 @@ df.bb100 %>%
        y = "Average weeks on Billboard Top 100 / year")
 ```
 
-
 Next is to perform ML for predicting each song's popularity by number of weeks!
 
 ## Machine Learning
-
-What we'll do is predict log_n_weeks by certain stats and characteristics found in the audio_features data, which we'll join together by an inner join.
+We'll utilise XGBoost to predict log_n_weeks by certain stats and characteristics 
+found in the audio_features data, which we'll join together by an inner join.
 ```{r}
 (by_song <- df.bb100 %>% 
   group_by(song_id) %>% 
@@ -137,22 +151,95 @@ What we'll do is predict log_n_weeks by certain stats and characteristics found 
             week_started = min(week),
             n_weeks = n(),
             log_n_weeks = log2(n_weeks)))
-```
 
-```{r}
 songs_joined <- by_song %>%
   inner_join(df.af, by = "song_id") %>%
   filter(!is.na(spotify_track_id))
 ```
 
+We perform an initial split to the data, creating a training set for estimating
+parameters and a testing set for evaluating the machine learning method, across
+3 blocks for cross validation which is rather few but we are only doing a quick test.
+```{r message=FALSE, warning=FALSE}
+library(tidymodels)
+library(textrecipes)
 
-*[To be continued]*
+set.seed(2022)
+split <- initial_split(songs_joined) #Initial data split
+train <- training(split) #training set for estimating parameters
+test <- testing(split) #testing set for evaluating the ML method
+folds <- vfold_cv(train, 3) # Divide the data into 3 blocks for cross validation
+```
 
+Onto preprocessing our recipe; we include all attributes to a song but also what
+genre it has been listed as on spotify, and what month they hit the billboard.
+Using step_mutate to adjust and clean the latter two variables to fit, while 
+also converting the genres into individual variables through tokenization. 
+```{r message=FALSE, warning=FALSE}
+# Preprocessing "recipe"
+xg_workflow <- recipe(log_n_weeks ~ danceability + energy + key + loudness + mode + speechiness +
+         acousticness + instrumentalness + liveness + valence + tempo + time_signature +
+         spotify_genre + week_started, data = train) %>% 
+  step_mutate(month = month(week_started),
+              # parse the genre
+              spotify_genre = str_remove_all(spotify_genre, "\\['|'\\]")) %>% 
+  step_rm(week_started) %>% 
+  # create tokens as variables for each spotify genre
+  step_tokenize(spotify_genre, token = "regex", options = list(pattern = "', '")) %>% 
+  step_tokenfilter(spotify_genre, max_tokens = tune()) %>% 
+  step_tf(spotify_genre) %>% 
+  workflow(boost_tree("regression", # create a decision tree
+                      mtry = tune(), # tunes hyperparameters (like booster parameters such as eta, gamma, and lambda)
+                      trees=tune(),
+                      learn_rate = .02))
+tune <- xg_workflow %>% 
+  tune_grid(folds,
+            metrics = metric_set(rmse),
+            grid = crossing(mtry = c(3, 5),
+                            max_tokens = c(1,10,30),
+                            trees = seq(25, 500, 25)))
+autoplot(tune)
+```
 
+We find that the amount of predictors have no effect on the estimated rmse value
+while the number of tokens do. 
 
+We'll select the best hyperparameters and perform an estimated rmse value:
+```{r}
+xg_fit <- xg_workflow %>%
+  finalize_workflow(select_best(tune)) %>%
+  fit(train)
 
+xg_fit %>%
+  augment(test) %>%
+  rmse(log_n_weeks, .pred)
+```
 
+Visualizing the fitted line through our test data.
+```{r message=FALSE, warning=FALSE}
+xg_fit %>%
+  augment(test) %>%
+  ggplot(aes(2 ^ .pred, 2 ^ log_n_weeks)) +
+  geom_point(alpha = .25) +
+  geom_smooth(method = "lm") +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(x = "Predicted weeks on top 100",
+       y = "Actual weeks on top 100")
+```
 
+## Interpreting the features
+
+```{r}
+importances <- xg_fit %>%
+  extract_fit_engine() %>%
+  xgb.importance(mod = .)
+importances %>%
+  mutate(Feature = fct_reorder(Feature, Gain)) %>%
+  ggplot(aes(Gain, Feature)) +
+  geom_col() +
+  labs(x = "Importance")
+```
 
 
 
