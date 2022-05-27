@@ -265,9 +265,9 @@ songs_joined <- by_song %>%
   filter(!is.na(spotify_track_id))
 ```
 
-We perform an initial split to the data, creating a training set for
-estimating parameters, another set called testing for evaluating the machine
-learning method, and splitting into 3 blocks for cross validation and a quick test.
+We perform an initial split to the data by creating a training set for
+estimating parameters, another set for testing and evaluating the machine
+learning method, and settling for 3 blocks to cross validate and make a quick test.
 
 ``` r
 library(tidymodels)
