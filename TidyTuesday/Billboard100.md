@@ -266,19 +266,18 @@ songs_joined <- by_song %>%
 ```
 
 We perform an initial split to the data, creating a training set for
-estimating parameters and a testing set for evaluating the machine
-learning method, across 3 blocks for cross validation which is rather
-few but we are only doing a quick test.
+estimating parameters, another set called testing for evaluating the machine
+learning method, and splitting into 3 blocks for cross validation and a quick test.
 
 ``` r
 library(tidymodels)
 library(textrecipes)
 
 set.seed(2022)
-split <- initial_split(songs_joined) #Initial data split
-train <- training(split) #training set for estimating parameters
-test <- testing(split) #testing set for evaluating the ML method
-folds <- vfold_cv(train, 3) # Divide the data into 3 blocks for cross validation
+split <- initial_split(songs_joined)
+train <- training(split) 
+test <- testing(split)
+folds <- vfold_cv(train, 3)
 ```
 
 Onto preprocessing our recipe; we include all attributes to a song but
