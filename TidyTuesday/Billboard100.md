@@ -1,11 +1,11 @@
 Tidy Tuesday: Billboard 100
 ================
-Benjamin Sivac
-2022-05-27
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/TidyTuesday/Billboard100_files/figure-gfm/bbhot100.jpg"/>
 </p>
+
+Benjamin Sivac 2022-05-27
 
 # Introduction
 
