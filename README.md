@@ -39,7 +39,7 @@ I have yet to decide whether or not I will commit to this weekly community activ
 * <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/TidyTuesday/Billboard100.md">Top 100 Billboard</a>
 
 ## <a href="https://github.com/BenjaminSivac/Projects_2022/blob/main/PredictLoanDefault/Refinance.md">Predicting Default for Refinance Loan Applications</a>
-I applied to a junior analytical role where the main focus would be credit risk and data analytics. This is a casestudy I was asked to complete in 3 days time, covering data exploration, data wrangling, and logistic regression, but I decided not to go through with it as I recieved another job offer.
+I applied to a junior analytical role where the main focus would be credit risk and data analytics. This is a casestudy I was asked to complete in 3 days time, covering data exploration, data wrangling, and logistic regression.
 
 ***
 # SQL
