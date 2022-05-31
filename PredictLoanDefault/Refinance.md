@@ -3,7 +3,7 @@ Predicting Default for Refinance Loan Applications
 
 <p align="center">
   <img src= "https://github.com/BenjaminSivac/Projects_2022/blob/main/PredictLoanDefault/Refinance_files/figure-gfm/appr.jpeg"
-       height="400px" width="1000""/>
+       height="300px" width="1000""/>
 </p>
 
 Benjamin Sivac 2022-05-31
