@@ -1,0 +1,302 @@
+---
+title: "Predicting Default for Refinance Loan Applications"
+author: "Benjamin Sivac"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::github_document
+---
+
+# Introduction
+In this dataset you will find consumer loan applications and the outcome flag for these
+applications (default flag).
+
+**Task:** Build a logistic regression model that predicts probability of default
+for **refinance loans.** Explain and present your model, explain the selection 
+of variables, and discuss the data limitations. Explain what can be improved in
+your model and discuss data limitations. 
+
+## Data
+
+Below is a description of the dataset variables.
+
+* **ApplicationDate** - Date of application (MMYYYY)
+* **Blanco_loan_debt** -  Blanco loan debt (SEK)
+* **Bureau_Score** - Credit score from the bureau
+* **CivilStatus** - Married/Single/Cohabiting
+* **Has_Co_Appl_Flag** - 1 if co-applicant exist, else 0
+* **Has_Mortgage** - 1 if applicant has a mortgage loan
+* **NrOfCars** - Number of cars registered on the applicant
+* **NrOfChildren** - Number of children
+* **NumberOfLoans** - Number of loans (all loan types)
+* **UC_Req_L12M** - Number of loan requests done past 12m
+* **UC_Req_L3M** - Number of loan requests done past 6m
+* **UC_Req_L6M** - Number of loan requests done past 3m
+* **age** - Age
+* **broker_id** - Id of the broker that the applicant used when applying
+* **default_flag** -  1= default, 0= not defaulted within 12m from application date
+* **gender** - "F"=Female, "M"=Male
+* **has_co_adress** - 1 if applicant has a C/O-address, else 0
+* **has_creditcard_loan** - 1 if applicant has at least one credit card loan, else 0
+* **has_repayment_loan** - 1 if applicant has at least one repayment loan, else 0
+* **income_year1** - Gross income most recent income year
+* **income_year2** - Gross income past income year
+* **requested_amount** - Total amount requested to loan
+* **refinance_flag** - 1= Refinance loan, 0 = Not a refinance loan
+
+In short, we have to *filter by refinance_flag = 1* to keep our analysis limited to
+refinance loans, and predict the dependent binary variable **default_flag** in 
+relation to the other variables.
+
+## Data Wrangling
+We'll load a few necessary packages beforehand, tidyverse and lubridate, 
+knowing that we'll most certainly work with data manipulation and date types. 
+```{r Loading packages, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lubridate)
+```
+
+Once we have all the libraries necessary, we can read the data in from CSV file.
+```{r Loading data, message=FALSE, warning=FALSE}
+theme_set(theme_light())
+df.loan_apps <- read.csv("case_data.csv", sep=";")
+glimpse(df.loan_apps)
+```
+
+The data consists of 25000 rows with 23 columns. By observe that several columns 
+need to be converted; the applicationDate to date format, the CivilStatus and 
+gender to factors, each flag -and "has" variable to logical data types, 
+and finally remove the dollar signs from previous years gross income and convert
+to numeric.
+
+```{r}
+df.clean <- df.loan_apps %>% 
+  mutate(ApplicationDate = format(parse_date_time(ApplicationDate, orders = c("m/Y")), "%m/%Y"),
+         CivilStatus = as.factor(CivilStatus),
+         gender = as.factor(gender),
+         across(starts_with("has"), as.logical),
+         across(ends_with("flag"), as.logical),
+         across(starts_with("income_year"), 
+                ~gsub("[$,]", "", .) %>% 
+                as.numeric))
+glimpse(df.clean)
+```
+
+Are there any obvious data augmentation to be made? Similar to credit scores, 
+there are other ratios that I presume could lessen the number constraints on the
+model, such as debt-to-income, loan-to-value, annual percentage rate, etc. However, 
+I must confess that I am ill informed in this area and I would much rather work
+with what we got. It might as well prove to be redundant. As such, we'll stick
+with the current set of variables.
+
+## Exploratory data analysis
+Let us begin by having a look at the number of missing values:
+```{r}
+sapply(df.clean, function(x) sum(is.na(x)))
+```
+The variable income_year1 is the only one with missing values, reassuring us 
+that values of 0 within the data are not to be confused with actual missing values.
+The question now is whether or not we should remove rows with missing values or perhaps 
+remove income_year1 entirely, since it could very likely be correlated with 
+income_year2.
+
+Let's remove the 1224 rows with missing values but also take a peek at 
+the correlation matrix of our data.
+```{r message=FALSE, warning=FALSE}
+df.refinance <- df.clean %>% filter(refinance_flag==TRUE) %>%
+  na.omit() %>% 
+  dplyr::select(-refinance_flag)
+
+df.refinance %>% select(-ApplicationDate) %>% 
+  mutate(gender=as.numeric(gender),
+         CivilStatus=as.numeric(CivilStatus)) %>% 
+  cor() %>% ggcorrplot::ggcorrplot(lab=TRUE,
+                                   lab_size = 3,
+                                   digits = 1, 
+                                   type = "lower",
+                                   ggtheme = ggplot2::theme_void,
+                                   tl.cex = 8)
+```
+
+We find that both the number of requests for loans across past months and the 
+past reported incomes have considerable high correlations. I'm hesitant to 
+remove either variables since we are not dealing with perfect collinearity,
+but it might be an option for improving our future model. It's also worth noting 
+that certain models can "infer" this in feature selection and remove useless variables.
+
+Let's take a quick look at our dependent variable:
+```{r}
+df.refinance %>% group_by(default_flag) %>% 
+  summarise(count = n()) %>% 
+  ggplot(aes(default_flag, count, fill=default_flag, color = default_flag)) +
+  geom_bar(stat="identity", alpha=0.4)
+
+prop.table(table(df.refinance$default_flag))
+```
+
+This is an issue. Having big imbalances in the data wont provide our model with enough
+neccessary information about the minority class, in this case for the 
+applications that end up defaulting, as the model strives to minimize 
+error in which the minority class contributes very little, resulting in 
+biased predictions and misleading accuracies.
+
+As a fix, let's perform random undersampling! It's a method for reducing the number of 
+observations from the majority class as a way to balance out the dataset.
+```{r}
+t <- which(df.refinance$default_flag==TRUE)
+f <- which(df.refinance$default_flag==FALSE)
+f.downsample <- sample(f, length(t))
+df.refinance_down <- df.refinance[c(f.downsample, t),]
+
+df.refinance_down %>% group_by(default_flag) %>% 
+  summarise(count = n())
+prop.table(table(df.refinance_down$default_flag))
+```
+
+There are also "Informative" undersampling methods with both an unsupervised and 
+supervised learning algorithm, but we'll settle for the quick, random undersampling method.
+
+## Analysis
+My first thought was to perform a stepwise logistic regression model for 
+obtaining the best variables, since that is what I'm most familiar with from my
+time studying statistics. However, I've found multiple online resources suggesting 
+that stepwise model selection is a cause for overfitting, by having coefficients
+that are too large and resulting in a highly biased outcome with nonreliable accuracy. 
+
+Now since we do have a few correlated variables, a down sampled dataset, and are asked to perform and also 
+motivate feature selection, **using LASSO** would be a good choice. It is a Regularization method 
+which penalizes large coefficients and can specifically perform estimation on very small sample sizes, 
+implement cross validation for tuning a hyperparameter, as a way for 
+balancing bias and variance, and computes a simpler model by forcing coefficients
+of lesser contributive variables to be zero. 
+
+We split the data into a training set (75%) for estimating parameters and another
+set reserved for testing and evaluation (25%). 
+```{r message=FALSE, warning=FALSE}
+set.seed(2022)
+library(tidymodels)
+library(glmnet)
+library(caret)
+
+split <- initial_split(df.refinance_down)
+train <- training(split)
+test <- testing(split)
+
+x.train <- model.matrix(default_flag~., train)[,-15]
+y.train <- train$default_flag
+
+x.test <- model.matrix(default_flag~., test)[,-15]
+y.test <- test$default_flag
+```
+
+LASSO is a penalized regression which utilises a constant lambda for adjusting 
+the amount of coefficient shrinkage, by optimizing lambda through iterations 
+we can minimize the cross validation prediction error rate. We'll use the 
+default value of 10 blocks for cross validation.
+```{r}
+cv.lasso <- cv.glmnet(x.train, y.train, family = "binomial", alpha = 1, nfolds = 10, keep = TRUE)
+plot(cv.lasso)
+```
+
+The left dashed vertical line is the optimal log value of lambda for minimizing 
+prediction error, and the right one is for the simplest model within one 
+standard error of the optimal model, in other words the best balance between 
+accuracy and simplicity. The values are:
+```{r}
+cv.lasso$lambda.min
+cv.lasso$lambda.1se
+```
+
+We proceed to fit the final models with their respective lambda values onto the 
+training data to find which regression coefficients are best.
+```{r}
+model.1se <- glmnet(x.train, y.train, alpha = 1, family = "binomial", 
+                lambda = cv.lasso$lambda.1se)
+coef(model.1se)
+```
+There are 16 coefficients remaining, the rest have been shrunken down to 0. Amongst 
+these coefficients, increasing the likelihood of defaulting on a 
+refinance loan is dependent on the requested amount, if you are single, if you have requested 
+a loan in recent months, and if you are a male. The remaining coefficients decrease the 
+likelihood on defaulting which pertain mostly to people who have grown old, 
+started a family, and who are financially stable enough to having already 
+acquired several loans under their name. There are also a few select months that affect 
+the predictions in both ways.
+
+```{r}
+model.min <- glmnet(x.train, y.train, alpha = 1, family = "binomial",
+                lambda = cv.lasso$lambda.min)
+coef(model.min)
+```
+
+This is the model with the smallest achieved MSE which is also considered the most
+accurate model. It's likely similar to a full model in terms of accuracy since 
+LASSO only shrinks useless variables and it is close to being completely unrestricted.
+
+Let's create predictions onto the test data, by using the fitted probabilities, and examine
+model accuracy and the confusion matrix.
+```{r}
+# fitting predictions
+prob.min <- predict(model.min, newx = x.test, type = "response")
+prob.1se <- predict(model.1se, newx = x.test, type = "response")
+
+pred.min <- ifelse(prob.min > 0.5, "TRUE", "FALSE")
+pred.1se <- ifelse(prob.1se > 0.5, "TRUE", "FALSE")
+
+# Model accuracy
+mean(pred.min == test$default_flag)
+
+mean(pred.1se == test$default_flag)
+```
+
+The models differ by 2%, having 68.6% and 66.6% accuracy respectively, 
+but the .1se model is simpler with a lot fewer predictors. 
+
+
+```{r}
+# confusion matrix for the .se1 model
+cnf <- cv.glmnet(x.train, y.train, alpha = 1, family = "binomial")
+confusion.glmnet(cnf, newx = x.test, newy = y.test)
+```
+
+The confusion matrix tells us how many instances whose correct default status
+was missclassified for the other. In binary classification, the diagonal 
+entries are commonly referred to as the true positives and the true negatives, 
+and the other two are the false positives and false negatives.
+
+## Discussing models and data limitations
+
+Generic takes; LASSO is better for feature selection or sparse model selection. Ridge 
+regression may give better prediction since it uses all variables. If an outcome 
+is better predicted by many weak predictors, then ridge regression or 
+bagging/boosting will outperform both forward stepwise regression and LASSO by a
+long shot. LASSO is much faster than forward stepwise regression.
+
+Concerning whether or not income_year1 and income_year2 are in fact reported in 
+dollars or just a typo, I would personally assume that it is in fact a typo 
+since the other variables are reported in SEK which would be more in line with
+the other figures in terms of value, however, I do confess that I lack the 
+necessary domain knowledge and would normally consult someone else in a real 
+life scenario. If they are in fact reported correctly I would consider it a data
+limitation, as I assume having variables with different currencies makes it no 
+longer comparable since they are on different scales, and I would instead implement
+a column for conversion rates between the two currency at the time of date, which
+I would also drill down in the applicationDate field.
+
+Other shortcomings; the data is missing interest rate, as blanco loans 
+are usually higher with a wide range that likely has a predictive 
+power. Similarly, a loan term could also be useful as it determines not only 
+how long the borrower will be in debt, but how high the borrower’s monthly
+loan payments and overall loan costs will be. Another variable that might prove 
+helpful, but generic, is education level of the applicant, but also of the co-applicant 
+since we are already have a flag for it. Might as well add co-applicant income.
+
+
+
+
+
+
+
+
+
+
+
