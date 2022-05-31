@@ -153,7 +153,7 @@ this area and I would much rather work with what we got. It might as
 well prove to be redundant. As such, we’ll stick with the current set of
 variables.
 
-## Exploratory data analysis
+## Data Exploration
 
 Let us begin by having a look at the number of missing values:
 
